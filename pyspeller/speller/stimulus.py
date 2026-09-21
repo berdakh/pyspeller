@@ -172,8 +172,12 @@ class SpellerStimulus:
         return self.spelled
 
     def _await_prediction(self, timeout):
-        """The next decoded letter, applying any corrections that arrive first."""
-        deadline = time.time() + timeout / self.clock.speed
+        """The next decoded letter, applying any corrections that arrive first.
+
+        This one waits in wall-clock time: the classifier takes as long as the
+        machine takes, whatever factor experiment time is running at.
+        """
+        deadline = time.time() + timeout
         while True:
             remaining = deadline - time.time()
             if remaining <= 0:

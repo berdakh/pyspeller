@@ -29,14 +29,25 @@ running a session with a participant and a g.tec amplifier.
 ```bash
 pip install numpy                       # the only hard dependency
 
-# the whole thing in one process: buffer, simulated EEG, speller, gui
+# the whole thing, driven with the mouse: pick a source, press start
 python -m pyspeller run
 
 # or without any display: calibrate, train and spell, printing the results
 python -m pyspeller demo --speed 10
 ```
 
-`run` opens the control panel and the speller window.  Press **Calibrate** to
+`run` opens a launcher first: choose the **simulated subject** or a **g.tec
+amplifier** (press *scan for amplifiers* and pick one from the list), set the
+participant, the matrix and the number of repetitions, tick *record this
+session to disk*, and press **Start session**. Nothing else needs a command
+line. `--simulate` or `--lsl` skip the launcher when you already know what you
+want, and every choice in it is also a flag.
+
+Prefer to script it? [`docs/pyspeller_tutorial.ipynb`](docs/pyspeller_tutorial.ipynb)
+runs the same session from a notebook and plots the ERP, the classifier weights
+and the decoded letters.
+
+Once started, the control panel and the speller window open.  Press **Calibrate** to
 record a labelled block, **Train classifier** to fit the ERP classifier, then
 **Feedback** to spell with it.  Every letter the classifier decides appears in
 the speller's text field at the top of the grid, and in the panel's `typed:`
@@ -107,6 +118,9 @@ python -m pyspeller speller                # 4. the stimulus display
 python -m pyspeller gui                    # 5. control panel + live signals
 python -m pyspeller save                   # 6. record everything to disk
 ```
+
+Anything the launcher offers is available here too: `--layout`,
+`--n-repetitions`, `--subject`, `--experiment`, `--save`, `--lsl-name`.
 
 The control panel publishes `startPhase.cmd` events; the speller and the signal
 processing client obey them.  Any other client can do the same, which is how
@@ -258,8 +272,9 @@ pyspeller/
   acquisition/   simulator.py, lsl_bridge.py, lsl_outlet.py, saver.py
   signalproc/    preproc.py, epochs.py, classifier.py
   speller/       matrix.py, stimulus.py, sigproc.py, render.py, text.py
-  gui/           control_panel.py
+  gui/           launcher.py, control_panel.py
   clock.py, config.py, experiment.py, cli.py
+docs/            MANUAL.md, pyspeller_tutorial.ipynb
 ```
 
 ## Limitations

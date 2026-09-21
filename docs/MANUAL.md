@@ -41,13 +41,18 @@ Everything below works against a simulated subject, so rehearse the procedure
 before anybody is sitting in the chair:
 
 ```bash
-python -m pyspeller run --save
+python -m pyspeller run
 ```
 
-Press **Calibrate**, wait for it to finish, press **Train classifier**, then
+A launcher opens. Leave the source on **simulated subject**, press **Start
+session**, then **Calibrate**, wait for it to finish, **Train classifier**, and
 **Feedback**. You will see the letters appear in the speller's text field. This
 is exactly the sequence you will run with a real participant — only the source
 of the data differs.
+
+If you would rather see each step in python, work through
+`docs/pyspeller_tutorial.ipynb` instead: it runs the same session in a notebook
+and plots the P300, the classifier weights and the decoded letters.
 
 ---
 
@@ -95,7 +100,18 @@ simplest fix is to run both on the same machine or the same lab switch.
 
 ## 4. Start the software
 
-The easy way — one command, everything in one process:
+The easy way — one command, and then the mouse:
+
+```bash
+python -m pyspeller run
+```
+
+In the launcher: choose **g.tec amplifier**, press **scan for amplifiers**,
+pick your amplifier from the list, type the participant code, check the matrix
+and the repetitions, leave *record this session to disk* ticked, and press
+**Start session**.
+
+The same session without the launcher, when you already know the settings:
 
 ```bash
 python -m pyspeller run --lsl --lsl-name "g.USBamp-UB-2016.03.06" --save \
@@ -105,6 +121,7 @@ python -m pyspeller run --lsl --lsl-name "g.USBamp-UB-2016.03.06" --save \
 Two windows open: the **control panel** on your screen and the **speller** on
 the participant's screen. Drag the speller window onto their monitor and
 maximise it, so the grid is as large as possible and nothing else is visible.
+The panel shows which source it is using and where it is recording.
 
 The explicit way — one component per terminal, which is what you want when the
 amplifier and the analysis run on different machines (add `--host` to point the

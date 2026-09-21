@@ -29,7 +29,7 @@ class ControlPanel:
     """The experiment's control window, with a live scope."""
 
     def __init__(self, config, client=None, window_seconds=5.0, refresh_ms=50,
-                 renderers=(), on_quit=None, recording=None):
+                 renderers=(), on_quit=None, recording=None, source=None):
         import tkinter as tk
         self.tk = tk
         self.config = config
@@ -40,6 +40,7 @@ class ControlPanel:
         self.renderers = list(renderers)      # extra tk renderers to pump
         self.on_quit = on_quit
         self.recording = recording            # directory the saver writes to
+        self.source = source                  # where the samples come from
 
         self.nchannels = self.header.nchannels
         self.labels = self.header.labels or ['ch%d' % (i + 1)
@@ -95,10 +96,14 @@ class ControlPanel:
         tk.Label(left, textvariable=self.spelled_var, bg=BG, fg='#81c784',
                  font=('Courier', 15, 'bold'), wraplength=170,
                  justify='left').pack(anchor='w', pady=(10, 0))
+        if self.source:
+            tk.Label(left, text='source: %s' % self.source, bg=BG, fg='#9aa0a6',
+                     wraplength=170, justify='left',
+                     font=('Helvetica', 9)).pack(anchor='w', pady=(8, 0))
         if self.recording:
             tk.Label(left, text='recording to\n%s' % self.recording, bg=BG,
                      fg='#9aa0a6', wraplength=170, justify='left',
-                     font=('Helvetica', 8)).pack(anchor='w', pady=(8, 0))
+                     font=('Helvetica', 8)).pack(anchor='w', pady=(4, 0))
 
         tk.Label(left, text='signal quality (uV rms)', bg=BG, fg=ACCENT,
                  font=('Helvetica', 10, 'bold')).pack(anchor='w', pady=(16, 2))

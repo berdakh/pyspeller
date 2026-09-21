@@ -46,7 +46,12 @@ class EpochGatherer:
         self.offset_samples = int(offset_samples)
 
     def gather(self, stop_types=(), timeout=30.0, poll_ms=100, on_epoch=None):
-        """(epochs, events, stop_event) collected until a stop event or timeout.
+        """(epochs, events, stop_event) collected until a stop event or a silence.
+
+        `timeout` is how long to wait with *nothing happening* -- every event
+        and every completed epoch pushes the deadline back.  A run therefore
+        takes as long as the stimulus takes, however slow the machine is, and
+        still gives up if the stimulus client dies mid-block.
 
         Each entry of `stop_types` is either an event type, or a (type, value)
         pair when only a particular value ends the run -- ('stimulus.training',
@@ -65,6 +70,7 @@ class EpochGatherer:
 
         while time.time() < deadline:
             for evt in self.client.new_events(timeout_ms=poll_ms):
+                deadline = time.time() + timeout        # something happened
                 if evt.type in self.event_types:
                     pending.append(evt)
                 elif any(evt.type == t and (v is None or str(evt.value) == v)
@@ -74,6 +80,7 @@ class EpochGatherer:
             ready = [e for e in pending
                      if e.sample + self.offset_samples + self.trlen_samples <= nsamples]
             if ready:
+                deadline = time.time() + timeout
                 pending = [e for e in pending if e not in ready]
                 new_epochs, used = slice_epochs(self.client, ready,
                                                 self.trlen_samples,
