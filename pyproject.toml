@@ -5,9 +5,23 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pyspeller"
 version = "0.1.0"
-description = "A minimal pure-python BCI framework and P300 speller for buffer_bci"
+description = "A minimal pure-python BCI framework and P300 speller"
+readme = "README.md"
 requires-python = ">=3.8"
+license = { text = "GPL-3.0-or-later" }
+keywords = ["BCI", "EEG", "P300", "speller", "ERP", "lab streaming layer", "g.tec"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+]
 dependencies = ["numpy>=1.20"]
+
+[project.urls]
+Homepage = "https://github.com/berdakh/pyspeller"
+Manual = "https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md"
+"buffer_bci" = "https://github.com/berdakh/buffer_bci"
 
 [project.optional-dependencies]
 lsl = ["pylsl>=1.16"]

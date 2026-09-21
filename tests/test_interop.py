@@ -1,8 +1,11 @@
-"""The server must stay wire compatible with the rest of buffer_bci.
+"""The server must stay wire compatible with buffer_bci.
 
-This drives the pure-python server with the framework's own FieldTrip client
-(dataAcq/buffer/python/FieldTrip.py), the same one the matlab, java and C
+This drives the pure-python server with buffer_bci's own FieldTrip client
+(dataAcq/buffer/python/FieldTrip.py), the same protocol the matlab, java and C
 clients implement, so a pyspeller buffer can be used by any of them.
+
+The tests skip unless a buffer_bci checkout can be found: set BUFFER_BCI_DIR,
+or have one next to this package (as when pyspeller lives inside it).
 """
 import os
 import sys
@@ -12,12 +15,26 @@ import numpy as np
 
 from pyspeller.buffer import BufferClient, BufferServer
 
-FIELDTRIP_DIR = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..', '..', '..', 'dataAcq', 'buffer', 'python'))
+def _find_fieldtrip_client():
+    """Where buffer_bci's FieldTrip.py is, if it is anywhere we can see."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    roots = []
+    if os.environ.get('BUFFER_BCI_DIR'):
+        roots.append(os.path.abspath(os.environ['BUFFER_BCI_DIR']))
+    roots += [os.path.join(here, '..', '..'),            # a sibling checkout
+              os.path.join(here, '..', '..', '..')]      # inside buffer_bci
+    for root in roots:
+        candidate = os.path.abspath(os.path.join(root, 'dataAcq', 'buffer', 'python'))
+        if os.path.exists(os.path.join(candidate, 'FieldTrip.py')):
+            return candidate
+    return None
 
 
-@unittest.skipUnless(os.path.exists(os.path.join(FIELDTRIP_DIR, 'FieldTrip.py')),
-                     'the buffer_bci FieldTrip client is not next to this package')
+FIELDTRIP_DIR = _find_fieldtrip_client()
+
+
+@unittest.skipUnless(FIELDTRIP_DIR,
+                     'no buffer_bci checkout found (set BUFFER_BCI_DIR)')
 class TestFieldTripInterop(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

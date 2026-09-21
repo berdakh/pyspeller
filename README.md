@@ -1,11 +1,14 @@
-# pyspeller — buffer_bci as a pure-python framework
+# pyspeller — a pure-python BCI framework and P300 speller
+
+[![tests](https://github.com/berdakh/pyspeller/actions/workflows/tests.yml/badge.svg)](https://github.com/berdakh/pyspeller/actions/workflows/tests.yml)
 
 A minimal but complete BCI framework written entirely in python, with a working
 P300 matrix speller on top of it: a 6x6 alphabet grid, the same kind of
-spelling environment a commercial g.tec speller gives you.  It follows the same client–server
-architecture as the rest of buffer_bci — a central buffer that stores data and
-events, with independent clients around it — but every part of it, including
-the buffer server itself, is python:
+spelling environment a commercial g.tec speller gives you.  It follows the
+client–server architecture of [buffer_bci](https://github.com/berdakh/buffer_bci),
+where it was first written — a central buffer that stores data and events, with
+independent clients around it — but every part of it, including the buffer
+server itself, is python:
 
 ```
    g.tec amplifier ──LSL──▶ lsl_bridge.py ─┐
@@ -17,7 +20,9 @@ the buffer server itself, is python:
 ```
 
 Nothing but `numpy` is required.  `pylsl` is needed only to talk to a real
-amplifier, and `tkinter` only for the graphical interface.
+amplifier, and `tkinter` only for the graphical interface.  The buffer speaks
+the FieldTrip protocol, so this server can be used by buffer_bci's matlab, java
+and C clients, and this client can talk to their buffer.
 
 ![the control panel and the speller](docs/screenshot.png)
 
@@ -27,6 +32,8 @@ running a session with a participant and a g.tec amplifier.
 ## Quick start
 
 ```bash
+git clone https://github.com/berdakh/pyspeller
+cd pyspeller
 pip install numpy                       # the only hard dependency
 
 # the whole thing, driven with the mouse: pick a source, press start
@@ -248,9 +255,16 @@ run the stimulus paces itself on the buffer's sample counter
 ## Tests
 
 ```bash
-python -m unittest discover -s tests           # 62 tests, about 30 s
-xvfb-run python -m unittest tests.test_gui     # the tk parts, headless
+python -m unittest discover -s tests           # about 35 s
+PYTHONPATH=. xvfb-run python tests/test_gui.py      # the tk parts, headless
+PYTHONPATH=. xvfb-run python tests/test_launcher.py
+
+pip install pylsl                              # then the LSL tests run too
+BUFFER_BCI_DIR=../buffer_bci python -m unittest tests.test_interop
 ```
+
+Tests that need something absent — pylsl, a display, a buffer_bci checkout —
+skip rather than fail, and CI runs all three groups.
 
 They cover the wire protocol, the server (including ring-buffer wrap-around and
 blocking waits), pre-processing, the classifier, epoching, the simulator's ERP,
@@ -262,7 +276,23 @@ and that the speller types the cued word.
 
 `tests/test_interop.py` drives this server with buffer_bci's own
 `dataAcq/buffer/python/FieldTrip.py` client, so the pure-python buffer stays
-usable from the matlab, java and C sides of the project.
+usable from the matlab, java and C sides of that project.  Point it at a
+checkout with `BUFFER_BCI_DIR`.
+
+## Relationship to buffer_bci
+
+pyspeller grew inside [buffer_bci](https://github.com/berdakh/buffer_bci) and
+still lives there under `python/pyspeller`; this repository is where it is
+developed from now on.  It needs nothing from buffer_bci to run — the
+dependency is one optional test — but it deliberately stays compatible with it:
+the same wire protocol, the same event names (`stimulus.tgtFlash`,
+`classifier.prediction`, …) and the same on-disk recording format, so
+recordings made here open with `matlab/offline/read_buffer_offline_*.m` and
+replay through `matlab/dataAcq/buffer_fileproxy.m`.
+
+## Licence
+
+GPL-3.0-or-later, the licence of the project it came from.  See `LICENSE`.
 
 ## Layout
 

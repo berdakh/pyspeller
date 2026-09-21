@@ -1,0 +1,65 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: install
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pyflakes
+      - name: lint
+        run: python -m pyflakes pyspeller tests
+      - name: tests
+        run: python -m unittest discover -s tests -v
+        # the LSL tests skip without pylsl, the tk tests without a display;
+        # both are covered by the jobs below
+
+  interface:
+    name: tk interface (xvfb)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: install tk and xvfb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-tk python3-numpy xvfb
+      - name: gui tests
+        run: |
+          xvfb-run -a python3 tests/test_gui.py -v
+          xvfb-run -a python3 tests/test_launcher.py -v
+        env:
+          PYTHONPATH: .
+
+  interop:
+    name: fieldtrip client interop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: berdakh/buffer_bci
+          path: buffer_bci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install numpy
+      - name: drive the server with buffer_bci's own client
+        run: python -m unittest tests.test_interop -v
+        env:
+          BUFFER_BCI_DIR: buffer_bci
