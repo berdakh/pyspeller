@@ -102,9 +102,8 @@ class ERPClassifier:
                 if verbose:
                     print('dropped %d artefact epochs' % len(bad))
         if verbose and len(self.bad_channels):
-            names = [self.channels[c] if self.channels else str(c)
-                     for c in self.bad_channels]
-            print('dropped bad channels: %s' % ', '.join(names))
+            print('dropped bad channels: %s'
+                  % ', '.join(self.channel_name(c) for c in self.bad_channels))
         self.lda.fit(self.features(X), labels)
         return self
 
@@ -113,6 +112,16 @@ class ERPClassifier:
 
     def predict(self, epochs):
         return (self.decision_function(epochs) > 0).astype(int)
+
+    def channel_name(self, index):
+        """A channel's label, falling back to its index.
+
+        The amplifier decides how many channels there are, so never assume the
+        names handed in cover them all.
+        """
+        if self.channels and index < len(self.channels):
+            return self.channels[index]
+        return 'ch%d' % (index + 1)
 
     # -- evaluation --------------------------------------------------------
     def cross_validate(self, epochs, labels, n_folds=5):

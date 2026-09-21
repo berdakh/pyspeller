@@ -21,6 +21,9 @@ amplifier, and `tkinter` only for the graphical interface.
 
 ![the control panel and the speller](docs/screenshot.png)
 
+**New to this?** [`docs/MANUAL.md`](docs/MANUAL.md) is a step-by-step manual for
+running a session with a participant and a g.tec amplifier.
+
 ## Quick start
 
 ```bash

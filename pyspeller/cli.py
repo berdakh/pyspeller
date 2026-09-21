@@ -104,8 +104,10 @@ def cmd_speller(args):
     client = BufferClient(config.host, config.port).connect(retries=20)
     client.wait_for_header(timeout=60)
     renderer = make_renderer(args.display, SpellerMatrix(config.symbols))
-    clock = (BufferClock(client, config.fsample, config.speed) if config.speed != 1
-             else Clock(1.0))
+    # the amplifier's own rate, not the configured one: they differ as soon as
+    # the data comes from real hardware
+    clock = (BufferClock(client, client.header.fsample, config.speed)
+             if config.speed != 1 else Clock(1.0))
     stimulus = SpellerStimulus(client, config, renderer, clock)
     print('speller ready -- waiting for startPhase.cmd events', flush=True)
     worker = threading.Thread(target=stimulus.run_phase_loop, daemon=True)
@@ -177,9 +179,12 @@ def cmd_run(args):
                                  noise_amplitude=args.noise_amplitude).start()
 
     stim_client = BufferClient(config.host, config.port).connect(retries=20)
-    stim_client.wait_for_header(timeout=60)
+    header = stim_client.wait_for_header(timeout=60)
     proc_client = BufferClient(config.host, config.port).connect(retries=20)
     proc_client.wait_for_header(timeout=60)
+    config.fsample = header.fsample          # whatever the amplifier reports
+    if header.labels:
+        config.channels = tuple(header.labels)
 
     if save_dir:
         from .acquisition.saver import BufferSaver
@@ -191,7 +196,7 @@ def cmd_run(args):
     renderer = TkRenderer(SpellerMatrix(config.symbols), master=panel.root)
     panel.renderers.append(renderer)
 
-    clock = (BufferClock(stim_client, config.fsample, config.speed)
+    clock = (BufferClock(stim_client, stim_client.header.fsample, config.speed)
              if config.speed != 1 else Clock(1.0))
     stimulus = SpellerStimulus(stim_client, config, renderer, clock)
     processor = SignalProcessor(proc_client, config, save_dir=save_dir)

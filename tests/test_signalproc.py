@@ -101,3 +101,21 @@ class TestClassifier(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestChannelNames(unittest.TestCase):
+    """The amplifier decides the montage; nothing may assume the configured one."""
+
+    def test_a_channel_beyond_the_given_labels_still_has_a_name(self):
+        clf = ERPClassifier(128.0, channels=['Fz', 'Cz'])
+        self.assertEqual(clf.channel_name(0), 'Fz')
+        self.assertEqual(clf.channel_name(7), 'ch8')
+
+    def test_training_reports_bad_channels_of_a_wider_montage(self):
+        rng = np.random.default_rng(4)
+        epochs = rng.normal(0, 5, (40, 16, 64))      # 16 channel amplifier ...
+        epochs[:, 11] *= 50                          # ... with a dead electrode
+        labels = np.array([0, 1] * 20)
+        clf = ERPClassifier(128.0, channels=['Fz', 'Cz', 'Pz'])   # 3 names only
+        clf.fit(epochs, labels, verbose=True)        # must not raise
+        self.assertIn(11, clf.bad_channels)

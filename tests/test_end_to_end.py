@@ -58,6 +58,12 @@ class TestEndToEnd(unittest.TestCase):
     def test_the_classifier_beats_chance_on_single_flashes(self):
         self.assertGreater(self.report['auc'], 0.65)
 
+    def test_the_classifier_uses_the_montage_the_amplifier_reported(self):
+        self.assertEqual(self.experiment.processor.channel_names,
+                         list(self.config.channels))
+        self.assertEqual(self.experiment.processor.classifier.channels,
+                         list(self.config.channels))
+
     def test_feedback_spells_the_cued_letters(self):
         self.assertEqual(len(self.pairs), len(self.config.feedback_letters))
         for target, prediction in self.pairs:

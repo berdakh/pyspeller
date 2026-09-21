@@ -49,7 +49,7 @@ class SignalProcessor:
                 os.path.join(self.save_dir, 'calibration_epochs.npz'),
                 epochs, labels, events,
                 metadata={'fsample': self.client.fsample,
-                          'channels': list(self.config.channels),
+                          'channels': self.channel_names,
                           'trlen_ms': self.config.trlen_ms})
             self._log('saved the calibration epochs to %s' % path)
         return epochs, labels
@@ -57,6 +57,14 @@ class SignalProcessor:
     @property
     def client_speed(self):
         return getattr(self.config, 'speed', 1.0)
+
+    @property
+    def channel_names(self):
+        """The montage the amplifier reports, or the configured one."""
+        header = self.client.header
+        if header is not None and header.labels:
+            return list(header.labels)
+        return list(self.config.channels)
 
     # -- training ----------------------------------------------------------
     def train(self, epochs=None, labels=None, cross_validate=True):
@@ -70,7 +78,7 @@ class SignalProcessor:
         self.classifier = ERPClassifier(self.client.fsample, config.freq_band,
                                         config.analysis_fsample,
                                         config.regularisation,
-                                        channels=list(config.channels),
+                                        channels=self.channel_names,
                                         spatial_filter=config.spatial_filter)
         self.classifier.fit(epochs, labels, verbose=self.verbose)
         report = {'n_epochs': int(len(labels)), 'n_targets': int((labels == 1).sum())}
