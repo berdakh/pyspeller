@@ -47,7 +47,7 @@ Do not dig — a good contact comes from contact, not pressure.</li>
 <li><strong>Use the right channels.</strong> Fz, Cz, Pz, Oz, P3, P4, PO7, PO8 at
 minimum, reference on an earlobe or mastoid, ground at AFz or FPz. More channels
 are welcome. Prepare the reference and the ground as carefully as any channel —
-<a href="sensors.html#7-reference-and-ground-the-question-everyone-asks">they are
+<a href="sensors.html#8-reference-and-ground-the-question-everyone-asks">they are
 in every number you record</a>.</li>
 <li><strong>Check impedances in the g.tec software.</strong> Below 5 kΩ with gel
 electrodes; dry electrodes read far higher, so use whatever threshold your lab

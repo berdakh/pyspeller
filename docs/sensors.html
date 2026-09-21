@@ -60,10 +60,12 @@ the electrode — cerebrospinal fluid, skull, scalp. This is <strong>volume
 conduction</strong>, and two facts about it shape everything else:</p>
 <ul>
 <li><strong>The skull is a poor conductor</strong>, so the pattern is smeared over
-  centimetres. Scalp EEG cannot see a single gyrus; it sees a region.</li>
+  centimetres — like reading a page through frosted glass. Scalp EEG cannot see
+  a single gyrus; it sees a region.</li>
 <li><strong>What arrives is tiny</strong>: 10–100 µV of ongoing EEG, and the P300 you are
-  hunting is about 5 µV. Mains hum in an unshielded room can be far larger, and
-  a blink is 10–20 times larger.</li>
+  hunting is about 5 µV. That is three hundred thousand times smaller than an AA
+  battery: you are listening for a whisper from the far side of a stadium, while
+  the crowd (mains hum, a blink, a clenched jaw) is shouting.</li>
 </ul>
 <p>In the tissue and in the gel, the current is carried by <strong>ions</strong> — Na⁺, K⁺,
 Cl⁻ moving. In the wire to the amplifier it is carried by <strong>electrons</strong>. The
@@ -110,7 +112,87 @@ chloride is the default for ERP work, and why an ERP lab will put up with the
 gel.
 </div>
 
-<h2 id="3-the-materials-and-why-each-is-used">3. The materials, and why each is used</h2>
+<h2 id="3-five-pictures-to-keep-in-your-head">3. Five pictures to keep in your head</h2>
+<p>The physics above is the answer; these are the pictures that make it stick.</p>
+<figure>
+<img src="assets/img/analogy.svg" alt="Three analogies: an exchange desk converting ions to electrons, a revolving door, and a glass door with crowds on both sides">
+<figcaption>Left: the electrode as a currency exchange. Middle and right: the difference between an electrode that lets charge through and one that does not.</figcaption>
+</figure>
+
+<h3 id="the-exchange-desk">The exchange desk</h3>
+<p>The body's currency is <strong>ions</strong>; the wire's currency is <strong>electrons</strong>. Neither
+can spend the other's money, and no ion ever travels up the cable. The electrode
+is the exchange desk on the border: ions arrive on one side, electrons leave on
+the other, and the chemical reaction sets the rate.</p>
+<p>This is why the <em>material</em> matters so much. A good desk exchanges instantly, at
+a fixed rate, in both directions. A bad one has a long queue and keeps changing
+its rate — which is exactly what drift is.</p>
+<h3 id="the-revolving-door-and-the-glass-door">The revolving door and the glass door</h3>
+<p>Ask what happens when charge arrives at the metal.</p>
+<p><strong>Silver–silver chloride is a revolving door.</strong> People keep walking through, in
+either direction, whether they arrive in a rush or one at a time. Current
+crosses freely, the interface behaves like a <strong>resistor</strong>, and even very slow
+changes — a P300 lasting half a second — get through unchanged.</p>
+<p><strong>Gold, platinum and steel are a glass door.</strong> Nobody gets through; they pile up
+against the glass on both sides. A crowd shoving suddenly still rattles the door
+and someone on the far side feels it — fast wiggles get through — but a slow,
+steady lean does nothing at all. That is a <strong>capacitor</strong>: it passes high
+frequencies and blocks low ones. It is why these metals are fine for alpha
+rhythms at 10 Hz and poorer for the slow shapes an ERP is made of.</p>
+<div class="note">
+<span class="block-title">The one-sentence version</span>
+If your signal is slow, you need an electrode that lets charge <em>through</em>
+— and that is what silver–silver chloride does and gold does not.
+</div>
+
+<h3 id="it-is-a-voltmeter-not-a-bucket">It is a voltmeter, not a bucket</h3>
+<p>The most common misconception is that the electrode <em>collects</em> electricity from
+the brain, the way a solar panel collects light. It does not. A modern amplifier
+has an input impedance of tens of megaohms or more, which means almost no
+current flows into it at all — a few picoamps.</p>
+<p>Think of a <strong>water gauge in a river</strong>, not a bucket. The gauge does not take any
+water; it reports the level. The electrode reports the electrical "level" — the
+potential — of the electrolyte it sits in, and that level rises and falls with
+the currents flowing through the scalp underneath.</p>
+<p>That is also why an electrode with poor contact does not give you a smaller
+signal so much as a <strong>noisier</strong> one: the gauge is still reading, but now it is
+wobbling in the wind.</p>
+<h3 id="two-bathroom-scales">Two bathroom scales</h3>
+<p>Every electrode has a half-cell potential of a couple of hundred millivolts —
+tens of thousands of times the EEG. Why does it not ruin everything?</p>
+<p>Imagine weighing a letter by standing on a bathroom scale holding it, and then
+standing on it without. Each reading is dominated by your own 70 kg, but the
+<strong>difference</strong> is the letter. EEG does the same: both electrodes carry a similar
+large offset, and the amplifier subtracts them.</p>
+<p>The catch follows immediately: this only works if both scales have the <em>same</em>
+offset and it does not wander while you weigh. Two electrodes of different
+metals are two scales calibrated differently, and a drying electrode is a scale
+slowly sliding out of calibration. That is drift, in one image.</p>
+<h3 id="two-microphones-in-a-noisy-hall">Two microphones in a noisy hall</h3>
+<p>The differential amplifier deserves its own picture. Put two microphones in a
+crowded hall, one right at a speaker's lips and one a metre away, and subtract
+the second from the first. The crowd noise reaches both almost identically and
+cancels; the whisper, which only the near microphone hears, survives.</p>
+<p>Your scalp electrode is the near microphone, the reference is the far one, and
+the crowd is 50 Hz mains hum plus everything else the whole body picks up. The
+<strong>common-mode rejection ratio</strong> is simply how well matched the two microphones
+are.</p>
+<p>And the catch is the same as before: the cancellation only works if the two
+paths are equal. One electrode at 5 kΩ and another at 200 kΩ is one microphone
+with a sock over it — the crowd no longer cancels. That is why you match
+impedances, not only lower them.</p>
+<h3 id="sea-level-and-the-mooring-rope">Sea level and the mooring rope</h3>
+<p>Finally, the question everyone asks. <strong>The reference is sea level; the ground is
+the mooring rope.</strong></p>
+<p>You cannot state the height of a hill without agreeing where zero is: heights
+are always <em>differences</em> from a datum. The reference is the datum for every
+channel — change it and every number changes, though the hill did not move.</p>
+<p>The ground does something else entirely. It is the rope that keeps the boat from
+drifting out of the dock: it holds the participant's whole body at a potential
+the amplifier can work with, so the inputs stay in range. It never appears in a
+measurement. Untie it and nothing is measured from sea level any more — the boat
+has floated away and everything saturates.</p>
+<h2 id="4-the-materials-and-why-each-is-used">4. The materials, and why each is used</h2>
 <table>
 <thead>
 <tr>
@@ -179,7 +261,7 @@ across your amplifier's input and drifts with temperature. Use one material for
 the whole montage — <em>including</em> the reference and ground.
 </div>
 
-<h2 id="4-the-sensors-themselves">4. The sensors themselves</h2>
+<h2 id="5-the-sensors-themselves">5. The sensors themselves</h2>
 <figure>
 <img src="assets/img/electrode-types.svg" alt="Six electrode types drawn in cross-section: wet cup, gold cup, active electrode, dry pins, capacitive, and subdermal needle">
 <figcaption>The families you will meet. For a teaching BCI lab it is nearly always one of the first four.</figcaption>
@@ -208,7 +290,7 @@ impedance and careful shielding, and are still mostly a research topic.</p>
 <p><strong>Subdermal needles</strong> exist for intensive care and intra-operative monitoring.
 They are not for student BCI work, and you should not be the person inserting
 them.</p>
-<h2 id="5-skin-gel-and-impedance">5. Skin, gel and impedance</h2>
+<h2 id="6-skin-gel-and-impedance">6. Skin, gel and impedance</h2>
 <p>The metal is rarely the problem. The <strong>stratum corneum</strong> — the outer layer of
 dead, dry skin cells — is where nearly all the resistance lives. That is what
 the preparation ritual is about:</p>
@@ -264,7 +346,7 @@ signal:</p>
 <p>Two failure modes to recognise on the scope: <strong>bridging</strong>, where gel spreads
 between neighbouring electrodes and makes their traces suspiciously identical,
 and <strong>drying</strong>, where impedance climbs over an hour and slow drift creeps in.</p>
-<h2 id="6-how-a-number-is-actually-computed">6. How a number is actually computed</h2>
+<h2 id="7-how-a-number-is-actually-computed">7. How a number is actually computed</h2>
 <figure>
 <img src="assets/img/differential-amp.svg" alt="Diagram of a head with an electrode, a reference and a ground feeding a differential amplifier, with hum cancelling in the output">
 <figcaption>Every EEG channel is the output of a differential amplifier: the signal at one electrode minus the signal at the reference, amplified.</figcaption>
@@ -287,7 +369,7 @@ voltage — 256 or 512 times a second in a typical g.tec setup — with an input
 range of a few hundred millivolts, wide enough to accommodate electrode offsets
 without clipping. The digital numbers that reach pyspeller through Lab Streaming
 Layer are already converted to <strong>microvolts</strong>.</p>
-<h2 id="7-reference-and-ground-the-question-everyone-asks">7. Reference and ground: the question everyone asks</h2>
+<h2 id="8-reference-and-ground-the-question-everyone-asks">8. Reference and ground: the question everyone asks</h2>
 <p>They are different things and they are not interchangeable.</p>
 <p><strong>The reference is one of the two inputs of every channel.</strong> It is a <em>signal</em>
 electrode, on the participant's head, that every channel is compared against.
@@ -373,7 +455,7 @@ common average. The P300 changes amplitude and even sign at some electrodes.
 Nothing about the brain changed — only what you subtracted.
 </div>
 
-<h2 id="8-what-goes-wrong-seen-from-the-sensor-side">8. What goes wrong, seen from the sensor side</h2>
+<h2 id="9-what-goes-wrong-seen-from-the-sensor-side">9. What goes wrong, seen from the sensor side</h2>
 <table>
 <thead>
 <tr>
@@ -412,7 +494,7 @@ Nothing about the brain changed — only what you subtracted.
 </tr>
 </tbody>
 </table>
-<h2 id="9-what-this-means-when-you-are-capping-up">9. What this means when you are capping up</h2>
+<h2 id="10-what-this-means-when-you-are-capping-up">10. What this means when you are capping up</h2>
 <ul>
 <li>Prepare the <strong>reference and ground as carefully as any channel</strong> — they are in
   every number you record.</li>

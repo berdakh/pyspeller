@@ -23,10 +23,12 @@ the electrode — cerebrospinal fluid, skull, scalp. This is **volume
 conduction**, and two facts about it shape everything else:
 
 - **The skull is a poor conductor**, so the pattern is smeared over
-  centimetres. Scalp EEG cannot see a single gyrus; it sees a region.
+  centimetres — like reading a page through frosted glass. Scalp EEG cannot see
+  a single gyrus; it sees a region.
 - **What arrives is tiny**: 10–100 µV of ongoing EEG, and the P300 you are
-  hunting is about 5 µV. Mains hum in an unshielded room can be far larger, and
-  a blink is 10–20 times larger.
+  hunting is about 5 µV. That is three hundred thousand times smaller than an AA
+  battery: you are listening for a whisper from the far side of a stadium, while
+  the crowd (mains hum, a blink, a clenched jaw) is shouting.
 
 In the tissue and in the gel, the current is carried by **ions** — Na⁺, K⁺,
 Cl⁻ moving. In the wire to the amplifier it is carried by **electrons**. The
@@ -85,7 +87,112 @@ chloride is the default for ERP work, and why an ERP lab will put up with the
 gel.
 </div>
 
-## 3. The materials, and why each is used
+## 3. Five pictures to keep in your head
+
+The physics above is the answer; these are the pictures that make it stick.
+
+<figure>
+<img src="assets/img/analogy.svg" alt="Three analogies: an exchange desk converting ions to electrons, a revolving door, and a glass door with crowds on both sides">
+<figcaption>Left: the electrode as a currency exchange. Middle and right: the difference between an electrode that lets charge through and one that does not.</figcaption>
+</figure>
+
+### The exchange desk
+
+The body's currency is **ions**; the wire's currency is **electrons**. Neither
+can spend the other's money, and no ion ever travels up the cable. The electrode
+is the exchange desk on the border: ions arrive on one side, electrons leave on
+the other, and the chemical reaction sets the rate.
+
+This is why the *material* matters so much. A good desk exchanges instantly, at
+a fixed rate, in both directions. A bad one has a long queue and keeps changing
+its rate — which is exactly what drift is.
+
+### The revolving door and the glass door
+
+Ask what happens when charge arrives at the metal.
+
+**Silver–silver chloride is a revolving door.** People keep walking through, in
+either direction, whether they arrive in a rush or one at a time. Current
+crosses freely, the interface behaves like a **resistor**, and even very slow
+changes — a P300 lasting half a second — get through unchanged.
+
+**Gold, platinum and steel are a glass door.** Nobody gets through; they pile up
+against the glass on both sides. A crowd shoving suddenly still rattles the door
+and someone on the far side feels it — fast wiggles get through — but a slow,
+steady lean does nothing at all. That is a **capacitor**: it passes high
+frequencies and blocks low ones. It is why these metals are fine for alpha
+rhythms at 10 Hz and poorer for the slow shapes an ERP is made of.
+
+<div class="note">
+<span class="block-title">The one-sentence version</span>
+If your signal is slow, you need an electrode that lets charge <em>through</em>
+— and that is what silver–silver chloride does and gold does not.
+</div>
+
+### It is a voltmeter, not a bucket
+
+The most common misconception is that the electrode *collects* electricity from
+the brain, the way a solar panel collects light. It does not. A modern amplifier
+has an input impedance of tens of megaohms or more, which means almost no
+current flows into it at all — a few picoamps.
+
+Think of a **water gauge in a river**, not a bucket. The gauge does not take any
+water; it reports the level. The electrode reports the electrical "level" — the
+potential — of the electrolyte it sits in, and that level rises and falls with
+the currents flowing through the scalp underneath.
+
+That is also why an electrode with poor contact does not give you a smaller
+signal so much as a **noisier** one: the gauge is still reading, but now it is
+wobbling in the wind.
+
+### Two bathroom scales
+
+Every electrode has a half-cell potential of a couple of hundred millivolts —
+tens of thousands of times the EEG. Why does it not ruin everything?
+
+Imagine weighing a letter by standing on a bathroom scale holding it, and then
+standing on it without. Each reading is dominated by your own 70 kg, but the
+**difference** is the letter. EEG does the same: both electrodes carry a similar
+large offset, and the amplifier subtracts them.
+
+The catch follows immediately: this only works if both scales have the *same*
+offset and it does not wander while you weigh. Two electrodes of different
+metals are two scales calibrated differently, and a drying electrode is a scale
+slowly sliding out of calibration. That is drift, in one image.
+
+### Two microphones in a noisy hall
+
+The differential amplifier deserves its own picture. Put two microphones in a
+crowded hall, one right at a speaker's lips and one a metre away, and subtract
+the second from the first. The crowd noise reaches both almost identically and
+cancels; the whisper, which only the near microphone hears, survives.
+
+Your scalp electrode is the near microphone, the reference is the far one, and
+the crowd is 50 Hz mains hum plus everything else the whole body picks up. The
+**common-mode rejection ratio** is simply how well matched the two microphones
+are.
+
+And the catch is the same as before: the cancellation only works if the two
+paths are equal. One electrode at 5 kΩ and another at 200 kΩ is one microphone
+with a sock over it — the crowd no longer cancels. That is why you match
+impedances, not only lower them.
+
+### Sea level and the mooring rope
+
+Finally, the question everyone asks. **The reference is sea level; the ground is
+the mooring rope.**
+
+You cannot state the height of a hill without agreeing where zero is: heights
+are always *differences* from a datum. The reference is the datum for every
+channel — change it and every number changes, though the hill did not move.
+
+The ground does something else entirely. It is the rope that keeps the boat from
+drifting out of the dock: it holds the participant's whole body at a potential
+the amplifier can work with, so the inputs stay in range. It never appears in a
+measurement. Untie it and nothing is measured from sea level any more — the boat
+has floated away and everything saturates.
+
+## 4. The materials, and why each is used
 
 | Material | Behaviour | Where you meet it | Trade-off |
 | --- | --- | --- | --- |
@@ -106,7 +213,7 @@ across your amplifier's input and drifts with temperature. Use one material for
 the whole montage — <em>including</em> the reference and ground.
 </div>
 
-## 4. The sensors themselves
+## 5. The sensors themselves
 
 <figure>
 <img src="assets/img/electrode-types.svg" alt="Six electrode types drawn in cross-section: wet cup, gold cup, active electrode, dry pins, capacitive, and subdermal needle">
@@ -142,7 +249,7 @@ impedance and careful shielding, and are still mostly a research topic.
 They are not for student BCI work, and you should not be the person inserting
 them.
 
-## 5. Skin, gel and impedance
+## 6. Skin, gel and impedance
 
 The metal is rarely the problem. The **stratum corneum** — the outer layer of
 dead, dry skin cells — is where nearly all the resistance lives. That is what
@@ -182,7 +289,7 @@ Two failure modes to recognise on the scope: **bridging**, where gel spreads
 between neighbouring electrodes and makes their traces suspiciously identical,
 and **drying**, where impedance climbs over an hour and slow drift creeps in.
 
-## 6. How a number is actually computed
+## 7. How a number is actually computed
 
 <figure>
 <img src="assets/img/differential-amp.svg" alt="Diagram of a head with an electrode, a reference and a ground feeding a differential amplifier, with hum cancelling in the output">
@@ -212,7 +319,7 @@ range of a few hundred millivolts, wide enough to accommodate electrode offsets
 without clipping. The digital numbers that reach pyspeller through Lab Streaming
 Layer are already converted to **microvolts**.
 
-## 7. Reference and ground: the question everyone asks
+## 8. Reference and ground: the question everyone asks
 
 They are different things and they are not interchangeable.
 
@@ -279,7 +386,7 @@ common average. The P300 changes amplitude and even sign at some electrodes.
 Nothing about the brain changed — only what you subtracted.
 </div>
 
-## 8. What goes wrong, seen from the sensor side
+## 9. What goes wrong, seen from the sensor side
 
 | On the scope | Usually means |
 | --- | --- |
@@ -291,7 +398,7 @@ Nothing about the brain changed — only what you subtracted.
 | All channels dead flat | amplifier not acquiring, or the cap is unplugged |
 | Fast, spiky activity over the temples | jaw and neck muscle, not brain |
 
-## 9. What this means when you are capping up
+## 10. What this means when you are capping up
 
 - Prepare the **reference and ground as carefully as any channel** — they are in
   every number you record.
