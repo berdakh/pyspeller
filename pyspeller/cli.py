@@ -16,6 +16,7 @@ import argparse
 import threading
 
 from .config import LAYOUTS, SpellerConfig
+from .speller.messages import LANGUAGES
 
 
 def _config_from_args(args):
@@ -26,7 +27,9 @@ def _config_from_args(args):
             setattr(config, field, value)
     layout = getattr(args, 'layout', None)
     if layout:
-        config.use_layout(layout)
+        config.use_layout(layout, language=getattr(args, 'language', None))
+    elif getattr(args, 'language', None):
+        config.language = args.language
     return config
 
 
@@ -40,9 +43,13 @@ def _add_common(parser):
     parser.add_argument('--isi', type=float, default=None,
                         help='seconds between flash onsets')
     parser.add_argument('--fsample', type=float, default=None)
-    parser.add_argument('--layout', default='6x6', choices=sorted(LAYOUTS),
-                        help='speller matrix: the 6x6 alphabet grid (default), '
-                             'the same with editing keys, or a 3x3 grid')
+    parser.add_argument('--layout', default='6x6-control', choices=sorted(LAYOUTS),
+                        help='speller matrix: the 6x6 alphabet grid with editing '
+                             'keys (default), the classic 6x6, the Kazakh (kk) or '
+                             'Russian (ru) Cyrillic grid, or a 3x3 grid')
+    parser.add_argument('--language', default=None, choices=sorted(LANGUAGES),
+                        help='language of the on-screen instructions '
+                             '(default: follows the matrix)')
 
 
 # -- individual components -------------------------------------------------
@@ -234,7 +241,7 @@ def cmd_run(args):
 
 def _apply_choices(args, config, choices):
     """Fold what the launcher returned back into the arguments and config."""
-    config.use_layout(choices['layout'])
+    config.use_layout(choices['layout'], language=choices.get('language'))
     config.n_repetitions = choices['n_repetitions']
     args.lsl = choices['source'] == 'lsl'
     args.lsl_name = choices['lsl_name']

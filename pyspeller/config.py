@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Experiment configuration -- the python counterpart of configureSpeller.m."""
 from dataclasses import dataclass
 
@@ -20,18 +21,42 @@ SYMBOLS_6X6_CONTROL = (('A', 'B', 'C', 'D', 'E', 'F'),
                        ('Y', 'Z', '0', '1', '2', '3'),
                        ('4', '5', '.', ',', '_', 'DEL'))
 
+#: Kazakh (Cyrillic): all 42 letters of the alphabet plus the editing keys,
+#: in alphabetical order across a 6x8 matrix
+SYMBOLS_KK_CYRILLIC = (('А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е'),
+                       ('Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Қ', 'Л'),
+                       ('М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С'),
+                       ('Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ц'),
+                       ('Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'І', 'Ь', 'Э'),
+                       ('Ю', 'Я', '_', '.', ',', '?', 'DEL', 'CLR'))
+
+#: Russian (Cyrillic): 33 letters, a space, a full stop and a backspace
+SYMBOLS_RU_CYRILLIC = (('А', 'Б', 'В', 'Г', 'Д', 'Е'),
+                       ('Ё', 'Ж', 'З', 'И', 'Й', 'К'),
+                       ('Л', 'М', 'Н', 'О', 'П', 'Р'),
+                       ('С', 'Т', 'У', 'Ф', 'Х', 'Ц'),
+                       ('Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь'),
+                       ('Э', 'Ю', 'Я', '_', '.', 'DEL'))
+
 #: a 3x3 grid, handy for quick demonstrations and tests
 SYMBOLS_3X3 = (('A', 'B', 'C'),
                ('D', 'E', 'F'),
                ('G', 'H', 'I'))
 
 LAYOUTS = {'6x6': SYMBOLS_6X6, '6x6-control': SYMBOLS_6X6_CONTROL,
+           'kk': SYMBOLS_KK_CYRILLIC, 'ru': SYMBOLS_RU_CYRILLIC,
            '3x3': SYMBOLS_3X3}
+
+#: the language a layout is normally used with -- picking the Kazakh matrix
+#: also puts the on-screen instructions into Kazakh, unless asked otherwise
+LAYOUT_LANGUAGE = {'kk': 'kk', 'ru': 'ru'}
 
 #: words to calibrate and spell with, per layout -- a word has to be spellable
 #: in the grid it is used with
 DEFAULT_WORDS = {'6x6': (tuple('BRAIN'), tuple('BCI')),
                  '6x6-control': (tuple('BRAIN'), tuple('BCI')),
+                 'kk': (tuple('БАҚЫТ'), tuple('СӘЛЕМ')),
+                 'ru': (tuple('МОЗГ'), tuple('ДА')),
                  '3x3': (tuple('AEICG'), tuple('BHD'))}
 
 DEFAULT_SYMBOLS = SYMBOLS_6X6_CONTROL
@@ -56,6 +81,7 @@ class SpellerConfig:
     fsample: float = 128.0
     channels: tuple = DEFAULT_CHANNELS
     # -- analysis ----------------------------------------------------------
+    language: str = 'en'                # what the participant reads on screen
     trlen_ms: float = 600.0             # epoch length after each flash
     freq_band: tuple = (0.1, 0.5, 10.0, 12.0)   # trapezoidal spectral filter
     analysis_fsample: float = 16.0      # rate the classifier features live at
@@ -79,9 +105,14 @@ class SpellerConfig:
         """Which of `letters` the current matrix cannot spell."""
         return [letter for letter in letters if letter not in self.symbol_set]
 
-    def use_layout(self, name):
-        """Switch matrix, and take words that fit it if the current ones do not."""
+    def use_layout(self, name, language=None):
+        """Switch matrix, and take words that fit it if the current ones do not.
+
+        The language of the on-screen instructions follows the matrix unless
+        one is given: the Kazakh grid comes with Kazakh instructions.
+        """
         self.symbols = LAYOUTS[name]
+        self.language = language or LAYOUT_LANGUAGE.get(name, self.language)
         calibration, feedback = DEFAULT_WORDS[name]
         if self.missing_symbols(self.calibration_letters):
             self.calibration_letters = calibration

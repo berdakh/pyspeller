@@ -17,6 +17,10 @@ CONTROL_KEYS = (SPACE, DELETE, CLEAR)
 #: (the control panel's backspace button, a carer's keyboard, another app)
 EDIT_EVENT = 'speller.edit'
 
+#: event that interrupts a running block: 'pause', 'resume' or 'stop'
+CONTROL_EVENT = 'speller.control'
+PAUSE, RESUME, STOP = 'pause', 'resume', 'stop'
+
 
 def apply_symbol(text, symbol):
     """The text after the speller decoded `symbol`."""

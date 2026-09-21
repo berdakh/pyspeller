@@ -124,13 +124,12 @@ class ERPClassifier:
         return 'ch%d' % (index + 1)
 
     # -- evaluation --------------------------------------------------------
-    def cross_validate(self, epochs, labels, n_folds=5):
-        """Stratified k-fold (AUC, accuracy) -- an honest calibration report."""
+    def cross_validated_scores(self, epochs, labels, n_folds=5):
+        """Held-out decision value for every epoch, from stratified k folds."""
         X = np.asarray(epochs, dtype=float)
         labels = np.asarray(labels).astype(int)
-        folds = _stratified_folds(labels, n_folds)
         scores = np.zeros(len(labels))
-        for test_idx in folds:
+        for test_idx in _stratified_folds(labels, n_folds):
             train_idx = np.setdiff1d(np.arange(len(labels)), test_idx)
             fold = ERPClassifier(self.fsample, self.freq_band,
                                  self.analysis_fsample,
@@ -138,7 +137,28 @@ class ERPClassifier:
                                  self.spatial_filter)
             fold.fit(X[train_idx], labels[train_idx], remove_bad_epochs=False)
             scores[test_idx] = fold.decision_function(X[test_idx])
+        return scores
+
+    def cross_validate(self, epochs, labels, n_folds=5):
+        """Stratified k-fold (AUC, accuracy) -- an honest calibration report."""
+        labels = np.asarray(labels).astype(int)
+        scores = self.cross_validated_scores(epochs, labels, n_folds)
         return auc(labels, scores), float(((scores > 0).astype(int) == labels).mean())
+
+    def discriminability(self, epochs, labels):
+        """AUC of every channel and time point on its own.
+
+        The same picture the matlab side plots after training: where in space
+        and time the two classes actually differ, independently of what the
+        classifier made of it.
+        """
+        X = self.preprocess(epochs)
+        labels = np.asarray(labels).astype(int)
+        values = np.zeros(X.shape[1:])
+        for channel in range(X.shape[1]):
+            for sample in range(X.shape[2]):
+                values[channel, sample] = auc(labels, X[:, channel, sample])
+        return values
 
     # -- persistence -------------------------------------------------------
     def save(self, path):

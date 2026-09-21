@@ -16,9 +16,13 @@ import time
 from ..buffer.protocol import Event
 from ..clock import Clock
 from ..speller.matrix import ROW, SpellerMatrix
-from . import text as speller_text
+from . import messages, text as speller_text
 
 PHASE_EVENT = 'startPhase.cmd'
+
+
+class RunStopped(Exception):
+    """Raised inside a block when a client asks for it to stop."""
 
 
 class SpellerStimulus:
@@ -33,6 +37,13 @@ class SpellerStimulus:
         self.rng = rng or random.Random(config.seed)
         self.predictions = []
         self.spelled = ''        # the letters decoded so far, as shown on screen
+        self.paused = False
+        self.stopped = False
+        self.next_phase = None   # a phase asked for while a block was running
+
+    def say(self, key, *args):
+        """One on-screen message, in the participant's language."""
+        return messages.say(getattr(self.config, 'language', 'en'), key, *args)
 
     # -- one letter --------------------------------------------------------
     def flash_letter(self, target=None):
@@ -42,6 +53,9 @@ class SpellerStimulus:
                                               config.min_gap)
         start = self.clock.now()
         for i, group in enumerate(sequence):
+            # a pause between two flashes, never in the middle of one: the
+            # paused time is added back so the flashes stay evenly spaced
+            start += self.handle_control()
             onset = start + i * config.isi
             self.clock.sleep_until(onset)
             self._send_flash(group, target)
@@ -72,40 +86,133 @@ class SpellerStimulus:
                                 ', '.join(repr(m) for m in missing)))
         return list(letters)
 
+    def begin_block(self):
+        """Clear any pause or stop left over from an earlier block."""
+        self.paused = False
+        self.stopped = False
+        self.next_phase = None
+        self.client.reset_event_cursor()
+
+    def end_block(self, phase_event=None):
+        """Close a block off: tell the other clients, and drop the cue.
+
+        A stopped block still sends its end events, otherwise the signal
+        processing client would sit waiting for data that is not coming.  If
+        the buffer has gone away (the session is shutting down) there is
+        nobody left to tell, and that is not an error.
+        """
+        try:
+            if self.stopped:
+                self.client.send_event('stimulus.sequence', 'end')
+            if phase_event:
+                self.client.send_event(phase_event, 'end')
+            self.client.send_event('simulation.target', '')
+        except (OSError, IOError):
+            pass
+        self.paused = False
+        self.stopped = False
+        self.renderer.draw((), 'idle')
+
+    def handle_control(self, poll=0.05):
+        """Apply pause/resume/stop (and corrections); returns time spent paused.
+
+        Called between flashes and during the gaps, so a block can be held or
+        abandoned without killing the process or losing the recording.
+        """
+        self._read_control_events()
+        if self.stopped:
+            raise RunStopped()
+        if not self.paused:
+            return 0.0
+        held = self.clock.now()
+        self.renderer.message(self.say('paused'))
+        while self.paused:
+            time.sleep(poll)
+            self._read_control_events()
+            if self.stopped:
+                self.paused = False
+                self.renderer.message('')
+                raise RunStopped()
+        self.renderer.message('')
+        return self.clock.now() - held
+
+    def _read_control_events(self):
+        for evt in self.client.new_events(timeout_ms=0):
+            if evt.type == speller_text.EDIT_EVENT:
+                self.apply_edit(evt.value)
+            elif evt.type == speller_text.CONTROL_EVENT:
+                value = str(evt.value)
+                if value == speller_text.PAUSE:
+                    self.paused = True
+                elif value == speller_text.RESUME:
+                    self.paused = False
+                elif value == speller_text.STOP:
+                    self.stopped = True
+            elif evt.type == PHASE_EVENT:
+                # asking for another phase while one is running means: stop
+                # this one and go there -- no need to press stop first
+                self.next_phase = str(evt.value)
+                self.paused = False
+                self.stopped = True
+
+    def sleep(self, seconds):
+        """Sleep in experiment time, still listening for pause and stop."""
+        deadline = self.clock.now() + seconds
+        while True:
+            deadline += self.handle_control()
+            remaining = deadline - self.clock.now()
+            if remaining <= 0:
+                return
+            self.clock.sleep(min(remaining, 0.1))
+
     def cue(self, symbol):
         """Show which symbol to attend to, and tell the simulated subject."""
         self.client.send_event('simulation.target', symbol)
-        self.renderer.message('look at: %s' % symbol)
+        self.renderer.message(self.say('look_at', symbol))
         self.renderer.draw([self.matrix.position_of(symbol)], 'target')
-        self.clock.sleep(self.config.cue_duration)
+        self.sleep(self.config.cue_duration)
         self.renderer.draw((), 'idle')
         self.renderer.message('')
 
     # -- phases ------------------------------------------------------------
     def run_calibration(self, letters=None):
         letters = self.check_spellable(letters or self.config.calibration_letters)
-        self.renderer.message('calibration: %s' % ' '.join(letters))
+        self.renderer.message(self.say('calibration', ' '.join(letters)))
+        self.begin_block()
         self.client.send_event('stimulus.training', 'start')
-        for symbol in letters:
-            self.cue(symbol)
-            self.flash_letter(target=symbol)
-            self.clock.sleep(self.config.inter_seq_duration)
-        self.client.send_event('stimulus.training', 'end')
-        self.client.send_event('simulation.target', '')
-        self.renderer.message('calibration done')
-        return letters
+        done = []
+        try:
+            for symbol in letters:
+                self.cue(symbol)
+                self.flash_letter(target=symbol)
+                done.append(symbol)
+                self.sleep(self.config.inter_seq_duration)
+        except RunStopped:
+            self.renderer.message(self.say('calibration_stopped', len(done)))
+        else:
+            self.renderer.message(self.say('calibration_done'))
+        finally:
+            self.end_block('stimulus.training')
+        return done
 
     def run_practice(self, letters=None):
         """Same as calibration but without training labels -- just a rehearsal."""
         letters = self.check_spellable(letters or self.config.calibration_letters[:2])
-        self.renderer.message('practice')
-        for symbol in letters:
-            self.cue(symbol)
-            self.flash_letter(target=None)
-            self.clock.sleep(self.config.inter_seq_duration)
-        self.client.send_event('simulation.target', '')
-        self.renderer.message('practice done')
-        return letters
+        self.renderer.message(self.say('practice'))
+        self.begin_block()
+        done = []
+        try:
+            for symbol in letters:
+                self.cue(symbol)
+                self.flash_letter(target=None)
+                done.append(symbol)
+                self.sleep(self.config.inter_seq_duration)
+            self.renderer.message(self.say('practice_done'))
+        except RunStopped:
+            self.renderer.message(self.say('practice_stopped'))
+        finally:
+            self.end_block()
+        return done
 
     def run_feedback(self, letters=None, prediction_timeout=10.0):
         """Spell letters and show what the classifier decided for each."""
@@ -113,30 +220,37 @@ class SpellerStimulus:
         self.predictions = []
         self.spelled = ''
         self.renderer.set_output(self.spelled)
+        self.begin_block()
         self.client.send_event('stimulus.feedback', 'start')
-        for symbol in letters:
-            self.drain_edits()
-            self.cue(symbol)
-            self.flash_letter(target=None)
-            prediction = self._await_prediction(prediction_timeout)
-            self.predictions.append(prediction)
-            if prediction is None:
-                self.renderer.message('no prediction')
-            else:
-                # the decoded letter: highlighted in the grid and applied to
-                # the text field, so the user sees what they have typed
-                self.spelled = speller_text.apply_symbol(self.spelled, prediction)
-                self.renderer.set_output(self.spelled)
-                self.renderer.message('predicted: %s' % prediction)
-                self.renderer.draw([self.matrix.position_of(prediction)], 'prediction')
-            self.clock.sleep(self.config.feedback_duration)
-            self.renderer.draw((), 'idle')
-            self.renderer.message('')
-        self.client.send_event('stimulus.feedback', 'end')
-        self.client.send_event('simulation.target', '')
-        correct = sum(p == t for p, t in zip(self.predictions, letters))
-        self.renderer.message('spelled %d/%d correctly' % (correct, len(letters)))
-        return list(zip(letters, self.predictions))
+        spelled_letters = []
+        try:
+            for symbol in letters:
+                self.handle_control()
+                self.cue(symbol)
+                self.flash_letter(target=None)
+                prediction = self._await_prediction(prediction_timeout)
+                self.predictions.append(prediction)
+                spelled_letters.append(symbol)
+                if prediction is None:
+                    self.renderer.message(self.say('no_prediction'))
+                else:
+                    # the decoded letter: highlighted in the grid and applied to
+                    # the text field, so the user sees what they have typed
+                    self.spelled = speller_text.apply_symbol(self.spelled, prediction)
+                    self.renderer.set_output(self.spelled)
+                    self.renderer.message(self.say('predicted', prediction))
+                    self.renderer.draw([self.matrix.position_of(prediction)],
+                                       'prediction')
+                self.sleep(self.config.feedback_duration)
+                self.renderer.draw((), 'idle')
+                self.renderer.message('')
+            correct = sum(p == t for p, t in zip(self.predictions, letters))
+            self.renderer.message(self.say('spelled_correctly', correct, len(letters)))
+        except RunStopped:
+            self.renderer.message(self.say('stopped_after', len(spelled_letters)))
+        finally:
+            self.end_block('stimulus.feedback')
+        return list(zip(spelled_letters, self.predictions))
 
     def run_free_spelling(self, n_letters=None, prediction_timeout=10.0,
                           stop_event=None):
@@ -151,24 +265,30 @@ class SpellerStimulus:
         self.predictions = []
         self.spelled = ''
         self.renderer.set_output(self.spelled)
-        self.renderer.message('free spelling')
+        self.renderer.message(self.say('free_spelling'))
+        self.begin_block()
         self.client.send_event('stimulus.feedback', 'start')
-        while len(self.predictions) < n_letters:
-            if stop_event is not None and stop_event.is_set():
-                break
-            self.drain_edits()
-            self.clock.sleep(self.config.inter_seq_duration)
-            self.flash_letter(target=None)
-            prediction = self._await_prediction(prediction_timeout)
-            self.predictions.append(prediction)
-            if prediction is not None:
-                self.spelled = speller_text.apply_symbol(self.spelled, prediction)
-                self.renderer.set_output(self.spelled)
-                self.renderer.draw([self.matrix.position_of(prediction)], 'prediction')
-                self.clock.sleep(self.config.feedback_duration)
-                self.renderer.draw((), 'idle')
-        self.client.send_event('stimulus.feedback', 'end')
-        self.renderer.message('typed: %s' % self.spelled)
+        try:
+            while len(self.predictions) < n_letters:
+                if stop_event is not None and stop_event.is_set():
+                    break
+                self.handle_control()
+                self.sleep(self.config.inter_seq_duration)
+                self.flash_letter(target=None)
+                prediction = self._await_prediction(prediction_timeout)
+                self.predictions.append(prediction)
+                if prediction is not None:
+                    self.spelled = speller_text.apply_symbol(self.spelled, prediction)
+                    self.renderer.set_output(self.spelled)
+                    self.renderer.draw([self.matrix.position_of(prediction)],
+                                       'prediction')
+                    self.sleep(self.config.feedback_duration)
+                    self.renderer.draw((), 'idle')
+        except RunStopped:
+            pass
+        finally:
+            self.end_block('stimulus.feedback')
+        self.renderer.message(self.say('typed', self.spelled))
         return self.spelled
 
     def _await_prediction(self, timeout):
@@ -215,21 +335,38 @@ class SpellerStimulus:
 
     # -- event driven control ---------------------------------------------
     def run_phase_loop(self, stop_event=None):
-        """Obey startPhase.cmd events until told to quit (the GUI drives this)."""
+        """Obey startPhase.cmd events until told to quit (the GUI drives this).
+
+        A phase asked for while a block is running interrupts it: the block
+        ends cleanly -- its end events are still sent -- and the new one
+        starts, so the operator can switch from practice to calibration
+        without waiting for the practice to finish.
+        """
         self.client.reset_event_cursor()
-        while stop_event is None or not stop_event.is_set():
-            evt = self.client.wait_for_event(PHASE_EVENT, timeout=0.5)
-            if evt is None:
-                continue
-            phase = str(evt.value)
-            if phase == 'quit':
-                break
-            if phase in ('calibrate', 'calibration'):
-                self.run_calibration()
-            elif phase == 'practice':
-                self.run_practice()
-            elif phase in ('feedback', 'testing'):
-                self.run_feedback()
-            elif phase in ('free', 'freespelling'):
-                self.run_free_spelling(stop_event=stop_event)
+        phase = None
+        try:
+            while stop_event is None or not stop_event.is_set():
+                if phase is None:
+                    evt = self.client.wait_for_event(PHASE_EVENT, timeout=0.5)
+                    if evt is None:
+                        continue
+                    phase = str(evt.value)
+                if phase == 'quit':
+                    break
+                self.run_phase(phase, stop_event=stop_event)
+                phase, self.next_phase = self.next_phase, None
+        except (OSError, IOError, ConnectionError):
+            pass                       # the buffer went away: the session ended
         self.renderer.close()
+
+    def run_phase(self, phase, stop_event=None):
+        """Run one phase by name; unknown names are ignored."""
+        if phase in ('calibrate', 'calibration'):
+            return self.run_calibration()
+        if phase == 'practice':
+            return self.run_practice()
+        if phase in ('feedback', 'testing'):
+            return self.run_feedback()
+        if phase in ('free', 'freespelling'):
+            return self.run_free_spelling(stop_event=stop_event)
+        return None

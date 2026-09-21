@@ -24,8 +24,8 @@ def _import_pylsl():
         import pylsl
     except ImportError as err:      # pragma: no cover - depends on the install
         raise ImportError(
-            'pylsl is required to talk to an LSL device. Install it with '
-            '"pip install pylsl" (it bundles liblsl).') from err
+            'pylsl is not installed, so no LSL device can be reached -- run: '
+            'pip install pylsl  (it bundles liblsl)') from err
     return pylsl
 
 

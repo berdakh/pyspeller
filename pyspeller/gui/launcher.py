@@ -7,7 +7,14 @@ command line.  The same choices exist as flags on `python -m pyspeller run`.
 """
 import threading
 
-from ..config import LAYOUTS
+from ..config import LAYOUTS, LAYOUT_LANGUAGE
+from ..speller.messages import LANGUAGES
+
+def pylsl_installed():
+    """Whether an LSL device can be reached at all from this machine."""
+    import importlib.util
+    return importlib.util.find_spec('pylsl') is not None
+
 
 BG = '#1a1d21'
 FG = '#e6e6e6'
@@ -32,6 +39,7 @@ class SessionLauncher:
         self.subject = tk.StringVar(value='test')
         self.experiment = tk.StringVar(value='speller')
         self.layout = tk.StringVar(value='6x6-control')
+        self.language = tk.StringVar(value=config.language)
         self.repetitions = tk.IntVar(value=config.n_repetitions)
         self.record = tk.BooleanVar(value=True)
         self.status = tk.StringVar(value='')
@@ -55,8 +63,11 @@ class SessionLauncher:
                  font=('Helvetica', 10, 'bold')).pack(anchor='w')
         source = tk.Frame(frame, bg=BG)
         source.pack(fill='x', pady=(4, 0))
+        amplifier_text = 'g.tec amplifier   (over Lab Streaming Layer)'
+        if not pylsl_installed():
+            amplifier_text += '   -- needs pylsl'
         for value, text in [('simulator', 'simulated subject   (no hardware needed)'),
-                            ('lsl', 'g.tec amplifier   (over Lab Streaming Layer)')]:
+                            ('lsl', amplifier_text)]:
             tk.Radiobutton(source, text=text, value=value, variable=self.source,
                            bg=BG, fg=FG, selectcolor='#2b3036', activebackground=BG,
                            activeforeground=FG, highlightthickness=0,
@@ -85,17 +96,27 @@ class SessionLauncher:
 
         tk.Label(options, text='matrix', bg=BG, fg=FG, anchor='w'
                  ).grid(row=2, column=0, sticky='w', pady=4, padx=(0, 16))
-        menu = tk.OptionMenu(options, self.layout, *sorted(LAYOUTS))
+        menu = tk.OptionMenu(options, self.layout, *sorted(LAYOUTS),
+                             command=self._layout_changed)
         menu.configure(bg='#2b3036', fg=FG, relief='flat', highlightthickness=0,
                        activebackground=ACCENT, width=14, anchor='w')
         menu['menu'].configure(bg='#2b3036', fg=FG)
         menu.grid(row=2, column=1, sticky='w')
 
-        tk.Label(options, text='repetitions per letter', bg=BG, fg=FG, anchor='w'
+        tk.Label(options, text='language on screen', bg=BG, fg=FG, anchor='w'
                  ).grid(row=3, column=0, sticky='w', pady=4, padx=(0, 16))
+        language_menu = tk.OptionMenu(options, self.language, *sorted(LANGUAGES))
+        language_menu.configure(bg='#2b3036', fg=FG, relief='flat',
+                                highlightthickness=0, activebackground=ACCENT,
+                                width=14, anchor='w')
+        language_menu['menu'].configure(bg='#2b3036', fg=FG)
+        language_menu.grid(row=3, column=1, sticky='w')
+
+        tk.Label(options, text='repetitions per letter', bg=BG, fg=FG, anchor='w'
+                 ).grid(row=4, column=0, sticky='w', pady=4, padx=(0, 16))
         tk.Spinbox(options, from_=1, to=30, textvariable=self.repetitions, width=6,
                    bg='#14171a', fg=FG, relief='flat', insertbackground=FG,
-                   buttonbackground='#2b3036').grid(row=3, column=1, sticky='w')
+                   buttonbackground='#2b3036').grid(row=4, column=1, sticky='w')
 
         tk.Checkbutton(frame, text='record this session to disk', variable=self.record,
                        bg=BG, fg=FG, selectcolor='#2b3036', activebackground=BG,
@@ -122,11 +143,19 @@ class SessionLauncher:
                                                           sticky='w', ipady=2)
 
     # -- behaviour ---------------------------------------------------------
+    def _layout_changed(self, layout):
+        """Choosing the Kazakh or Russian matrix suggests its language too."""
+        if layout in LAYOUT_LANGUAGE:
+            self.language.set(LAYOUT_LANGUAGE[layout])
+
     def _source_changed(self):
         using_lsl = self.source.get() == 'lsl'
         self.stream_list.configure(state='normal' if using_lsl else 'disabled')
         if using_lsl and not self.streams:
-            self.status.set('press scan to find the amplifier')
+            if pylsl_installed():
+                self.status.set('press scan to find the amplifier')
+            else:
+                self.status.set('pylsl is not installed  --  run:  pip install pylsl')
         elif not using_lsl:
             self.status.set('the simulator needs no hardware')
 
@@ -141,8 +170,8 @@ class SessionLauncher:
             try:
                 from ..acquisition.lsl_bridge import list_streams
                 found = list_streams(timeout=2.0)
-            except ImportError as err:
-                message = str(err).split('.')[0]
+            except ImportError:
+                message = 'pylsl is not installed  --  run:  pip install pylsl'
                 self.root.after(0, lambda m=message: self.status.set(m))
                 return
             except Exception as err:
@@ -181,6 +210,7 @@ class SessionLauncher:
                    'subject': self.subject.get().strip() or 'test',
                    'experiment': self.experiment.get().strip() or 'speller',
                    'layout': self.layout.get(),
+                   'language': self.language.get(),
                    'n_repetitions': max(1, int(self.repetitions.get())),
                    'record': bool(self.record.get()),
                    'lsl_name': None, 'lsl_type': 'EEG'}

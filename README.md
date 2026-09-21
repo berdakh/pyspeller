@@ -56,7 +56,10 @@ and the decoded letters.
 
 Once started, the control panel and the speller window open.  Press **Calibrate** to
 record a labelled block, **Train classifier** to fit the ERP classifier, then
-**Feedback** to spell with it.  Every letter the classifier decides appears in
+**Feedback** to spell with it.  A block can be held with **⏸ pause** and
+abandoned with **■ stop**, and pressing another phase button interrupts
+whatever is running -- there is no need to wait for a block to finish before
+switching from practice to calibration.  Every letter the classifier decides appears in
 the speller's text field at the top of the grid, and in the panel's `typed:`
 line, so the user sees the text grow as they spell it.  The panel also shows
 the live signal, per-channel signal quality and the event stream.
@@ -70,10 +73,22 @@ a letter the classifier got wrong:
 ```
 A B C D E F      --layout 6x6-control  the default: A-Z, 0-5, . , _ and DEL
 G H I J K L      --layout 6x6          the classic grid: A-Z, 1-9 and _
-M N O P Q R      --layout 3x3          a small grid for quick demos
-S T U V W X
-Y Z 0 1 2 3
+M N O P Q R      --layout kk           Kazakh Cyrillic, all 42 letters (6x8)
+S T U V W X      --layout ru           Russian Cyrillic, all 33 letters (6x6)
+Y Z 0 1 2 3      --layout 3x3          a small grid for quick demos
 4 5 . , _ DEL
+```
+
+The Kazakh matrix holds the whole alphabet, А to Я including Ә Ғ Қ Ң Ө Ұ Ү Һ І,
+with space, full stop, comma, question mark, backspace and clear:
+
+```
+А Ә Б В Г Ғ Д Е        python -m pyspeller run --lsl --layout kk
+Ё Ж З И Й К Қ Л
+М Н Ң О Ө П Р С        the on-screen instructions follow the matrix
+Т У Ұ Ү Ф Х Һ Ц        (--language en | kk | ru to override), so the
+Ч Ш Щ Ъ Ы І Ь Э        participant reads "қараңыз: Қ" rather than
+Ю Я _ . , ? DEL CLR    "look at: Қ"
 ```
 
 Twelve groups (six rows, six columns) are flashed per repetition, so one letter
@@ -84,6 +99,23 @@ commercial system.
 **Free spelling** just flashes and types whatever the classifier decides, which
 is how a user actually works.  Press **Free spelling** on the panel or send
 `startPhase.cmd = free`.
+
+### What training tells you
+
+Pressing **Train classifier** fits the ERP classifier and opens a result
+window, the same report the matlab side draws after `train_erp_clsfr`:
+
+* the **cross-validated AUC and accuracy**, with a word on whether the session
+  is good enough to spell with;
+* the **target and non-target averages** for every channel, as the classifier
+  sees them (referenced and filtered);
+* **where the classes differ**: the AUC of every channel and time point, which
+  is where the P300 should stand out at the parietal electrodes near 300 ms;
+* the **confusion matrix** behind the accuracy, read row by row.
+
+The same numbers are published as a `classifier.summary` event and written to
+`training_summary.json` next to the recording, so an analysis script can pick
+them up.
 
 ### Correcting a letter
 

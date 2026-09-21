@@ -176,14 +176,30 @@ Tell the participant, in these words:
 
 Press **Calibrate**. The speller cues five letters (B, R, A, I, N by default)
 and flashes each one for about 22 seconds. Watch the scope: if the participant
-blinks constantly or moves, stop, give them a break, and start again. Bad
-calibration data cannot be fixed later.
+blinks constantly or moves, press **⏸ pause**, sort it out, and press the same
+button again to carry on — the flashing picks up where it left off. **■ stop**
+abandons the block altogether, and you can start it again from the top. Bad
+calibration data cannot be fixed later, so it is better to stop and redo it.
+
+You do not have to wait for a block to finish before doing something else:
+pressing any of the phase buttons interrupts what is running and starts the new
+one cleanly.
 
 ---
 
 ## 7. Train the classifier (a few seconds)
 
-Press **Train classifier**. The signal processing terminal prints, for example:
+Press **Train classifier**. A result window opens with everything you need to
+judge the session:
+
+* **cross-validated AUC and accuracy** at the top;
+* the **target and non-target averages** per channel — look for a positive bump
+  around 300 ms at Cz/Pz on the target trace;
+* **where the classes differ** (AUC per channel and time point) — the warm
+  patch should sit over the centro-parietal channels around 300 ms;
+* the **confusion matrix**, read a row at a time.
+
+The signal processing terminal prints the same headline numbers:
 
 ```
 [sigproc] gathered 720 epochs (120 target, 600 non-target)
@@ -221,7 +237,19 @@ and shows up in the event log as `speller.edit DEL`. `_` types a space and the
 
 One letter takes about 22 seconds at the default of 12 repetitions. Fewer
 repetitions are faster and less accurate: `--n-repetitions 8` for a good
-participant, 15 for a difficult one. Give a break every 10 minutes.
+participant, 15 for a difficult one. Give a break every 10 minutes — **⏸ pause**
+holds the flashing without losing the block, and **■ stop** ends it early.
+
+### Spelling in Kazakh or Russian
+
+Pick the matrix in the launcher (`kk` or `ru`), or start with
+`--layout kk`. The Kazakh grid is 6x8 and holds the whole alphabet, so one
+letter takes about 25 seconds at 12 repetitions. The instructions the
+participant reads follow the matrix — «қараңыз: Қ», «кідіріс», «болжам: Қ» —
+and `--language` overrides that if your participant would rather read Russian
+or English. The wording lives in `pyspeller/speller/messages.py`: it was
+written by a non-native speaker, so have somebody read it over before a real
+session and correct that one file.
 
 ---
 
@@ -267,6 +295,7 @@ with `matlab/dataAcq/buffer_fileproxy.m`.
 
 | symptom | likely cause and fix |
 | --- | --- |
+| `pylsl is not installed` in the launcher | the LSL library is missing: `pip install pylsl` (it brings liblsl with it), then press scan again. |
 | `no LSL stream matching name=... type='EEG'` | the g.tec connector is not streaming, or it is on another subnet. Run `python -m pyspeller lsl --list` to see what is actually there. |
 | `no header appeared in the buffer` | the buffer is running but no amplifier client is feeding it — start the `lsl` bridge (step 4). |
 | the scope is flat | the amplifier is streaming zeros: check that the device is on, the cap is plugged in, and that you started acquisition in the g.tec software. |
@@ -288,7 +317,7 @@ Print this and tick it off.
 - [ ] recording started (`--save`), path noted in the lab book
 - [ ] signal checked: blink, jaw, eyes-closed alpha
 - [ ] calibration run, no obvious artefacts
-- [ ] classifier trained, AUC noted
+- [ ] classifier trained, AUC noted from the result window
 - [ ] feedback block run and scored
 - [ ] free spelling done
 - [ ] data copied off the machine, cap and electrodes cleaned

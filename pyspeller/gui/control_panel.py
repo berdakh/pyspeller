@@ -7,6 +7,7 @@ and the spelled text.  It therefore works the same whether the samples come
 from the simulator or from a g.tec amplifier over LSL.
 """
 import collections
+import json
 import time
 
 import numpy as np
@@ -53,6 +54,9 @@ class ControlPanel:
         self.autoscale = True
         self._last_stats = (time.time(), self.cursor)
         self._rate = 0.0
+        self.paused = False
+        self.training = None          # the last training summary, as published
+        self.training_view = None
 
         self.root = tk.Tk()
         self.root.title('pyspeller control panel')
@@ -86,6 +90,17 @@ class ControlPanel:
                   pady=5,
                   command=lambda: self.send_edit(speller_text.CLEAR)).pack(side='left',
                                                                            padx=(4, 0))
+        # hold or abandon whatever block is running
+        running = tk.Frame(left, bg=BG)
+        running.pack(pady=(10, 0))
+        self.pause_text = tk.StringVar(value='\u23f8 pause')
+        tk.Button(running, textvariable=self.pause_text, width=11, bg='#2b3036',
+                  fg=FG, relief='flat', pady=5,
+                  command=self.toggle_pause).pack(side='left')
+        tk.Button(running, text='\u25a0 stop', width=5, bg='#2b3036', fg=FG,
+                  relief='flat', pady=5,
+                  command=self.stop_block).pack(side='left', padx=(4, 0))
+
         tk.Button(left, text='Quit', width=18, bg='#3a2b2b', fg=FG, relief='flat',
                   pady=6, command=self.quit).pack(pady=(12, 3))
 
@@ -140,9 +155,24 @@ class ControlPanel:
 
     # -- control -----------------------------------------------------------
     def send_phase(self, phase):
+        self._set_paused(False)
         self.client.send_event('startPhase.cmd', phase)
         self._log('-> startPhase.cmd %s' % phase)
         self.status.set('running: %s' % phase)
+
+    def send_control(self, value):
+        """Pause, resume or stop the block that is running."""
+        self.client.send_event(speller_text.CONTROL_EVENT, value)
+        return value
+
+    def toggle_pause(self):
+        """Hold the flashing where it is, or let it go on."""
+        return self.send_control(speller_text.RESUME if self.paused
+                                 else speller_text.PAUSE)
+
+    def stop_block(self):
+        """End the running block early; the session itself carries on."""
+        return self.send_control(speller_text.STOP)
 
     def send_edit(self, symbol=speller_text.DELETE):
         """Correct the typed text -- backspace or clear -- for every client."""
@@ -193,6 +223,17 @@ class ControlPanel:
 
     def _pump_events(self):
         for evt in self.client.new_events(timeout_ms=0):
+            if evt.type == speller_text.CONTROL_EVENT:
+                # follow the control events rather than the button presses, so
+                # the panel agrees with whoever sent them
+                value = str(evt.value)
+                if value == speller_text.PAUSE:
+                    self._set_paused(True)
+                elif value == speller_text.RESUME:
+                    self._set_paused(False)
+                elif value == speller_text.STOP:
+                    self._set_paused(False)
+                    self.status.set('block stopped')
             if evt.type in ('classifier.prediction', speller_text.EDIT_EVENT):
                 # DEL and the other control keys edit the text, they are not
                 # characters to append -- the speller window shows the same.
@@ -200,13 +241,43 @@ class ControlPanel:
                 # buffer, so every client ends up with the same text.
                 self.spelled = speller_text.apply_symbol(self.spelled, evt.value)
                 self.spelled_var.set('typed: %s' % speller_text.display(self.spelled))
+            elif evt.type == 'stimulus.feedback' and str(evt.value) == 'start':
+                self.spelled = ''          # a new block types a new line
+                self.spelled_var.set('typed: %s' % speller_text.display(''))
             elif evt.type == 'sigproc.training' and str(evt.value) == 'done':
                 self.status.set('classifier trained')
+            elif evt.type == 'classifier.summary':
+                self.show_training(evt.value)
             elif evt.type == 'sigproc.error':
                 self.status.set('sigproc error: %s' % evt.value)
             if evt.type not in ('stimulus.rowFlash', 'stimulus.colFlash',
                                 'stimulus.tgtFlash'):
                 self._log('%8d %s %s' % (evt.sample, evt.type, evt.value))
+
+    def show_training(self, summary):
+        """Open (or refresh) the window showing what training found."""
+        if isinstance(summary, str):
+            try:
+                summary = json.loads(summary)
+            except ValueError:
+                return None
+        self.training = summary
+        self.status.set('classifier trained: AUC %.3f, accuracy %.0f%%'
+                        % (summary['auc'], 100 * summary['accuracy']))
+        try:
+            from .training_view import TrainingView
+            if self.training_view is None:
+                self.training_view = TrainingView(master=self.root)
+            self.training_view.update(summary)
+        except Exception as err:            # a headless run has no window
+            self._log('training view unavailable: %s' % err)
+        return summary
+
+    def _set_paused(self, paused):
+        self.paused = paused
+        self.pause_text.set('\u25b6 resume' if paused else '\u23f8 pause')
+        if paused:
+            self.status.set('paused')
 
     def _log(self, line):
         self.log.insert('end', line)

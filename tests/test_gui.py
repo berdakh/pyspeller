@@ -77,6 +77,82 @@ class TestControlPanel(unittest.TestCase):
         self.assertEqual(self.panel.spelled, 'BC')
         self.assertIn('BC_', self.panel.spelled_var.get())
 
+    def test_a_training_summary_opens_the_result_window(self):
+        summary = {
+            'auc': 0.78, 'accuracy': 0.72, 'n_epochs': 360, 'n_targets': 60,
+            'channels': ['Fz', 'Cz', 'Pz'], 'bad_channels': ['Oz'],
+            'times_ms': [0, 100, 200, 300, 400, 500],
+            'erp_target': [[0, 1, 2, 6, 3, 1]] * 3,
+            'erp_nontarget': [[0, 0, 1, 1, 0, 0]] * 3,
+            'discriminability': [[0.5, 0.5, 0.6, 0.8, 0.6, 0.5]] * 3,
+            'confusion': [[200, 100], [20, 40]],
+        }
+        self.assertIsNotNone(self.panel.show_training(summary))
+        self._tick()
+        self.assertIsNotNone(self.panel.training_view)
+        self.assertIn('0.78', self.panel.training_view.headline.get())
+        self.assertIn('72%', self.panel.training_view.headline.get())
+        self.assertIn('360 epochs', self.panel.training_view.subhead.get())
+        self.assertIn('Oz', self.panel.training_view.subhead.get())
+        self.assertIn('AUC 0.780', self.panel.status.get())
+        self.addCleanup(self.panel.training_view.destroy)
+
+    def test_a_summary_that_arrives_as_an_event_is_shown_too(self):
+        import json
+        summary = {'auc': 0.66, 'accuracy': 0.61, 'n_epochs': 120, 'n_targets': 20,
+                   'channels': ['Cz'], 'bad_channels': [],
+                   'times_ms': [0, 200, 400], 'erp_target': [[0, 3, 1]],
+                   'erp_nontarget': [[0, 0, 0]],
+                   'discriminability': [[0.5, 0.7, 0.5]],
+                   'confusion': [[80, 20], [8, 12]]}
+        self.writer.send_event('classifier.summary', json.dumps(summary))
+        self._tick()
+        self.assertEqual(self.panel.training['auc'], 0.66)
+        self.assertIn('usable', self.panel.training_view.headline.get())
+        self.addCleanup(self.panel.training_view.destroy)
+
+    def test_a_new_block_starts_a_new_line_of_text(self):
+        self.writer.send_event('classifier.prediction', 'A')
+        self._tick()
+        self.assertEqual(self.panel.spelled, 'A')
+        self.writer.send_event('stimulus.feedback', 'start')
+        self._tick()
+        self.assertEqual(self.panel.spelled, '')
+
+    def test_the_pause_button_asks_for_a_pause_then_a_resume(self):
+        from pyspeller.speller import text as speller_text
+        reader = BufferClient(port=self.server.port).connect()
+        self.addCleanup(reader.disconnect)
+        reader.reset_event_cursor()
+
+        self.assertEqual(self.panel.toggle_pause(), speller_text.PAUSE)
+        self._tick()                       # the panel follows the event back
+        self.assertTrue(self.panel.paused)
+        self.assertIn('resume', self.panel.pause_text.get())
+
+        self.assertEqual(self.panel.toggle_pause(), speller_text.RESUME)
+        self._tick()
+        self.assertFalse(self.panel.paused)
+        self.assertIn('pause', self.panel.pause_text.get())
+        self.assertEqual([(e.type, str(e.value)) for e in reader.new_events()],
+                         [(speller_text.CONTROL_EVENT, 'pause'),
+                          (speller_text.CONTROL_EVENT, 'resume')])
+
+    def test_the_stop_button_ends_the_block(self):
+        self.panel.toggle_pause()
+        self._tick()
+        self.panel.stop_block()
+        self._tick()
+        self.assertFalse(self.panel.paused)      # a stop clears the pause too
+        self.assertIn('stopped', self.panel.status.get())
+
+    def test_starting_a_phase_clears_a_pause(self):
+        self.panel.toggle_pause()
+        self._tick()
+        self.assertTrue(self.panel.paused)
+        self.panel.send_phase('calibrate')
+        self.assertFalse(self.panel.paused)
+
     def test_the_clear_button_empties_the_text(self):
         self.writer.send_event('classifier.prediction', 'A')
         self._tick()
