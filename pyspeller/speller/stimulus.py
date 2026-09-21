@@ -11,10 +11,12 @@ what it did as buffer events, which is what lets the signal processing client
     stimulus.feedback  = start / end        a feedback run starts / ends
 """
 import random
+import time
 
 from ..buffer.protocol import Event
 from ..clock import Clock
 from ..speller.matrix import ROW, SpellerMatrix
+from . import text as speller_text
 
 PHASE_EVENT = 'startPhase.cmd'
 
@@ -30,6 +32,7 @@ class SpellerStimulus:
         self.clock = clock or Clock(config.speed)
         self.rng = rng or random.Random(config.seed)
         self.predictions = []
+        self.spelled = ''        # the letters decoded so far, as shown on screen
 
     # -- one letter --------------------------------------------------------
     def flash_letter(self, target=None):
@@ -59,6 +62,16 @@ class SpellerStimulus:
                                 int(self.matrix.contains(group, target))))
         self.client.put_events(events)     # one request -> one sample stamp
 
+    def check_spellable(self, letters):
+        """Raise before a run starts if the matrix cannot spell these letters."""
+        missing = [l for l in letters
+                   if l not in {s for row in self.matrix.symbols for s in row}]
+        if missing:
+            raise ValueError('the %dx%d speller matrix has no %s'
+                             % (self.matrix.n_rows, self.matrix.n_cols,
+                                ', '.join(repr(m) for m in missing)))
+        return list(letters)
+
     def cue(self, symbol):
         """Show which symbol to attend to, and tell the simulated subject."""
         self.client.send_event('simulation.target', symbol)
@@ -70,7 +83,7 @@ class SpellerStimulus:
 
     # -- phases ------------------------------------------------------------
     def run_calibration(self, letters=None):
-        letters = list(letters or self.config.calibration_letters)
+        letters = self.check_spellable(letters or self.config.calibration_letters)
         self.renderer.message('calibration: %s' % ' '.join(letters))
         self.client.send_event('stimulus.training', 'start')
         for symbol in letters:
@@ -84,7 +97,7 @@ class SpellerStimulus:
 
     def run_practice(self, letters=None):
         """Same as calibration but without training labels -- just a rehearsal."""
-        letters = list(letters or self.config.calibration_letters[:2])
+        letters = self.check_spellable(letters or self.config.calibration_letters[:2])
         self.renderer.message('practice')
         for symbol in letters:
             self.cue(symbol)
@@ -96,10 +109,13 @@ class SpellerStimulus:
 
     def run_feedback(self, letters=None, prediction_timeout=10.0):
         """Spell letters and show what the classifier decided for each."""
-        letters = list(letters or self.config.feedback_letters)
+        letters = self.check_spellable(letters or self.config.feedback_letters)
         self.predictions = []
+        self.spelled = ''
+        self.renderer.set_output(self.spelled)
         self.client.send_event('stimulus.feedback', 'start')
         for symbol in letters:
+            self.drain_edits()
             self.cue(symbol)
             self.flash_letter(target=None)
             prediction = self._await_prediction(prediction_timeout)
@@ -107,6 +123,10 @@ class SpellerStimulus:
             if prediction is None:
                 self.renderer.message('no prediction')
             else:
+                # the decoded letter: highlighted in the grid and applied to
+                # the text field, so the user sees what they have typed
+                self.spelled = speller_text.apply_symbol(self.spelled, prediction)
+                self.renderer.set_output(self.spelled)
                 self.renderer.message('predicted: %s' % prediction)
                 self.renderer.draw([self.matrix.position_of(prediction)], 'prediction')
             self.clock.sleep(self.config.feedback_duration)
@@ -118,12 +138,76 @@ class SpellerStimulus:
         self.renderer.message('spelled %d/%d correctly' % (correct, len(letters)))
         return list(zip(letters, self.predictions))
 
+    def run_free_spelling(self, n_letters=None, prediction_timeout=10.0,
+                          stop_event=None):
+        """Spell without a cue -- the mode a user actually works in.
+
+        Nothing tells the speller what the user is attending to, so there is no
+        target to show and nothing to score: letters simply appear in the text
+        field as the classifier decides them.  The run ends after `n_letters`
+        or when `stop_event` is set.
+        """
+        n_letters = n_letters or self.config.free_spelling_letters
+        self.predictions = []
+        self.spelled = ''
+        self.renderer.set_output(self.spelled)
+        self.renderer.message('free spelling')
+        self.client.send_event('stimulus.feedback', 'start')
+        while len(self.predictions) < n_letters:
+            if stop_event is not None and stop_event.is_set():
+                break
+            self.drain_edits()
+            self.clock.sleep(self.config.inter_seq_duration)
+            self.flash_letter(target=None)
+            prediction = self._await_prediction(prediction_timeout)
+            self.predictions.append(prediction)
+            if prediction is not None:
+                self.spelled = speller_text.apply_symbol(self.spelled, prediction)
+                self.renderer.set_output(self.spelled)
+                self.renderer.draw([self.matrix.position_of(prediction)], 'prediction')
+                self.clock.sleep(self.config.feedback_duration)
+                self.renderer.draw((), 'idle')
+        self.client.send_event('stimulus.feedback', 'end')
+        self.renderer.message('typed: %s' % self.spelled)
+        return self.spelled
+
     def _await_prediction(self, timeout):
-        evt = self.client.wait_for_event('classifier.prediction',
-                                         timeout=timeout / self.clock.speed)
-        if evt is None:
-            return None
-        return evt.value if isinstance(evt.value, str) else str(evt.value)
+        """The next decoded letter, applying any corrections that arrive first."""
+        deadline = time.time() + timeout / self.clock.speed
+        while True:
+            remaining = deadline - time.time()
+            if remaining <= 0:
+                return None
+            evt = self.client.wait_for_event(
+                ['classifier.prediction', speller_text.EDIT_EVENT],
+                timeout=remaining)
+            if evt is None:
+                return None
+            if evt.type == speller_text.EDIT_EVENT:
+                self.apply_edit(evt.value)
+                continue
+            return evt.value if isinstance(evt.value, str) else str(evt.value)
+
+    def apply_edit(self, symbol=speller_text.DELETE):
+        """Correct the text field: DEL rubs out the last letter, CLR the line.
+
+        The user can select DEL in the matrix like any other key; this is the
+        same edit arriving from somewhere else -- the control panel's backspace
+        button, or any client that sends a speller.edit event.
+        """
+        symbol = str(symbol or speller_text.DELETE)
+        self.spelled = speller_text.apply_symbol(self.spelled, symbol)
+        self.renderer.set_output(self.spelled)
+        return self.spelled
+
+    def drain_edits(self):
+        """Apply any corrections waiting in the event stream; returns how many."""
+        applied = 0
+        for evt in self.client.new_events(timeout_ms=0):
+            if evt.type == speller_text.EDIT_EVENT:
+                self.apply_edit(evt.value)
+                applied += 1
+        return applied
 
     # -- event driven control ---------------------------------------------
     def run_phase_loop(self, stop_event=None):
@@ -142,4 +226,6 @@ class SpellerStimulus:
                 self.run_practice()
             elif phase in ('feedback', 'testing'):
                 self.run_feedback()
+            elif phase in ('free', 'freespelling'):
+                self.run_free_spelling(stop_event=stop_event)
         self.renderer.close()

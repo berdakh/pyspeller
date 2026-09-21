@@ -8,7 +8,7 @@ import unittest
 import numpy as np
 
 from pyspeller.buffer import BufferClient, BufferServer
-from pyspeller.config import SpellerConfig
+from pyspeller.config import SYMBOLS_6X6, SpellerConfig
 from pyspeller.speller.matrix import SpellerMatrix
 
 try:
@@ -67,18 +67,61 @@ class TestControlPanel(unittest.TestCase):
         self.assertEqual(self.panel.spelled, 'HI')
         self.assertIn('HI', self.panel.spelled_var.get())
 
-    def test_speller_window_draws_the_matrix(self):
+    def test_the_backspace_button_corrects_a_wrong_letter(self):
+        for symbol in ('B', 'C', 'X'):
+            self.writer.send_event('classifier.prediction', symbol)
+        self._tick()
+        self.assertEqual(self.panel.spelled, 'BCX')
+        self.panel.send_edit()               # what the backspace button does
+        self._tick()
+        self.assertEqual(self.panel.spelled, 'BC')
+        self.assertIn('BC_', self.panel.spelled_var.get())
+
+    def test_the_clear_button_empties_the_text(self):
+        self.writer.send_event('classifier.prediction', 'A')
+        self._tick()
+        from pyspeller.speller import text as speller_text
+        self.panel.send_edit(speller_text.CLEAR)
+        self._tick()
+        self.assertEqual(self.panel.spelled, '')
+
+    def test_the_control_keys_edit_the_typed_text(self):
+        for symbol in ('B', 'C', 'X', 'DEL', 'I', '_', 'A'):
+            self.writer.send_event('classifier.prediction', symbol)
+        self._tick()
+        self.assertEqual(self.panel.spelled, 'BCI A')
+
+    def test_speller_window_draws_the_alphabet_matrix(self):
         from pyspeller.speller.render import TkRenderer
-        renderer = TkRenderer(SpellerMatrix(self.config.symbols),
-                              master=self.panel.root)
+        renderer = TkRenderer(SpellerMatrix(SYMBOLS_6X6), master=self.panel.root)
         self.addCleanup(renderer.root.destroy)
-        renderer.draw([(0, 0), (0, 1), (0, 2)], 'flash')
+        self.assertEqual(len(renderer._items), 36)
+        renderer.draw([(0, c) for c in range(6)], 'flash')
         renderer.message('look at: A')
         renderer.pump()
         self.assertEqual(renderer.canvas.itemcget(renderer._items[(0, 0)], 'fill'),
                          '#ffffff')
         self.assertEqual(renderer.canvas.itemcget(renderer._items[(1, 0)], 'fill'),
                          '#808080')
+
+    def test_the_speller_window_shows_the_typed_text(self):
+        from pyspeller.speller.render import TkRenderer
+        renderer = TkRenderer(SpellerMatrix(SYMBOLS_6X6), master=self.panel.root)
+        self.addCleanup(renderer.root.destroy)
+        renderer.set_output('HELLO')
+        renderer.pump()
+        self.assertEqual(renderer.canvas.itemcget(renderer._output, 'text'),
+                         'HELLO_')
+
+    def test_multi_character_keys_get_a_smaller_font(self):
+        from pyspeller.config import SYMBOLS_6X6_CONTROL
+        from pyspeller.speller.render import TkRenderer
+        renderer = TkRenderer(SpellerMatrix(SYMBOLS_6X6_CONTROL),
+                              master=self.panel.root)
+        self.addCleanup(renderer.root.destroy)
+        letter = renderer.canvas.itemcget(renderer._items[(0, 0)], 'font')
+        delete = renderer.canvas.itemcget(renderer._items[(5, 5)], 'font')
+        self.assertLess(int(delete.split()[1]), int(letter.split()[1]))
 
 
 if __name__ == '__main__':

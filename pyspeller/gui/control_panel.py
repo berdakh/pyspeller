@@ -12,9 +12,11 @@ import time
 import numpy as np
 
 from ..buffer.client import BufferClient
+from ..speller import text as speller_text
 
 PHASES = [('Practice', 'practice'), ('Calibrate', 'calibrate'),
-          ('Train classifier', 'train'), ('Feedback', 'feedback')]
+          ('Train classifier', 'train'), ('Feedback', 'feedback'),
+          ('Free spelling', 'free')]
 
 BG = '#1a1d21'
 FG = '#e6e6e6'
@@ -27,7 +29,7 @@ class ControlPanel:
     """The experiment's control window, with a live scope."""
 
     def __init__(self, config, client=None, window_seconds=5.0, refresh_ms=50,
-                 renderers=(), on_quit=None):
+                 renderers=(), on_quit=None, recording=None):
         import tkinter as tk
         self.tk = tk
         self.config = config
@@ -37,6 +39,7 @@ class ControlPanel:
         self.refresh_ms = int(refresh_ms)
         self.renderers = list(renderers)      # extra tk renderers to pump
         self.on_quit = on_quit
+        self.recording = recording            # directory the saver writes to
 
         self.nchannels = self.header.nchannels
         self.labels = self.header.labels or ['ch%d' % (i + 1)
@@ -71,16 +74,31 @@ class ControlPanel:
             tk.Button(left, text=text, width=18, bg='#2b3036', fg=FG,
                       activebackground=ACCENT, relief='flat', pady=6,
                       command=lambda p=phase: self.send_phase(p)).pack(pady=3)
+        # correcting the text: the user can also select DEL in the matrix, this
+        # is the same edit from the operator's side
+        edits = tk.Frame(left, bg=BG)
+        edits.pack(pady=(10, 0))
+        tk.Button(edits, text='\u232b backspace', width=11, bg='#2b3036', fg=FG,
+                  relief='flat', pady=5,
+                  command=lambda: self.send_edit(speller_text.DELETE)).pack(side='left')
+        tk.Button(edits, text='clear', width=5, bg='#2b3036', fg=FG, relief='flat',
+                  pady=5,
+                  command=lambda: self.send_edit(speller_text.CLEAR)).pack(side='left',
+                                                                           padx=(4, 0))
         tk.Button(left, text='Quit', width=18, bg='#3a2b2b', fg=FG, relief='flat',
                   pady=6, command=self.quit).pack(pady=(12, 3))
 
         self.status = tk.StringVar(value='connected')
         tk.Label(left, textvariable=self.status, bg=BG, fg=FG, wraplength=170,
                  justify='left').pack(anchor='w', pady=(14, 0))
-        self.spelled_var = tk.StringVar(value='spelled: ')
+        self.spelled_var = tk.StringVar(value='typed: _')
         tk.Label(left, textvariable=self.spelled_var, bg=BG, fg='#81c784',
-                 font=('Helvetica', 16, 'bold'), wraplength=170,
+                 font=('Courier', 15, 'bold'), wraplength=170,
                  justify='left').pack(anchor='w', pady=(10, 0))
+        if self.recording:
+            tk.Label(left, text='recording to\n%s' % self.recording, bg=BG,
+                     fg='#9aa0a6', wraplength=170, justify='left',
+                     font=('Helvetica', 8)).pack(anchor='w', pady=(8, 0))
 
         tk.Label(left, text='signal quality (uV rms)', bg=BG, fg=ACCENT,
                  font=('Helvetica', 10, 'bold')).pack(anchor='w', pady=(16, 2))
@@ -120,6 +138,11 @@ class ControlPanel:
         self.client.send_event('startPhase.cmd', phase)
         self._log('-> startPhase.cmd %s' % phase)
         self.status.set('running: %s' % phase)
+
+    def send_edit(self, symbol=speller_text.DELETE):
+        """Correct the typed text -- backspace or clear -- for every client."""
+        self.client.send_event(speller_text.EDIT_EVENT, symbol)
+        return symbol
 
     def quit(self):
         try:
@@ -165,9 +188,13 @@ class ControlPanel:
 
     def _pump_events(self):
         for evt in self.client.new_events(timeout_ms=0):
-            if evt.type == 'classifier.prediction':
-                self.spelled += str(evt.value)
-                self.spelled_var.set('spelled: %s' % self.spelled)
+            if evt.type in ('classifier.prediction', speller_text.EDIT_EVENT):
+                # DEL and the other control keys edit the text, they are not
+                # characters to append -- the speller window shows the same.
+                # Corrections are applied when the event comes back from the
+                # buffer, so every client ends up with the same text.
+                self.spelled = speller_text.apply_symbol(self.spelled, evt.value)
+                self.spelled_var.set('typed: %s' % speller_text.display(self.spelled))
             elif evt.type == 'sigproc.training' and str(evt.value) == 'done':
                 self.status.set('classifier trained')
             elif evt.type == 'sigproc.error':

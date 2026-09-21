@@ -15,7 +15,7 @@ Each component is a separate process in normal use:
 import argparse
 import threading
 
-from .config import SpellerConfig
+from .config import LAYOUTS, SpellerConfig
 
 
 def _config_from_args(args):
@@ -24,6 +24,9 @@ def _config_from_args(args):
         value = getattr(args, field, None)
         if value is not None:
             setattr(config, field, value)
+    layout = getattr(args, 'layout', None)
+    if layout:
+        config.use_layout(layout)
     return config
 
 
@@ -37,6 +40,9 @@ def _add_common(parser):
     parser.add_argument('--isi', type=float, default=None,
                         help='seconds between flash onsets')
     parser.add_argument('--fsample', type=float, default=None)
+    parser.add_argument('--layout', default='6x6', choices=sorted(LAYOUTS),
+                        help='speller matrix: the 6x6 alphabet grid (default), '
+                             'the same with editing keys, or a 3x3 grid')
 
 
 # -- individual components -------------------------------------------------
@@ -76,6 +82,17 @@ def cmd_lsl_publish(args):
         pass
 
 
+def cmd_save(args):
+    """Write everything in the buffer to disk as it arrives."""
+    from .acquisition.saver import main as saver_main
+    argv = ['--host', args.host, '--port', str(args.port),
+            '--root', args.root, '--experiment', args.experiment,
+            '--subject', args.subject]
+    if args.dir:
+        argv += ['--dir', args.dir]
+    saver_main(argv)
+
+
 def cmd_speller(args):
     from .buffer.client import BufferClient
     from .clock import BufferClock, Clock
@@ -103,7 +120,12 @@ def cmd_sigproc(args):
     config = _config_from_args(args)
     client = BufferClient(config.host, config.port).connect(retries=20)
     client.wait_for_header(timeout=60)
-    processor = SignalProcessor(client, config)
+    save_dir = _save_dir(args)
+    if save_dir:
+        import os
+        os.makedirs(save_dir, exist_ok=True)
+        print('calibration data and classifier go to %s' % save_dir)
+    processor = SignalProcessor(client, config, save_dir=save_dir)
     print('signal processing ready -- waiting for startPhase.cmd events', flush=True)
     processor.run_phase_loop(model_path=args.model)
 
@@ -119,7 +141,8 @@ def cmd_demo(args):
     config = _config_from_args(args)
     config.port = 0                       # pick a free port
     run_demo(config, erp_amplitude=args.erp_amplitude,
-             noise_amplitude=args.noise_amplitude, renderer=args.display)
+             noise_amplitude=args.noise_amplitude, renderer=args.display,
+             save_dir=_save_dir(args) if args.save else None)
 
 
 def cmd_run(args):
@@ -135,7 +158,8 @@ def cmd_run(args):
     from .speller.stimulus import SpellerStimulus
 
     config = _config_from_args(args)
-    server = simulator = bridge = None
+    server = simulator = bridge = saver = None
+    save_dir = _save_dir(args) if args.save else None
     if not args.no_buffer:
         server = BufferServer(config.host, config.port).start()
         config.port = server.port
@@ -157,15 +181,20 @@ def cmd_run(args):
     proc_client = BufferClient(config.host, config.port).connect(retries=20)
     proc_client.wait_for_header(timeout=60)
 
+    if save_dir:
+        from .acquisition.saver import BufferSaver
+        saver = BufferSaver(config.host, config.port, directory=save_dir).start()
+        save_dir = saver.directory
+
     stop = threading.Event()
-    panel = ControlPanel(config, on_quit=stop.set)
+    panel = ControlPanel(config, on_quit=stop.set, recording=save_dir)
     renderer = TkRenderer(SpellerMatrix(config.symbols), master=panel.root)
     panel.renderers.append(renderer)
 
     clock = (BufferClock(stim_client, config.fsample, config.speed)
              if config.speed != 1 else Clock(1.0))
     stimulus = SpellerStimulus(stim_client, config, renderer, clock)
-    processor = SignalProcessor(proc_client, config)
+    processor = SignalProcessor(proc_client, config, save_dir=save_dir)
     threads = [threading.Thread(target=stimulus.run_phase_loop, args=(stop,),
                                 daemon=True),
                threading.Thread(target=processor.run_phase_loop,
@@ -177,9 +206,20 @@ def cmd_run(args):
         panel.run()
     finally:
         stop.set()
-        for component in (simulator, bridge, server):
+        for component in (saver, simulator, bridge, server):
             if component is not None:
                 component.stop()
+
+
+def _save_dir(args):
+    """Where a recording goes: what was asked for, or a timestamped session."""
+    from .acquisition.saver import session_directory
+    explicit = getattr(args, 'save_dir', None) or getattr(args, 'dir', None)
+    if explicit:
+        return explicit
+    if getattr(args, 'save', False) or args.command in ('save', 'sigproc'):
+        return session_directory(args.root, args.experiment, args.subject)
+    return None
 
 
 def build_parser():
@@ -189,7 +229,7 @@ def build_parser():
 
     for name, handler in [('buffer', cmd_buffer), ('simulator', cmd_simulator),
                           ('lsl', cmd_lsl), ('lsl-publish', cmd_lsl_publish),
-                          ('speller', cmd_speller),
+                          ('save', cmd_save), ('speller', cmd_speller),
                           ('sigproc', cmd_sigproc), ('gui', cmd_gui),
                           ('demo', cmd_demo), ('run', cmd_run)]:
         p = sub.add_parser(name, help=handler.__doc__ or ('run the %s' % name))
@@ -204,6 +244,18 @@ def build_parser():
         if name in ('sigproc', 'run'):
             p.add_argument('--model', default=None,
                            help='file to save the trained classifier to')
+        if name in ('save', 'run', 'demo', 'sigproc'):
+            p.add_argument('--save-dir', dest='save_dir', default=None,
+                           help='directory to record the session into '
+                                '(default: a timestamped one under --root)')
+            p.add_argument('--root', default='~/output')
+            p.add_argument('--experiment', default='pyspeller')
+            p.add_argument('--subject', default='test')
+        if name == 'save':
+            p.add_argument('--dir', default=None, help=argparse.SUPPRESS)
+        if name in ('run', 'demo'):
+            p.add_argument('--save', action='store_true',
+                           help='record the raw data and events to disk')
         if name == 'lsl':
             p.add_argument('--list', action='store_true')
             p.add_argument('--name', default=None)

@@ -38,12 +38,17 @@ class TestSimulator(unittest.TestCase):
         clock = BufferClock(self.client, self.config.fsample, self.config.speed)
         pz = list(self.config.channels).index('Pz')
         trlen = int(0.6 * self.config.fsample)
-        self.client.send_event('simulation.target', 'E')
+        from pyspeller.speller.matrix import SpellerMatrix
+        matrix = SpellerMatrix(self.config.symbols)
+        attended = 'E'
+        target_row, _ = matrix.position_of(attended)
+        other_row = (target_row + 1) % matrix.n_rows
+        self.client.send_event('simulation.target', attended)
         epochs = {True: [], False: []}
         for i in range(60):
             target = i % 2 == 0
-            # row 1 contains E, row 0 does not
-            self.client.send_event('stimulus.rowFlash', 1 if target else 0)
+            self.client.send_event('stimulus.rowFlash',
+                                   target_row if target else other_row)
             start = self.client.poll()[0]
             clock.sleep(0.8)
             epochs[target].append(self.client.get_data(start, start + trlen - 1)[:, pz])

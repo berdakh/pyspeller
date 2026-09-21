@@ -6,9 +6,11 @@ classifier output per row/column until a letter's flashes are over -- then puts
 the decoded symbol back into the buffer as classifier.prediction.
 """
 import collections
+import os
 
 import numpy as np
 
+from ..acquisition.saver import save_epochs
 from ..signalproc.classifier import ERPClassifier
 from ..signalproc.epochs import EpochGatherer
 from ..speller.matrix import COL, ROW, SpellerMatrix
@@ -20,11 +22,12 @@ FLASH_EVENTS = ('stimulus.rowFlash', 'stimulus.colFlash')
 class SignalProcessor:
     """Calibrate -> train -> apply, all driven by buffer events."""
 
-    def __init__(self, client, config, verbose=True):
+    def __init__(self, client, config, verbose=True, save_dir=None):
         self.client = client
         self.config = config
         self.matrix = SpellerMatrix(config.symbols)
         self.verbose = verbose
+        self.save_dir = save_dir      # where calibration epochs and models go
         self.classifier = None
         self.calibration = None        # (epochs, labels) from the last calibration
         self.training_report = None
@@ -41,6 +44,14 @@ class SignalProcessor:
         self.calibration = (epochs, labels)
         self._log('gathered %d epochs (%d target, %d non-target)'
                   % (len(labels), int((labels == 1).sum()), int((labels == 0).sum())))
+        if self.save_dir and len(labels):
+            path = save_epochs(
+                os.path.join(self.save_dir, 'calibration_epochs.npz'),
+                epochs, labels, events,
+                metadata={'fsample': self.client.fsample,
+                          'channels': list(self.config.channels),
+                          'trlen_ms': self.config.trlen_ms})
+            self._log('saved the calibration epochs to %s' % path)
         return epochs, labels
 
     @property
@@ -71,6 +82,9 @@ class SignalProcessor:
         else:
             self._log('classifier trained on %d epochs' % len(labels))
         self.training_report = report
+        if self.save_dir:
+            path = self.classifier.save(os.path.join(self.save_dir, 'classifier.pkl'))
+            self._log('saved the classifier to %s' % path)
         self.client.send_event('sigproc.training', 'done')
         return report
 

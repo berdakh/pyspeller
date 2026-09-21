@@ -1,7 +1,8 @@
 # pyspeller — buffer_bci as a pure-python framework
 
 A minimal but complete BCI framework written entirely in python, with a working
-P300 matrix speller on top of it.  It follows the same client–server
+P300 matrix speller on top of it: a 6x6 alphabet grid, the same kind of
+spelling environment a commercial g.tec speller gives you.  It follows the same client–server
 architecture as the rest of buffer_bci — a central buffer that stores data and
 events, with independent clients around it — but every part of it, including
 the buffer server itself, is python:
@@ -34,16 +35,60 @@ python -m pyspeller demo --speed 10
 
 `run` opens the control panel and the speller window.  Press **Calibrate** to
 record a labelled block, **Train classifier** to fit the ERP classifier, then
-**Feedback** to spell with it.  The panel shows the live signal, per-channel
-signal quality, the event stream and the letters as they are decoded.
+**Feedback** to spell with it.  Every letter the classifier decides appears in
+the speller's text field at the top of the grid, and in the panel's `typed:`
+line, so the user sees the text grow as they spell it.  The panel also shows
+the live signal, per-channel signal quality and the event stream.
+
+### The speller matrix
+
+The default grid is the 6x6 matrix of Farwell & Donchin that g.tec's speller
+also uses, with the whole alphabet — plus the editing keys a user needs to fix
+a letter the classifier got wrong:
+
+```
+A B C D E F      --layout 6x6-control  the default: A-Z, 0-5, . , _ and DEL
+G H I J K L      --layout 6x6          the classic grid: A-Z, 1-9 and _
+M N O P Q R      --layout 3x3          a small grid for quick demos
+S T U V W X
+Y Z 0 1 2 3
+4 5 . , _ DEL
+```
+
+Twelve groups (six rows, six columns) are flashed per repetition, so one letter
+at the default twelve repetitions takes about 22 seconds — the same order as a
+commercial system.
+
+**Copy spelling** (Calibrate / Feedback) cues a letter and scores the result;
+**Free spelling** just flashes and types whatever the classifier decides, which
+is how a user actually works.  Press **Free spelling** on the panel or send
+`startPhase.cmd = free`.
+
+### Correcting a letter
+
+`_` types a space, `DEL` rubs out the last character and `CLR` clears the line.
+`DEL` is a cell like any other, so the user corrects a wrong letter by
+selecting it with the same P300 response they spell with — no help needed.
+
+The same correction can also come from outside, for when the user would rather
+not spend a selection on it: the control panel has **⌫ backspace** and
+**clear** buttons, and any client can send the event
+
+    speller.edit = DEL      (or CLR)
+
+Corrections are applied when that event comes back from the buffer, so the
+speller window, the control panel and anything else watching end up with the
+same text.
 
 A typical run of `demo` prints something like:
 
 ```
-[sigproc] gathered 360 epochs (120 target, 240 non-target)
-[sigproc] classifier trained: cross-validated AUC 0.795, accuracy 0.74
-spelled: B->B H->H D->D A->A F->F I->I
-letter accuracy: 6/6
+calibrating on B R A I N ...
+[sigproc] gathered 720 epochs (120 target, 600 non-target)
+[sigproc] classifier trained: cross-validated AUC 0.773, accuracy 0.72
+spelling B C I ...
+typed: 'BCI'  (cued: 'BCI')
+letter accuracy: 3/3
 ```
 
 ## Running the components separately
@@ -57,6 +102,7 @@ python -m pyspeller simulator              # 2. an amplifier ... (or see below)
 python -m pyspeller sigproc --model clsfr.pkl   # 3. online signal processing
 python -m pyspeller speller                # 4. the stimulus display
 python -m pyspeller gui                    # 5. control panel + live signals
+python -m pyspeller save                   # 6. record everything to disk
 ```
 
 The control panel publishes `startPhase.cmd` events; the speller and the signal
@@ -94,17 +140,65 @@ sample rate (the buffer is a regularly sampled store), and the speller's
 `--isi` should be a multiple of the amplifier's block size if the device sends
 large blocks, otherwise flash timing is quantised to the block.
 
+## Saving the data
+
+Recording is a client like any other, so it works with the simulator and with
+a real amplifier:
+
+```bash
+python -m pyspeller save --subject S01 --experiment speller
+# saving 8 channels at 256 Hz to ~/output/speller/S01/260921/1503/raw_buffer
+
+python -m pyspeller run --save            # record the session the gui runs
+python -m pyspeller demo --save           # ... or the headless demo
+python -m pyspeller sigproc --save-dir ~/output/S01   # epochs + classifier
+```
+
+The files follow the FieldTrip offline-buffer layout that buffer_bci already
+reads, in a `<root>/<experiment>/<subject>/<date>/<time>/raw_buffer/`
+directory, as `getBufferSaveDir.py` lays it out:
+
+| file | contents |
+| --- | --- |
+| `header` | binary header: channels, sample rate, sample type, channel labels |
+| `header.txt` | the same in ascii (`fSample=256`, `nChans=8`, `1:Fz`, ...) |
+| `samples` | the raw samples, channels fastest, in the header's data type |
+| `events` | every event in the buffer's own wire format |
+| `calibration_epochs.npz` | the cut, labelled calibration epochs (`--save-dir`) |
+| `classifier.pkl` | the trained ERP classifier (`--save-dir`) |
+
+So a recording can be read with `matlab/offline/read_buffer_offline_data.m`,
+replayed into a buffer with `matlab/dataAcq/buffer_fileproxy.m`, or loaded in
+python:
+
+```python
+from pyspeller.acquisition.saver import load_session, load_epochs
+
+header, samples, events = load_session('~/output/speller/S01/260921/1503/raw_buffer')
+samples.shape           # (59525, 8) -- samples x channels, microvolts
+[e for e in events if e.type == 'classifier.prediction']
+
+epochs, labels, meta = load_epochs('.../calibration_epochs.npz')
+epochs.shape            # (720, 8, 77) -- epochs x channels x samples
+```
+
+If the buffer's ring wraps before the saver gets to it (a stalled disk, a
+paused process), the missing samples are written as zeros and recorded in
+`saver.gaps`, so that the sample indices stored in the events keep pointing at
+the right place in the file.
+
 ## What the pipeline does
 
 | stage | where | what |
 | --- | --- | --- |
 | stimulus | `speller/stimulus.py` | flashes each row and column `n_repetitions` times in random order, never repeating a group within `min_gap` flashes |
 | events | buffer | `stimulus.rowFlash` / `stimulus.colFlash` carry the flashed index; during calibration `stimulus.tgtFlash` carries the 1/0 label |
+| corrections | buffer | `speller.edit` = `DEL` / `CLR` edits the typed text from any client |
 | epoching | `signalproc/epochs.py` | cuts the 600 ms after each flash once those samples have arrived |
 | pre-processing | `signalproc/preproc.py` | linear detrend, common average reference, trapezoidal 0.5–10 Hz FFT band-pass, boxcar downsample to 16 Hz, outlier channel/epoch rejection |
 | classification | `signalproc/classifier.py` | shrinkage LDA over channels × time, reported with stratified 5-fold cross-validated AUC |
 | decoding | `speller/matrix.py` | classifier output is averaged per row and per column; the best row and best column intersect at the predicted letter |
-| feedback | buffer | `classifier.prediction` carries the letter; the speller displays it |
+| feedback | buffer | `classifier.prediction` carries the letter; the speller shows it in the grid and appends it to the text field |
 
 Everything is configured from one place, `pyspeller/config.py` (the
 counterpart of `configureSpeller.m`): grid layout, timing, filter band,
@@ -143,9 +237,11 @@ xvfb-run python -m unittest tests.test_gui     # the tk parts, headless
 
 They cover the wire protocol, the server (including ring-buffer wrap-around and
 blocking waits), pre-processing, the classifier, epoching, the simulator's ERP,
-the LSL bridge (skipped without pylsl), the tk widgets (skipped without a
-display), and a full calibrate → train → spell experiment that asserts the
-classifier beats chance and that the speller gets the letters right.
+saving and loading a session (including the padded-gap case), the speller
+layouts and the typed-text rules, the LSL bridge (skipped without pylsl), the
+tk widgets (skipped without a display), and a full calibrate → train → spell
+experiment on the 6x6 alphabet grid that asserts the classifier beats chance
+and that the speller types the cued word.
 
 `tests/test_interop.py` drives this server with buffer_bci's own
 `dataAcq/buffer/python/FieldTrip.py` client, so the pure-python buffer stays
@@ -156,19 +252,24 @@ usable from the matlab, java and C sides of the project.
 ```
 pyspeller/
   buffer/        protocol.py, server.py, client.py   the fieldtrip buffer, in python
-  acquisition/   simulator.py, lsl_bridge.py, lsl_outlet.py
+  acquisition/   simulator.py, lsl_bridge.py, lsl_outlet.py, saver.py
   signalproc/    preproc.py, epochs.py, classifier.py
-  speller/       matrix.py, stimulus.py, sigproc.py, render.py
+  speller/       matrix.py, stimulus.py, sigproc.py, render.py, text.py
   gui/           control_panel.py
   clock.py, config.py, experiment.py, cli.py
 ```
 
 ## Limitations
 
-* The buffer keeps samples in memory only (a ring buffer); there is no
-  save-to-disk client like `dataAcq/buffer/java/BufferSaver`.
 * Feedback is epoch-based: a letter is decided after a fixed number of
-  repetitions, with no dynamic stopping and no language model.
+  repetitions, with no dynamic stopping and no language model — where a
+  commercial speller would stop early once the evidence is clear, and would
+  suggest the likely word.
+* There is no error-potential detection: a wrong letter is corrected with the
+  DEL key or the backspace button, not automatically.
+* The saver writes one session per run; it does not split `samples` into
+  numbered files the way the java saver does for very long recordings (the
+  matlab reader supports that, this writer does not use it).
 * The classifier is retrained from scratch per session; there is no online
   adaptation or cross-session transfer.
 * The tk renderer is fine for a 3×3 or 6×6 grid at 150 ms ISI, but it is not a

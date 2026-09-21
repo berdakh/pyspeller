@@ -4,7 +4,8 @@ Every renderer implements the same small interface, so the stimulus code does
 not care whether it is driving a window, a terminal, or nothing at all:
 
     draw(highlight=..., style=...)   show the grid, optionally highlighting cells
-    message(text)                    show a line of text instead of the grid
+    message(text)                    show a line of status text under the grid
+    set_output(text)                 show the letters spelled so far
     mainloop(worker)                 run the display until the worker finishes
 
 The stimulus sequence always runs in a worker thread; a GUI toolkit needs the
@@ -34,6 +35,10 @@ class Renderer:
     def message(self, text):
         pass
 
+    def set_output(self, text):
+        """Show the text the user has spelled so far."""
+        pass
+
     def close(self):
         pass
 
@@ -50,12 +55,16 @@ class HeadlessRenderer(Renderer):
         super().__init__(matrix)
         self.frames = []
         self.messages = []
+        self.output = ''
 
     def draw(self, highlight=(), style='flash'):
         self.frames.append((tuple(highlight), style))
 
     def message(self, text):
         self.messages.append(text)
+
+    def set_output(self, text):
+        self.output = text
 
 
 class TextRenderer(Renderer):
@@ -81,6 +90,9 @@ class TextRenderer(Renderer):
     def message(self, text):
         print('-- %s' % text, file=self.stream, flush=True)
 
+    def set_output(self, text):
+        print('   typed: %s_' % text, file=self.stream, flush=True)
+
 
 class TkRenderer(Renderer):
     """A full-screen-ish tkinter window showing the speller matrix.
@@ -89,7 +101,7 @@ class TkRenderer(Renderer):
     thread running the tk event loop.
     """
 
-    def __init__(self, matrix, title='P300 speller', size=(640, 640), master=None):
+    def __init__(self, matrix, title='P300 speller', size=(720, 720), master=None):
         super().__init__(matrix)
         import tkinter as tk
         self.tk = tk
@@ -111,16 +123,34 @@ class TkRenderer(Renderer):
 
     def _build(self):
         w, h = self.size
+        top, bottom = 70, 60          # room for the spelled text and the status line
+        grid_height = h - top - bottom
         self._items = {}
         for r in range(self.matrix.n_rows):
             for c in range(self.matrix.n_cols):
                 x = w * (c + 0.5) / self.matrix.n_cols
-                y = h * (r + 0.5) / self.matrix.n_rows
+                y = top + grid_height * (r + 0.5) / self.matrix.n_rows
+                symbol = self.matrix.symbol_at(r, c)
                 self._items[(r, c)] = self.canvas.create_text(
-                    x, y, text=self.matrix.symbol_at(r, c), fill=STYLES['idle'][0],
-                    font=('Helvetica', int(min(w, h) / (2.5 * self.matrix.n_rows)), 'bold'))
+                    x, y, text=symbol, fill=STYLES['idle'][0],
+                    font=('Helvetica', self._font_size(symbol, w, grid_height),
+                          'bold'))
+        # the text field: what the user has spelled so far
+        self.canvas.create_rectangle(16, 14, w - 16, top - 16, outline='#2f3439',
+                                     fill='#181b1e')
+        self._output = self.canvas.create_text(28, top / 2 - 2, text='_', anchor='w',
+                                               fill=STYLES['prediction'][0],
+                                               font=('Courier', 24, 'bold'))
         self._message = self.canvas.create_text(w / 2, h - 30, text='', fill='#a0a0a0',
                                                 font=('Helvetica', 18))
+
+    def _font_size(self, symbol, width, grid_height):
+        """Fit the symbol in its cell -- keys like DEL need a smaller font."""
+        cell = min(width / self.matrix.n_cols, grid_height / self.matrix.n_rows)
+        size = int(cell * 0.55)
+        if len(symbol) > 1:                     # bold helvetica is ~0.75 em wide
+            size = int(min(size, cell * 0.8 / (0.75 * len(symbol))))
+        return max(8, size)
 
     # -- public API (thread safe) -----------------------------------------
     def draw(self, highlight=(), style='flash'):
@@ -128,6 +158,9 @@ class TkRenderer(Renderer):
 
     def message(self, text):
         self._queue.put(('message', text))
+
+    def set_output(self, text):
+        self._queue.put(('output', text))
 
     def close(self):
         self._closed.set()
@@ -145,6 +178,8 @@ class TkRenderer(Renderer):
                     self._apply_draw(*payload)
                 elif kind == 'message':
                     self.canvas.itemconfigure(self._message, text=payload)
+                elif kind == 'output':
+                    self.canvas.itemconfigure(self._output, text='%s_' % payload)
         except queue.Empty:
             pass
 
