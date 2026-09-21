@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="960" height="330" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:12px}
+    .tiny{fill:#64748b;font-size:10.5px}
+    .lbl{fill:#16202c;font-size:11.5px;font-weight:600}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;fill:#16202c}
+</style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f6feb"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+  </defs>
+  <text x="30" y="34" class="t" font-size="16">capping up, step by step</text>
+<rect x="30" y="56" width="172" height="250" rx="10" fill="#fff" stroke="#c9d3de"/>
+<text x="46" y="82" class="lbl">1 &#183; find Cz</text>
+<g transform="translate(30,56)"><path d="M40 112 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0" fill="#f6e7db" stroke="#d9c7b8"/>
+<path d="M40 112 q-9 6 -1 13" fill="none" stroke="#d9c7b8" stroke-width="2"/>
+<path d="M40 112 L128 112" stroke="#1f6feb" stroke-width="1.4" stroke-dasharray="4 3"/>
+<circle cx="84" cy="68" r="6" fill="#dbe7fb" stroke="#1f6feb"/>
+<text x="84" y="58" class="tiny" text-anchor="middle">Cz</text>
+<path d="M84 106 L84 76" stroke="#1f6feb" stroke-width="1.2" stroke-dasharray="3 3"/>
+<path d="M40 106 L40 118 M128 106 L128 118" stroke="#1f6feb" stroke-width="1.4"/>
+<text x="84" y="172" class="tiny" text-anchor="middle">half way along the dashed line</text></g>
+<text x="44" y="252" class="tiny" text-anchor="start">Measure from the bridge of the</text>
+<text x="44" y="265" class="tiny" text-anchor="start">nose to the bump at the back of</text>
+<text x="44" y="278" class="tiny" text-anchor="start">the skull. Half way is Cz.</text>
+<rect x="215" y="56" width="172" height="250" rx="10" fill="#fff" stroke="#c9d3de"/>
+<text x="231" y="82" class="lbl">2 &#183; seat the cap</text>
+<g transform="translate(215,56)"><circle cx="84" cy="104" r="46" fill="#eef3f9" stroke="#b9c6d6"/>
+<path d="M84 58 l-7 -11 l14 0 z" fill="#b9c6d6"/>
+<circle cx="84" cy="104" r="8" fill="#dbe7fb" stroke="#90a4bd"/>
+<circle cx="60" cy="90" r="6" fill="#fff" stroke="#90a4bd"/>
+<circle cx="108" cy="90" r="6" fill="#fff" stroke="#90a4bd"/>
+<circle cx="60" cy="118" r="6" fill="#fff" stroke="#90a4bd"/>
+<circle cx="108" cy="118" r="6" fill="#fff" stroke="#90a4bd"/>
+<circle cx="84" cy="76" r="6" fill="#fff" stroke="#90a4bd"/>
+<circle cx="84" cy="132" r="6" fill="#fff" stroke="#90a4bd"/>
+<circle cx="40" cy="104" r="6" fill="#fff" stroke="#90a4bd"/>
+<circle cx="128" cy="104" r="6" fill="#fff" stroke="#90a4bd"/>
+<text x="84" y="108" class="tiny" text-anchor="middle">Cz</text>
+<text x="84" y="168" class="tiny" text-anchor="middle">seen from above</text></g>
+<text x="229" y="252" class="tiny" text-anchor="start">Line the cap&#8217;s middle hole up</text>
+<text x="229" y="265" class="tiny" text-anchor="start">with that mark and pull it down</text>
+<text x="229" y="278" class="tiny" text-anchor="start">evenly, front to back.</text>
+<rect x="400" y="56" width="172" height="250" rx="10" fill="#fff" stroke="#c9d3de"/>
+<text x="416" y="82" class="lbl">3 &#183; part and abrade</text>
+<g transform="translate(400,56)"><circle cx="84" cy="106" r="42" fill="#fff" stroke="#90a4bd"/>
+<path d="M52 128 q14 -22 32 -10 q20 12 32 -12" stroke="#c7b39c" stroke-width="2" fill="none"/>
+<path d="M50 140 q18 -26 34 -12 q18 14 34 -14" stroke="#c7b39c" stroke-width="2" fill="none"/>
+<path d="M120 62 L92 96" stroke="#64748b" stroke-width="3"/>
+<circle cx="90" cy="99" r="4" fill="#f7d7d7" stroke="#d98a8a"/>
+<text x="84" y="168" class="tiny" text-anchor="middle">through the hole in the cap</text></g>
+<text x="414" y="252" class="tiny" text-anchor="start">Part the hair through the hole</text>
+<text x="414" y="265" class="tiny" text-anchor="start">with a blunt needle and rub</text>
+<text x="414" y="278" class="tiny" text-anchor="start">gently until the skin pinks.</text>
+<rect x="585" y="56" width="172" height="250" rx="10" fill="#fff" stroke="#c9d3de"/>
+<text x="601" y="82" class="lbl">4 &#183; gel, then stop</text>
+<g transform="translate(585,56)"><rect x="56" y="52" width="26" height="44" rx="4" fill="#fff" stroke="#64748b"/>
+<rect x="58" y="70" width="22" height="26" fill="#dbe7fb"/>
+<path d="M69 96 L69 112" stroke="#64748b" stroke-width="3"/>
+<path d="M46 118 a24 14 0 0 0 48 0 z" fill="#dbe7fb" stroke="#1f6feb"/>
+<path d="M42 118 L98 118" stroke="#90a4bd" stroke-width="2"/>
+<text x="72" y="172" class="tiny" text-anchor="middle">enough to fill the cup</text>
+<path d="M126 88 L142 104 M142 88 L126 104" stroke="#c2410c" stroke-width="2"/>
+<text x="134" y="124" class="tiny" text-anchor="middle">not so much</text>
+<text x="134" y="137" class="tiny" text-anchor="middle">it spreads</text></g>
+<text x="599" y="252" class="tiny" text-anchor="start">Fill until the number settles.</text>
+<text x="599" y="265" class="tiny" text-anchor="start">More gel does not help &#8212; it</text>
+<text x="599" y="278" class="tiny" text-anchor="start">bridges to the next electrode.</text>
+<rect x="770" y="56" width="172" height="250" rx="10" fill="#fff" stroke="#c9d3de"/>
+<text x="786" y="82" class="lbl">5 &#183; check impedance</text>
+<g transform="translate(770,56)"><rect x="26" y="58" width="66" height="20" rx="4" fill="#eefaf1" stroke="#15803d" opacity="0.92"/>
+<text x="34" y="72" class="tiny" text-anchor="start">Fz</text>
+<text x="86" y="72" class="tiny" text-anchor="end">3 k&#937;</text>
+<rect x="100" y="58" width="66" height="20" rx="4" fill="#eefaf1" stroke="#15803d" opacity="0.92"/>
+<text x="108" y="72" class="tiny" text-anchor="start">Cz</text>
+<text x="160" y="72" class="tiny" text-anchor="end">2 k&#937;</text>
+<rect x="26" y="84" width="66" height="20" rx="4" fill="#eefaf1" stroke="#15803d" opacity="0.92"/>
+<text x="34" y="98" class="tiny" text-anchor="start">Pz</text>
+<text x="86" y="98" class="tiny" text-anchor="end">4 k&#937;</text>
+<rect x="100" y="84" width="66" height="20" rx="4" fill="#eefaf1" stroke="#15803d" opacity="0.92"/>
+<text x="108" y="98" class="tiny" text-anchor="start">Oz</text>
+<text x="160" y="98" class="tiny" text-anchor="end">6 k&#937;</text>
+<rect x="26" y="110" width="66" height="20" rx="4" fill="#eefaf1" stroke="#15803d" opacity="0.92"/>
+<text x="34" y="124" class="tiny" text-anchor="start">P3</text>
+<text x="86" y="124" class="tiny" text-anchor="end">3 k&#937;</text>
+<rect x="100" y="110" width="66" height="20" rx="4" fill="#fdf3e6" stroke="#d97706" opacity="0.92"/>
+<text x="108" y="124" class="tiny" text-anchor="start">P4</text>
+<text x="160" y="124" class="tiny" text-anchor="end">41 k&#937;</text>
+<rect x="26" y="136" width="66" height="20" rx="4" fill="#eefaf1" stroke="#15803d" opacity="0.92"/>
+<text x="34" y="150" class="tiny" text-anchor="start">REF</text>
+<text x="86" y="150" class="tiny" text-anchor="end">2 k&#937;</text>
+<rect x="100" y="136" width="66" height="20" rx="4" fill="#eefaf1" stroke="#15803d" opacity="0.92"/>
+<text x="108" y="150" class="tiny" text-anchor="start">GND</text>
+<text x="160" y="150" class="tiny" text-anchor="end">3 k&#937;</text>
+<text x="84" y="178" class="tiny" text-anchor="middle">one is far worse &#8212; redo it</text></g>
+<text x="784" y="252" class="tiny" text-anchor="start">Low and similar to each other.</text>
+<text x="784" y="265" class="tiny" text-anchor="start">Write them down, and check</text>
+<text x="784" y="278" class="tiny" text-anchor="start">again after half an hour.</text>
+</svg>

@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="960" height="470" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:12px}
+    .tiny{fill:#64748b;font-size:10.5px}
+    .lbl{fill:#16202c;font-size:11.5px;font-weight:600}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;fill:#16202c}
+</style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f6feb"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+  </defs>
+  <text x="30" y="34" class="t" font-size="16">where the signal comes from</text>
+<rect x="30" y="56" width="285" height="386" rx="10" fill="#fff" stroke="#c9d3de"/>
+<text x="46" y="82" class="lbl">1 · one cell, for a few thousandths of a second</text>
+<g transform="translate(30,56)"><path d="M72 150 L72 88" stroke="#334155" stroke-width="2.4" fill="none"/>
+<path d="M72 96 L54 72 M72 96 L90 72 M72 88 L72 64 M54 72 L46 58 M90 72 L98 58" stroke="#334155" stroke-width="1.6" fill="none"/>
+<path d="M56 186 L88 186 L72 148 z" fill="#e8eef7" stroke="#334155" stroke-width="2"/>
+<path d="M56 186 L36 204 M56 186 L44 210 M88 186 L108 204 M88 186 L100 210" stroke="#334155" stroke-width="1.5" fill="none"/>
+<path d="M72 186 L72 268" stroke="#334155" stroke-width="1.8" fill="none"/>
+<text x="72" y="286" class="tiny" text-anchor="middle">one cortical cell</text>
+<path d="M30 84 L62 90" stroke="#1f6feb" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="14" y="80" class="ion" fill="#1f6feb" font-size="11" font-weight="700">Na+</text>
+<path d="M30 108 L62 102" stroke="#1f6feb" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<path d="M96 170 L126 160" stroke="#d97706" stroke-width="1.6" fill="none" marker-end="url(#ao)"/>
+<path d="M96 196 L126 206" stroke="#d97706" stroke-width="1.6" fill="none" marker-end="url(#ao)"/>
+<path d="M132 182 C176 176 176 104 128 96" stroke="#94a3b8" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#ag)"/>
+<text x="150" y="140" class="tiny" text-anchor="middle">the loop closes</text>
+<text x="150" y="153" class="tiny" text-anchor="middle">through the fluid</text>
+<circle cx="96" cy="96" r="9" fill="#e8f0fe" stroke="#1f6feb"/>
+<text x="96" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#1f6feb">&#8722;</text>
+<circle cx="96" cy="222" r="9" fill="#fdeee0" stroke="#d97706"/>
+<text x="96" y="227" text-anchor="middle" font-size="13" font-weight="700" fill="#d97706">+</text></g>
+<g transform="translate(30,56)"><text x="16" y="316" class="tiny" text-anchor="start">A message arrives near the top and positive ions</text>
+<text x="16" y="329" class="tiny" text-anchor="start">rush IN; a little lower down they leak back OUT.</text>
+<text x="16" y="349" class="tiny" text-anchor="start">So one end of the cell is briefly negative and the</text>
+<text x="16" y="362" class="tiny" text-anchor="start">other positive: a tiny battery, a few millionths</text>
+<text x="16" y="375" class="tiny" text-anchor="start">of a volt, lasting a few thousandths of a second.</text></g>
+<rect x="337" y="56" width="285" height="386" rx="10" fill="#fff" stroke="#c9d3de"/>
+<text x="353" y="82" class="lbl">2 · why we can detect it at all</text>
+<g transform="translate(337,56)"><rect x="16" y="52" width="253" height="136" rx="6" fill="#fbfdff" stroke="#dbe3ec"/>
+<text x="28" y="72" class="tiny" text-anchor="start">cortex cells, all facing the same way</text>
+<path d="M32 160 L32 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<path d="M50 160 L50 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<path d="M68 160 L68 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<path d="M86 160 L86 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<path d="M104 160 L104 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<path d="M122 160 L122 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<path d="M140 160 L140 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<path d="M158 160 L158 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<path d="M176 160 L176 100" stroke="#1f6feb" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<text x="28" y="178" class="tiny" text-anchor="start">their little batteries point the same way &#8594; they ADD</text>
+<path d="M210 168 L210 92" stroke="#1f6feb" stroke-width="9" fill="none" marker-end="url(#a)"/>
+<text x="228" y="134" class="lbl" text-anchor="start">big</text>
+<rect x="16" y="206" width="253" height="136" rx="6" fill="#fbfdff" stroke="#dbe3ec"/>
+<text x="28" y="226" class="tiny" text-anchor="start">cells pointing every which way, as in deeper tissue</text>
+<path d="M32 292 L55.4869 287.064" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<path d="M50 292 L27.0491 284.982" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<path d="M68 292 L91.6474 287.901" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<path d="M86 292 L80.7375 268.584" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<path d="M104 292 L96.2586 269.283" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<path d="M122 292 L127.075 315.457" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<path d="M140 292 L163.734 288.436" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<path d="M158 292 L181.982 292.939" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<path d="M176 292 L175.55 315.996" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#ag)"/>
+<text x="28" y="332" class="tiny" text-anchor="start">they point in all directions &#8594; they CANCEL</text>
+<circle cx="206" cy="286" r="5" fill="#94a3b8"/>
+<text x="220" y="290" class="lbl" text-anchor="start">nothing</text>
+<text x="16" y="366" class="tiny" text-anchor="start">Tens of thousands of aligned cells doing the same thing</text>
+<text x="16" y="379" class="tiny" text-anchor="start">at once is what makes a measurable signal.</text></g>
+<rect x="644" y="56" width="286" height="386" rx="10" fill="#fff" stroke="#c9d3de"/>
+<text x="660" y="82" class="lbl">3 · out through the head</text>
+<g transform="translate(644,56)"><rect x="18" y="84" width="250" height="26" fill="#f6e7db" stroke="#d9c7b8"/>
+<text x="26" y="101" class="tiny" text-anchor="start">scalp</text>
+<rect x="18" y="110" width="250" height="34" fill="#e7e7ea" stroke="#cdced4"/>
+<text x="26" y="131" class="tiny" text-anchor="start">skull &#8212; a poor conductor</text>
+<rect x="18" y="144" width="250" height="20" fill="#e2eef0" stroke="#c3d8dc"/>
+<text x="26" y="158" class="tiny" text-anchor="start">fluid</text>
+<rect x="18" y="164" width="250" height="60" fill="#f0e2ef" stroke="#d8bdd6"/>
+<text x="26" y="198" class="tiny" text-anchor="start">cortex</text>
+<circle cx="143" cy="182" r="7" fill="#e8f0fe" stroke="#1f6feb"/>
+<text x="143" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#1f6feb">&#8722;</text>
+<circle cx="143" cy="208" r="7" fill="#fdeee0" stroke="#d97706"/>
+<text x="143" y="212" text-anchor="middle" font-size="11" font-weight="700" fill="#d97706">+</text>
+<text x="158" y="196" class="tiny" text-anchor="start">many thousands,</text>
+<text x="158" y="209" class="tiny" text-anchor="start">all lined up</text>
+<path d="M143 174 C83 144 47 116 47 90" stroke="#b9c6d6" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+<path d="M143 174 C109 144 87 116 87 90" stroke="#b9c6d6" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+<path d="M143 174 C131 144 123 116 123 90" stroke="#b9c6d6" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+<path d="M143 174 C155 144 163 116 163 90" stroke="#b9c6d6" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+<path d="M143 174 C177 144 199 116 199 90" stroke="#b9c6d6" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+<path d="M143 174 C203 144 239 116 239 90" stroke="#b9c6d6" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+<path d="M143 172 L143 94" stroke="#b9c6d6" stroke-width="1.3" fill="none" stroke-dasharray="4 4"/>
+<rect x="118" y="66" width="50" height="16" rx="5" fill="#dbe7fb" stroke="#1f6feb"/>
+<text x="143" y="78" class="tiny" text-anchor="middle">electrode</text>
+<path d="M196 62 L172 70" stroke="#94a3b8" stroke-width="1.3" fill="none" marker-end="url(#ag)"/>
+<text x="200" y="58" class="tiny" text-anchor="end">about 5 &#181;V arrives here</text>
+<text x="18" y="254" class="tiny" text-anchor="start">The current does not run along a wire: it spreads</text>
+<text x="18" y="267" class="tiny" text-anchor="start">through fluid, skull and scalp the way heat spreads</text>
+<text x="18" y="280" class="tiny" text-anchor="start">through a pan. So an electrode never sees one small</text>
+<text x="18" y="293" class="tiny" text-anchor="start">spot of brain, but a blurred region a few cm across.</text>
+<rect x="18" y="308" width="250" height="64" rx="6" fill="#f6f8fa" stroke="#dbe3ec"/>
+<text x="30" y="329" class="tiny" text-anchor="start">Inside the head the current is carried by ions.</text>
+<text x="30" y="342" class="tiny" text-anchor="start">In the cable it is carried by electrons. The</text>
+<text x="30" y="355" class="tiny" text-anchor="start">electrode is what translates between them.</text></g>
+</svg>

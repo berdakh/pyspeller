@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="960" height="340" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:12px}
+    .tiny{fill:#64748b;font-size:10.5px}
+    .lbl{fill:#16202c;font-size:11.5px;font-weight:600}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;fill:#16202c}
+</style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f6feb"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+  </defs>
+  <text x="30" y="34" class="t" font-size="16">how small is five microvolts?</text>
+<rect x="30" y="56" width="900" height="236" rx="10" fill="#fff" stroke="#c9d3de"/>
+<line x1="70" y1="250" x2="900" y2="250" stroke="#94a3b8" stroke-width="1.5"/>
+<line x1="70" y1="250" x2="70" y2="256" stroke="#c9d3de"/>
+<text x="70" y="271" class="tiny" text-anchor="middle">0.1 &#181;V</text>
+<line x1="173.75" y1="250" x2="173.75" y2="256" stroke="#c9d3de"/>
+<text x="173.75" y="271" class="tiny" text-anchor="middle">1 &#181;V</text>
+<line x1="277.5" y1="250" x2="277.5" y2="256" stroke="#c9d3de"/>
+<text x="277.5" y="271" class="tiny" text-anchor="middle">10 &#181;V</text>
+<line x1="381.25" y1="250" x2="381.25" y2="256" stroke="#c9d3de"/>
+<text x="381.25" y="271" class="tiny" text-anchor="middle">100 &#181;V</text>
+<line x1="485" y1="250" x2="485" y2="256" stroke="#c9d3de"/>
+<text x="485" y="271" class="tiny" text-anchor="middle">1 mV</text>
+<line x1="588.75" y1="250" x2="588.75" y2="256" stroke="#c9d3de"/>
+<text x="588.75" y="271" class="tiny" text-anchor="middle">10 mV</text>
+<line x1="692.5" y1="250" x2="692.5" y2="256" stroke="#c9d3de"/>
+<text x="692.5" y="271" class="tiny" text-anchor="middle">100 mV</text>
+<line x1="796.25" y1="250" x2="796.25" y2="256" stroke="#c9d3de"/>
+<text x="796.25" y="271" class="tiny" text-anchor="middle">1 V</text>
+<line x1="900" y1="250" x2="900" y2="256" stroke="#c9d3de"/>
+<text x="900" y="271" class="tiny" text-anchor="middle">10 V</text>
+<rect x="277.5" y="158" width="103.75" height="92" fill="#e8f0fe" stroke="#1f6feb" stroke-dasharray="3 3"/>
+<text x="329.375" y="150" class="lbl" text-anchor="middle">the ongoing EEG</text>
+<text x="329.375" y="176" class="tiny" text-anchor="middle">10&#8211;100 &#181;V</text>
+<line x1="142.518" y1="250" x2="142.518" y2="200" stroke="#94a3b8" stroke-width="1.4"/>
+<circle cx="142.518" cy="200" r="3.5" fill="#94a3b8"/>
+<text x="136.518" y="188" class="tiny" text-anchor="start">the amplifier&#8217;s own hiss</text>
+<line x1="246.268" y1="250" x2="246.268" y2="112" stroke="#c2410c" stroke-width="2.4"/>
+<circle cx="246.268" cy="112" r="4.5" fill="#c2410c"/>
+<text x="246.268" y="100" class="lbl" text-anchor="middle" fill="#c2410c">the P300 you are hunting &#8212; 5 &#181;V</text>
+<line x1="430.751" y1="250" x2="430.751" y2="196" stroke="#94a3b8" stroke-width="1.4"/>
+<circle cx="430.751" cy="196" r="3.5" fill="#94a3b8"/>
+<text x="430.751" y="184" class="tiny" text-anchor="middle">a big eye blink</text>
+<line x1="619.982" y1="250" x2="619.982" y2="140" stroke="#94a3b8" stroke-width="1.4"/>
+<circle cx="619.982" cy="140" r="3.5" fill="#94a3b8"/>
+<text x="619.982" y="128" class="tiny" text-anchor="middle">mains hum floating the whole body</text>
+<line x1="728.026" y1="250" x2="728.026" y2="90" stroke="#d97706" stroke-width="2.4"/>
+<circle cx="728.026" cy="90" r="3.5" fill="#d97706"/>
+<text x="728.026" y="78" class="lbl" text-anchor="middle" fill="#d97706">each electrode&#8217;s own private voltage</text>
+<line x1="814.519" y1="250" x2="814.519" y2="192" stroke="#94a3b8" stroke-width="1.4"/>
+<circle cx="814.519" cy="192" r="3.5" fill="#94a3b8"/>
+<text x="814.519" y="180" class="tiny" text-anchor="middle">an AA battery</text>
+<text x="70" y="322" class="tiny" text-anchor="start">Each step along this line is ten times bigger than the one before. The P300 sits a hundred thousand times below the electrode&#8217;s own voltage &#8212; which is why every channel is a subtraction.</text>
+</svg>

@@ -80,6 +80,11 @@ tutorial:
   crowd — mains hum from the wiring in the walls, a blink, a clenched jaw — is
   shouting.
 
+<figure>
+<img src="assets/img/dipole.svg" alt="Three panels: a single cortical neuron with ions flowing in at the top and out lower down forming a dipole, aligned cells adding up while randomly oriented ones cancel, and the field spreading through skull and scalp to an electrode">
+<figcaption>The whole of section 1 in one picture: a cell becomes a tiny battery, thousands of them line up and add, and what is left spreads out through the head to the electrode.</figcaption>
+</figure>
+
 So: **in your head, the current is carried by ions. In the cable to the
 amplifier, it is carried by electrons.** Those are two different things, and
 something has to translate between them. That something is the electrode.
@@ -114,6 +119,11 @@ is about **0.22 volts**.
 Stop and compare that with the signal: 0.22 volts against 0.000005 volts. The
 electrode's own private voltage is some **forty thousand times larger than the
 P300**. How is anything measurable at all?
+
+<figure>
+<img src="assets/img/scale-ladder.svg" alt="A logarithmic scale from 0.1 microvolts to 10 volts marking amplifier noise, the P300, ongoing EEG, an eye blink, mains hum, the electrode half-cell potential and an AA battery">
+<figcaption>Everything on one line, each step ten times the last. The P300 sits at the far left; the electrode&#8217;s own voltage is a hundred thousand times bigger.</figcaption>
+</figure>
 
 Because you never measure one electrode on its own — you measure the
 **difference between two of them**. Use two electrodes of the same material,
@@ -163,7 +173,7 @@ drifting. That is why silver–silver chloride, gel and all, is the standard for
 this kind of work, and why gold is better suited to faster brain rhythms.
 </div>
 
-## 3. Five pictures to keep in your head
+## 3. Six pictures to keep in your head
 
 The physics above is the answer; these are the pictures that make it stick. Come
 back here whenever a later page uses a word you have half-forgotten.
@@ -211,6 +221,11 @@ gold electrode perfectly well — the **alpha rhythm**, for instance, a backgrou
 wobble of about ten cycles a second that appears when someone closes their eyes.
 (One cycle a second is one **hertz**, written Hz, so alpha is "about 10 Hz".)
 The slow bump of a P300 does not fare nearly so well.
+
+<figure>
+<img src="assets/img/door-frequency.svg" alt="Left: how much of a signal passes, against how fast it wiggles, flat for silver-silver chloride and rolling off below a few hertz for gold. Right: a P300 bump reproduced faithfully through Ag/AgCl and distorted through gold">
+<figcaption>Left: how much gets through, against speed. Right: the same P300 recorded through each. The shaded band is where the P300 lives &#8212; exactly where the glass door starts to fail.</figcaption>
+</figure>
 
 <div class="note">
 <span class="block-title">The one-sentence version</span>
@@ -424,6 +439,11 @@ losing signal:
    inputs, and it has no way to tell that difference from brain activity.
    **Matched impedances matter as much as low ones.**
 
+<figure>
+<img src="assets/img/impedance.svg" alt="Left: the electrode and the amplifier input sharing the signal, 20 kilohms against 100 megohms. Right: matched electrodes cancelling mains hum completely, mismatched electrodes leaving hum in the recording">
+<figcaption>Why low impedance is not about losing signal, and why two electrodes that differ leave hum behind that no amount of amplification can remove.</figcaption>
+</figure>
+
 Two failure modes worth recognising when you watch the live traces: **bridging**,
 where gel spreads across the scalp between neighbouring electrodes so their
 traces become suspiciously identical, and **drying**, where impedance climbs
@@ -475,6 +495,11 @@ millivolts, deliberately far wider than any EEG, so that the electrodes' own
 private voltages do not push the reading off the end of the scale. The numbers
 that finally reach pyspeller through Lab Streaming Layer have already been
 converted into **microvolts**.
+
+<figure>
+<img src="assets/img/sampling.svg" alt="A smooth voltage, the same voltage measured 512 times a second as dots on stems, and the resulting column of microvolt numbers flowing to Lab Streaming Layer">
+<figcaption>The last step of the chain: a voltage that changes continuously becomes a stream of numbers, which is what every piece of pyspeller actually works with.</figcaption>
+</figure>
 
 ## 8. Reference and ground: the question everyone asks
 
@@ -558,6 +583,11 @@ Nothing about the brain changed — only what you subtracted.
 
 ## 9. What goes wrong, seen from the sensor side
 
+<figure>
+<img src="assets/img/artifacts.svg" alt="Eight small traces: healthy EEG, an electrode pop, slow drift, mains hum, muscle activity, eye blinks, a bridged pair of channels and a dead channel">
+<figcaption>Learn these eight shapes and most of what goes wrong in a session announces itself before you have recorded a single trial.</figcaption>
+</figure>
+
 | On the screen | Usually means |
 | --- | --- |
 | One channel much larger than its neighbours | that electrode has poor contact, or has come off |
@@ -569,6 +599,11 @@ Nothing about the brain changed — only what you subtracted.
 | Fast, spiky activity over the temples | jaw and neck muscle, not brain |
 
 ## 10. What this means when you are capping up
+
+<figure>
+<img src="assets/img/capping.svg" alt="Five steps: measuring for Cz, seating the cap, parting the hair and abrading through the hole, injecting gel, and reading an impedance check">
+<figcaption>The five minutes that decide how good your data will be. The <a href="paradigm.html">10&#8211;20 map</a> shows where each electrode belongs.</figcaption>
+</figure>
 
 - Prepare the **reference and ground as carefully as any channel** — the
   reference is inside every number you record, and without the ground there are
