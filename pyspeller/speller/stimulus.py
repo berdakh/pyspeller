@@ -19,6 +19,7 @@ from ..speller.matrix import ROW, SpellerMatrix
 from . import messages, text as speller_text
 
 PHASE_EVENT = 'startPhase.cmd'
+READY_EVENT = 'speller.ready'
 
 
 class RunStopped(Exception):
@@ -343,6 +344,9 @@ class SpellerStimulus:
         without waiting for the practice to finish.
         """
         self.client.reset_event_cursor()
+        # say so, so that nobody sends a phase into the gap between connecting
+        # and listening -- the panel waits for this before it lets you press
+        self.client.send_event(READY_EVENT, 'stimulus')
         phase = None
         try:
             while stop_event is None or not stop_event.is_set():

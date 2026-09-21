@@ -17,6 +17,7 @@ from ..signalproc.epochs import EpochGatherer
 from ..speller.matrix import COL, ROW, SpellerMatrix
 
 PHASE_EVENT = 'startPhase.cmd'
+READY_EVENT = 'speller.ready'
 FLASH_EVENTS = ('stimulus.rowFlash', 'stimulus.colFlash')
 
 
@@ -203,6 +204,7 @@ class SignalProcessor:
         interrupts it, so the operator can switch blocks at any time.
         """
         self.client.reset_event_cursor()
+        self.client.send_event(READY_EVENT, 'sigproc')
         phase = None
         while stop_event is None or not stop_event.is_set():
             try:

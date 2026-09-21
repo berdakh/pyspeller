@@ -47,6 +47,20 @@ class ControlTestCase(unittest.TestCase):
     def events_of_type(self, type_name):
         return [e for e in self.operator.get_events() if e.type == type_name]
 
+    def start_phase_loop(self):
+        """Start the loop and wait until it is actually listening."""
+        stop = threading.Event()
+        worker = threading.Thread(target=self.stimulus.run_phase_loop, args=(stop,),
+                                  daemon=True)
+        worker.start()
+        self.addCleanup(stop.set)
+        deadline = time.time() + 10
+        while time.time() < deadline and not self.events_of_type('speller.ready'):
+            time.sleep(0.02)
+        self.assertTrue(self.events_of_type('speller.ready'),
+                        'the speller never said it was listening')
+        return worker
+
 
 class TestPause(ControlTestCase):
     def test_pause_holds_the_flashing_and_resume_carries_on(self):
@@ -123,14 +137,17 @@ class TestStop(ControlTestCase):
                          ['start', 'end'])
 
 
+class TestReadiness(ControlTestCase):
+    def test_the_phase_loop_says_when_it_is_listening(self):
+        """Otherwise a command sent a moment too early is simply lost."""
+        self.start_phase_loop()
+        ready = self.events_of_type('speller.ready')
+        self.assertEqual([str(e.value) for e in ready], ['stimulus'])
+
+
 class TestPhaseSwitching(ControlTestCase):
     def test_a_new_phase_interrupts_the_running_one(self):
-        stop = threading.Event()
-        worker = threading.Thread(target=self.stimulus.run_phase_loop, args=(stop,),
-                                  daemon=True)
-        worker.start()
-        self.addCleanup(stop.set)
-
+        worker = self.start_phase_loop()
         self.operator.send_event('startPhase.cmd', 'practice')
         self.wait_for_flashes(3)
         self.assertIn('practice', self.renderer.messages)
@@ -150,11 +167,7 @@ class TestPhaseSwitching(ControlTestCase):
         self.assertFalse(worker.is_alive())
 
     def test_quitting_during_a_block_leaves_the_loop(self):
-        stop = threading.Event()
-        worker = threading.Thread(target=self.stimulus.run_phase_loop, args=(stop,),
-                                  daemon=True)
-        worker.start()
-        self.addCleanup(stop.set)
+        worker = self.start_phase_loop()
         self.operator.send_event('startPhase.cmd', 'practice')
         self.wait_for_flashes(3)
         self.operator.send_event('startPhase.cmd', 'quit')

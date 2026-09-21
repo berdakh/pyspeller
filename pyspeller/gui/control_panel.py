@@ -55,6 +55,7 @@ class ControlPanel:
         self._last_stats = (time.time(), self.cursor)
         self._rate = 0.0
         self.paused = False
+        self.ready = set()            # clients that have said they are listening
         self.training = None          # the last training summary, as published
         self.training_view = None
 
@@ -241,6 +242,9 @@ class ControlPanel:
                 # buffer, so every client ends up with the same text.
                 self.spelled = speller_text.apply_symbol(self.spelled, evt.value)
                 self.spelled_var.set('typed: %s' % speller_text.display(self.spelled))
+            elif evt.type == 'speller.ready':
+                self.ready.add(str(evt.value))
+                self.status.set('ready: %s' % ', '.join(sorted(self.ready)))
             elif evt.type == 'stimulus.feedback' and str(evt.value) == 'start':
                 self.spelled = ''          # a new block types a new line
                 self.spelled_var.set('typed: %s' % speller_text.display(''))
