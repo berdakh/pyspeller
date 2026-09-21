@@ -165,7 +165,8 @@ this kind of work, and why gold is better suited to faster brain rhythms.
 
 ## 3. Five pictures to keep in your head
 
-The physics above is the answer; these are the pictures that make it stick.
+The physics above is the answer; these are the pictures that make it stick. Come
+back here whenever a later page uses a word you have half-forgotten.
 
 <figure>
 <img src="assets/img/analogy.svg" alt="Three analogies: an exchange desk converting ions to electrons, a revolving door, and a glass door with crowds on both sides">
@@ -174,30 +175,42 @@ The physics above is the answer; these are the pictures that make it stick.
 
 ### The exchange desk
 
-The body's currency is **ions**; the wire's currency is **electrons**. Neither
-can spend the other's money, and no ion ever travels up the cable. The electrode
-is the exchange desk on the border: ions arrive on one side, electrons leave on
-the other, and the chemical reaction sets the rate.
+Money makes this one easy. Inside the body, charge is carried by ions — atoms
+with a charge, drifting through salty fluid. Inside the cable, charge is carried
+by electrons. Those are two different currencies, and neither can be spent in
+the other's country: **no ion ever travels up the cable to the amplifier.**
 
-This is why the *material* matters so much. A good desk exchanges instantly, at
-a fixed rate, in both directions. A bad one has a long queue and keeps changing
-its rate — which is exactly what drift is.
+The electrode is the exchange desk on the border. Ions arrive on one side,
+electrons leave on the other, and the chemical reaction at the metal surface
+sets the rate.
+
+That is why the *material* matters so much. A good exchange desk serves everyone
+instantly, at the same rate, in both directions. A bad one has a long queue and
+quietly changes its rate as the day goes on — and a rate that keeps changing is
+exactly what drift is, when you watch it wander across the screen.
 
 ### The revolving door and the glass door
 
-Ask what happens when charge arrives at the metal.
+Ask what happens when charge arrives at the metal from the gel.
 
 **Silver–silver chloride is a revolving door.** People keep walking through, in
-either direction, whether they arrive in a rush or one at a time. Current
-crosses freely, the interface behaves like a **resistor**, and even very slow
-changes — a P300 lasting half a second — get through unchanged.
+either direction, whether they arrive in a rush or one at a time. Charge crosses
+freely, so the electrode reports honestly however fast or slowly the signal
+changes — including a P300, which is a bump lasting about half a second.
+Electrically, the boundary behaves like a plain **resistor**: something charge
+simply flows through.
 
 **Gold, platinum and steel are a glass door.** Nobody gets through; they pile up
-against the glass on both sides. A crowd shoving suddenly still rattles the door
-and someone on the far side feels it — fast wiggles get through — but a slow,
-steady lean does nothing at all. That is a **capacitor**: it passes high
-frequencies and blocks low ones. It is why these metals are fine for alpha
-rhythms at 10 Hz and poorer for the slow shapes an ERP is made of.
+against the glass on both sides. A crowd arriving suddenly still rattles the
+door and someone on the far side feels the shove — so fast wiggles do get
+across — but a slow, steady lean does nothing at all. That is a **capacitor**:
+it passes fast changes and blocks slow ones.
+
+The consequence is practical. Brain activity that wobbles quickly gets through a
+gold electrode perfectly well — the **alpha rhythm**, for instance, a background
+wobble of about ten cycles a second that appears when someone closes their eyes.
+(One cycle a second is one **hertz**, written Hz, so alpha is "about 10 Hz".)
+The slow bump of a P300 does not fare nearly so well.
 
 <div class="note">
 <span class="block-title">The one-sentence version</span>
@@ -208,50 +221,65 @@ If your signal is slow, you need an electrode that lets charge <em>through</em>
 ### It is a voltmeter, not a bucket
 
 The most common misconception is that the electrode *collects* electricity from
-the brain, the way a solar panel collects light. It does not. A modern amplifier
-has an input impedance of tens of megaohms or more, which means almost no
-current flows into it at all — a few picoamps.
+the brain, the way a solar panel collects light. It does not, and it must not.
 
-Think of a **water gauge in a river**, not a bucket. The gauge does not take any
-water; it reports the level. The electrode reports the electrical "level" — the
-potential — of the electrolyte it sits in, and that level rises and falls with
-the currents flowing through the scalp underneath.
+The amplifier is deliberately built so that almost nothing can flow into it.
+Every material resists the movement of charge to some degree, and that
+resistance is measured in **ohms** (written Ω): a thousand ohms is a **kilohm**,
+kΩ, and a million is a **megohm**, MΩ. The input of an EEG amplifier resists at
+tens of megohms or more, so the current that actually enters it is a few
+*trillionths* of an amp — nothing at all, by any everyday standard.
 
-That is also why an electrode with poor contact does not give you a smaller
-signal so much as a **noisier** one: the gauge is still reading, but now it is
-wobbling in the wind.
+So think of a **water gauge standing in a river**, not a bucket. The gauge takes
+no water; it reports the level. The electrode reports the electrical "level" —
+the voltage — of the gel it sits in, and that level rises and falls with the
+currents spreading through the scalp underneath.
+
+That also explains something you will see in the lab: an electrode with poor
+contact does not give you a *smaller* signal so much as a **noisier** one. The
+gauge is still reading the river; it is just wobbling in the wind while it does
+it.
 
 ### Two bathroom scales
 
-Every electrode has a half-cell potential of a couple of hundred millivolts —
-tens of thousands of times the EEG. Why does it not ruin everything?
+Every electrode carries its own private voltage — the half-cell potential from
+section 2 — of a couple of hundred **millivolts** (thousandths of a volt), which
+is tens of thousands of times the size of the EEG. Why does that not ruin
+everything?
 
-Imagine weighing a letter by standing on a bathroom scale holding it, and then
-standing on it without. Each reading is dominated by your own 70 kg, but the
-**difference** is the letter. EEG does the same: both electrodes carry a similar
-large offset, and the amplifier subtracts them.
+Imagine weighing a letter by standing on a bathroom scale holding it, then
+standing on the scale without it. Each reading is dominated by your own 70 kg,
+but the **difference** between the two readings is the letter. EEG does exactly
+this: both electrodes carry a similar large offset, and the amplifier subtracts
+one from the other.
 
-The catch follows immediately: this only works if both scales have the *same*
-offset and it does not wander while you weigh. Two electrodes of different
-metals are two scales calibrated differently, and a drying electrode is a scale
-slowly sliding out of calibration. That is drift, in one image.
+The catch follows immediately. It only works if both scales have the *same*
+offset and neither drifts while you weigh. Two electrodes of different metals
+are two scales calibrated differently; a drying electrode is a scale sliding
+slowly out of calibration. That is drift, in one image.
 
 ### Two microphones in a noisy hall
 
-The differential amplifier deserves its own picture. Put two microphones in a
-crowded hall, one right at a speaker's lips and one a metre away, and subtract
-the second from the first. The crowd noise reaches both almost identically and
-cancels; the whisper, which only the near microphone hears, survives.
+The subtraction deserves its own picture. Put two microphones in a crowded hall,
+one right at a speaker's lips and one a metre away, and subtract the second
+recording from the first. The crowd noise reaches both microphones almost
+identically, so it cancels. The whisper, which only the near microphone hears,
+survives.
 
-Your scalp electrode is the near microphone, the reference is the far one, and
-the crowd is 50 Hz mains hum plus everything else the whole body picks up. The
-**common-mode rejection ratio** is simply how well matched the two microphones
-are.
+Your scalp electrode is the near microphone, the reference electrode is the far
+one, and the crowd is the electrical noise the whole body picks up from its
+surroundings — above all the hum radiated by the mains wiring in the walls,
+which alternates fifty times a second in most of the world and sixty in the
+Americas. Engineers score this cancellation with a number called the
+**common-mode rejection ratio**: in plain words, how well matched the two
+microphones are, and therefore how much of what reaches both alike disappears in
+the subtraction.
 
-And the catch is the same as before: the cancellation only works if the two
-paths are equal. One electrode at 5 kΩ and another at 200 kΩ is one microphone
-with a sock over it — the crowd no longer cancels. That is why you match
-impedances, not only lower them.
+And the catch is the same as before: cancelling only works if the two paths are
+equally easy. One electrode connected through 5 kΩ and another through 200 kΩ is
+one microphone with a sock over it — the crowd arrives at different loudness in
+the two recordings and no longer cancels. That is why you match the electrodes
+to each other, not only make them good.
 
 ### Sea level and the mooring rope
 
@@ -259,34 +287,51 @@ Finally, the question everyone asks. **The reference is sea level; the ground is
 the mooring rope.**
 
 You cannot state the height of a hill without agreeing where zero is: heights
-are always *differences* from a datum. The reference is the datum for every
-channel — change it and every number changes, though the hill did not move.
+are always *differences* from some agreed datum. The reference is that datum for
+every channel — change it and every number changes, though the hill did not
+move.
 
-The ground does something else entirely. It is the rope that keeps the boat from
-drifting out of the dock: it holds the participant's whole body at a potential
-the amplifier can work with, so the inputs stay in range. It never appears in a
-measurement. Untie it and nothing is measured from sea level any more — the boat
-has floated away and everything saturates.
+The ground does something else entirely. It is the rope that stops the boat
+drifting out of the dock: it holds the participant's whole body at a voltage the
+amplifier can cope with, so its inputs stay within the range they can measure.
+It never appears in any measurement. Untie it and nothing is measured from sea
+level any more — the boat has floated away, and every channel runs off the end
+of its scale.
 
 ## 4. The materials, and why each is used
 
-| Material | Behaviour | Where you meet it | Trade-off |
+Everything in the table below is a variation on the two doors. The second column
+says which door an electrode is: a **revolving door** lets charge across and so
+stays honest at slow speeds (the technical word is *non-polarizable*); a **glass
+door** does not, and drifts (*polarizable*). Three other words show up in the
+table and are worth having in advance:
+
+- **Sintered** — powder pressed and baked into a solid pellet, so the useful
+  chemistry runs all the way through the material instead of sitting on the
+  surface.
+- **Chloridized** — a thin layer of silver chloride grown on plain silver. Same
+  chemistry, but only skin-deep, so scrubbing eventually wears it away.
+- **Inert** — the metal reacts with almost nothing. It stays clean, and skin
+  does not react to it either.
+
+| Material | Which door | Where you meet it | Trade-off |
 | --- | --- | --- | --- |
-| **Sintered Ag/AgCl** (silver and silver chloride powder pressed into a pellet) | Non-polarizable | Research caps, ERP labs, the reference standard | Best low-frequency stability; the AgCl is throughout the pellet, so it survives cleaning. Most expensive |
-| **Chloridized silver** (a thin AgCl layer grown on silver) | Non-polarizable while the layer lasts | Cheaper caps, home-made electrodes | Same physics, but the layer wears off with scrubbing and has to be re-chloridized |
-| **Gold** (usually gold-plated silver or copper) | Largely polarizable | Clinical cups, dry pin electrodes, long-term monitoring | Inert, biocompatible, easy to clean, no allergy issues. Drifts below ~1 Hz; fine for oscillations, weaker for slow ERPs |
-| **Platinum / platinum–iridium** | Polarizable, very inert | Implanted and intracranial electrodes, some research surface electrodes | Chemically superb and MRI-compatible-ish; expensive, and polarizes |
-| **Tin (Sn)** | Between the two | Older and budget caps | Cheap and workable; noisier and driftier than Ag/AgCl |
-| **Stainless steel** | Polarizable | Dry electrodes, rugged field systems | Tough and cheap; poor at low frequencies, more 1/f noise |
-| **Conductive polymer / carbon / silver-loaded rubber** | Varies | MRI-compatible caps, textile electrodes | Chosen for safety inside a scanner (no induced heating), not for signal quality |
+| **Sintered Ag/AgCl** (silver and silver chloride powder pressed into a pellet) | Revolving door | Research caps, ERP labs, the reference standard | Steadiest of all at slow speeds, and because the silver chloride goes right through the pellet it survives cleaning. Most expensive |
+| **Chloridized silver** (a thin AgCl layer grown on silver) | Revolving door, while the layer lasts | Cheaper caps, home-made electrodes | Same physics, but the layer wears off with scrubbing and has to be grown again |
+| **Gold** (usually gold-plated silver or copper) | Mostly glass door | Clinical cups, dry pin electrodes, long-term monitoring | Inert, kind to skin, easy to clean, no allergy problems. Drifts below about 1 Hz: fine for rhythms, weaker for slow responses like the P300 |
+| **Platinum / platinum–iridium** | Glass door, extremely inert | Implanted and intracranial electrodes, some research surface electrodes | Chemically superb and safe to leave in the body; expensive, and it does pile charge up |
+| **Tin (Sn)** | In between | Older and budget caps | Cheap and workable; hissier and driftier than Ag/AgCl |
+| **Stainless steel** | Glass door | Dry electrodes, rugged field systems | Tough and cheap; poor at slow speeds, with more of the slow wandering noise |
+| **Conductive polymer / carbon / silver-loaded rubber** | Varies | MRI-compatible caps, textile electrodes | Chosen for safety inside an MRI scanner — metal there can heat up — rather than for signal quality |
 | **Sponge / saline ("water-based")** | Ag/AgCl behind a saline sponge | Fast-setup caps | No gel to wash out; dries out over an hour and drifts as it does |
 
 <div class="warn">
 <span class="block-title">Do not mix metals</span>
-Two different metals in the same electrolyte form a battery: their half-cell
-potentials differ by tens or hundreds of millivolts, and that difference sits
-across your amplifier's input and drifts with temperature. Use one material for
-the whole montage — <em>including</em> the reference and ground.
+Two different metals sitting in the same liquid are the recipe for a battery —
+that is literally how a battery is built. Their private voltages differ by tens
+or hundreds of millivolts, that difference lands straight across the
+amplifier's input, and it wanders as the room warms up. Use one material for the
+whole montage — <em>including</em> the reference and ground.
 </div>
 
 ## 5. The sensors themselves
@@ -296,50 +341,61 @@ the whole montage — <em>including</em> the reference and ground.
 <figcaption>The families you will meet. For a teaching BCI lab it is nearly always one of the first four.</figcaption>
 </figure>
 
-**Wet cup or ring electrodes.** A small Ag/AgCl cup held in a cap, filled with
-conductive gel through a hole in the top. The workhorse: lowest noise, lowest
-drift, and the reason ERP labs smell faintly of electrolyte.
+**Wet cup or ring electrodes.** A small Ag/AgCl cup held in a cap and filled
+with conductive gel through a hole in the top. The workhorse: quietest, least
+drifty, and the reason ERP labs smell faintly of electrolyte.
 
 **Gold cups.** Glued to the scalp with conductive paste in clinical EEG, or
-mounted in caps. Durable and easy to clean; a little more drift.
+mounted in caps. Durable and easy to clean; a little more drift, for the
+glass-door reason above.
 
-**Active electrodes.** A wet or dry electrode with a tiny amplifier *on the
-electrode itself*. The weak, high-impedance signal is buffered before it travels
-down a metre of cable, so cable movement and mains pickup matter far less and
-the skin can be prepared less aggressively. g.tec's g.LADYbird electrodes work
-this way; so do the active systems from other manufacturers.
+**Active electrodes.** A wet or dry electrode with a tiny amplifier built
+*into the electrode itself*. This matters because the raw signal leaves the head
+both very small and very fragile — the path it comes through is a poor
+conductor, so the signal is easily disturbed. A metre of cable behaves like a
+radio aerial and picks up hum, and it changes what it picks up every time it
+swings. Strengthening the signal at the electrode, before it travels anywhere,
+makes cable movement and mains hum far less damaging and means the skin can be
+prepared less aggressively. g.tec's g.LADYbird electrodes work this way; so do
+the active systems from other manufacturers.
 
 **Dry electrodes.** Gold-plated pins or fingers that push through the hair to
-touch the scalp, with no gel at all — g.tec's g.SAHARA is the example you are
-most likely to meet on a g.Nautilus. Setup drops from twenty minutes to two. The
-price is impedance in the tens or hundreds of kΩ, more drift, and much greater
-sensitivity to movement. They work for a P300 speller; they work *better* after
-the participant has stopped fidgeting.
+touch the scalp, with no gel at all — g.tec's g.SAHARA is the one you are most
+likely to meet, on a g.Nautilus. Setup drops from twenty minutes to two. The
+price is that the path into the amplifier is ten to a hundred times harder than
+with gel, along with more drift and much greater sensitivity to movement. They
+work for a P300 speller; they work *better* once the participant has stopped
+fidgeting.
 
 **Capacitive / contactless electrodes.** A metal plate separated from the skin
-by an insulator — even hair or a thin fabric. No chemistry at all: the skin and
-the plate are the two plates of a capacitor. They demand extremely high input
-impedance and careful shielding, and are still mostly a research topic.
+by an insulator — even hair or thin fabric. No chemistry at all: the skin and
+the plate act as the two facing surfaces of a capacitor, the glass door taken to
+its limit. They demand extraordinarily high input resistance and careful
+shielding, and remain mostly a research topic.
 
-**Subdermal needles** exist for intensive care and intra-operative monitoring.
-They are not for student BCI work, and you should not be the person inserting
-them.
+**Subdermal needles** exist for intensive care and operating theatres. They are
+not for student BCI work, and you should not be the person inserting them.
 
 ## 6. Skin, gel and impedance
 
-The metal is rarely the problem. The **stratum corneum** — the outer layer of
-dead, dry skin cells — is where nearly all the resistance lives. That is what
-the preparation ritual is about:
+The metal is rarely the problem. The **stratum corneum** — the outermost layer
+of skin, which is dead, dry, flattened cells — is where nearly all the
+obstruction lives. Skin is built to keep the outside world out, and an EEG
+signal is part of the outside world trying to get in. That is what the whole
+preparation ritual is about:
 
-- **Abrasion** with a blunt needle or gel with a mild abrasive removes some of
-  that dead layer.
-- **Conductive gel** is an electrolyte, usually a chloride salt in a viscous
-  base. It provides the Cl⁻ ions the Ag/AgCl reaction needs and fills the gap
-  between a rigid cup and an irregular scalp.
+- **Abrasion** with a blunt needle or a mildly gritty gel scrapes away part of
+  that dead layer. It should tickle, never hurt or bleed.
+- **Conductive gel** is salty water thickened into a paste. It supplies the
+  chloride ions the silver–silver chloride reaction needs, and it fills the gap
+  between a rigid cup and an irregular, hairy scalp so the path is continuous.
 
-**Electrode impedance** is what you measure when you press *impedance check* in
-the recording software: the amplifier passes a tiny alternating current through
-the electrode and measures the resulting voltage. Typical values:
+When you press *impedance check* in the recording software, the amplifier sends
+an extremely small alternating current out through the electrode and measures
+the voltage it produces, which tells it how hard that path is. The result is
+called the **impedance** of the electrode — resistance's slightly larger
+relative, meaning resistance to a current that keeps reversing direction — and
+it is measured in ohms, like resistance. Typical values:
 
 | Setup | Impedance |
 | --- | --- |
@@ -348,22 +404,30 @@ the electrode and measures the resulting voltage. Typical values:
 | Dry pins on clean scalp | 50 kΩ – 1 MΩ |
 | Electrode that has come off | open circuit, often shown as ∞ |
 
-Modern amplifiers have input impedances of tens of megaohms to gigaohms, so a
-20 kΩ electrode loses almost none of the signal by simple division. **Why do we
-still chase low impedances?** Two reasons, and both are about noise rather than
-signal:
+Now a puzzle. The amplifier's own input resists at tens of megohms or more —
+thousands of times more than even a bad electrode. When two resistances sit in a
+row, they share the voltage between them in proportion, so a 20 kΩ electrode
+feeding a 100 MΩ input keeps about 99.98 % of the signal. Almost nothing is
+lost. **So why chase low impedances at all?** Two reasons, and neither is about
+losing signal:
 
-1. **Thermal noise.** Any resistance generates Johnson noise proportional to
-   √R. At 5 kΩ it is negligible next to the EEG; at 1 MΩ it is not.
-2. **Mismatch turns common-mode into differential.** Mains hum reaches both
-   inputs of the amplifier equally — but only if both paths are equal. If one
-   electrode is at 5 kΩ and another at 200 kΩ, the hum arrives with different
-   amplitudes, the amplifier sees a genuine difference, and it cannot cancel it.
+1. **Heat makes hiss.** Everything warm jiggles: in any resistance, the
+   charge carriers move about randomly simply because the material is above
+   absolute zero, and that random motion appears as a faint random voltage of
+   its own. The more resistance, the more hiss. At 5 kΩ it is negligible beside
+   the EEG; at 1 MΩ it is not. (Its formal name is *Johnson*, or thermal,
+   noise, and it grows with the square root of the resistance.)
+2. **Mismatch breaks the cancelling trick.** Mains hum arrives at both inputs of
+   the amplifier equally — but only if both paths are equally easy. If one
+   electrode is at 5 kΩ and its neighbour at 200 kΩ, the hum shows up larger in
+   one than the other, the amplifier sees a genuine difference between its two
+   inputs, and it has no way to tell that difference from brain activity.
    **Matched impedances matter as much as low ones.**
 
-Two failure modes to recognise on the scope: **bridging**, where gel spreads
-between neighbouring electrodes and makes their traces suspiciously identical,
-and **drying**, where impedance climbs over an hour and slow drift creeps in.
+Two failure modes worth recognising when you watch the live traces: **bridging**,
+where gel spreads across the scalp between neighbouring electrodes so their
+traces become suspiciously identical, and **drying**, where impedance climbs
+over the course of an hour and slow drift creeps in with it.
 
 ## 7. How a number is actually computed
 
@@ -372,68 +436,93 @@ and **drying**, where impedance climbs over an hour and slow drift creeps in.
 <figcaption>Every EEG channel is the output of a differential amplifier: the signal at one electrode minus the signal at the reference, amplified.</figcaption>
 </figure>
 
-A **differential amplifier** (in practice an *instrumentation amplifier*) has two
-inputs and amplifies only their difference:
+The two-microphone trick is built into a component called a **differential
+amplifier** (in practice a refined version called an *instrumentation
+amplifier*). It has two inputs, and it ignores whatever they have in common:
+what it puts out is the *difference* between them, made many times bigger.
 
 ```
 output = gain × ( V(+) − V(−) )
 ```
 
-Whatever is identical on both inputs — the **common-mode** signal — is
-suppressed. How well is the **common-mode rejection ratio**, CMRR, quoted in
-decibels; a good EEG amplifier is above 100 dB, meaning common-mode signals come
-out at least 100 000 times smaller.
+Read that as: take the voltage at the first input, subtract the voltage at the
+second, and multiply what is left by the **gain** — simply how many times bigger
+the output is than the input. V(+) is your scalp electrode; V(−) is the
+reference.
 
-This is what makes EEG possible at all. A participant sitting in a room is an
-antenna: their whole body floats tens of millivolts of 50 Hz mains hum. That hum
-is the same at Pz and at the mastoid, so it cancels. The 5 µV P300 is not the
-same at both, so it survives.
+Whatever is identical on both inputs — engineers call it the **common-mode**
+signal — is suppressed. How thoroughly is the common-mode rejection ratio from
+section 3 — **CMRR** on datasheets and in the figure above — quoted in
+**decibels** (dB), a compressed way of writing very large
+ratios: 100 dB means a factor of 100 000. A good EEG amplifier is above that, so
+anything arriving equally at both inputs comes out at least a hundred thousand
+times smaller than it went in.
 
-After the amplifier, a **24-bit analogue-to-digital converter** samples the
-voltage — 256 or 512 times a second in a typical g.tec setup — with an input
-range of a few hundred millivolts, wide enough to accommodate electrode offsets
-without clipping. The digital numbers that reach pyspeller through Lab Streaming
-Layer are already converted to **microvolts**.
+This is what makes EEG possible at all. A participant sitting in an ordinary
+room acts as an aerial: their whole body floats up and down by tens of
+millivolts with the mains hum around them — thousands of times the size of the
+signal you want. But that hum is nearly the same at Pz and at the mastoid, so
+the subtraction removes it. The 5 µV P300 is *not* the same at both, so it
+survives.
+
+After the amplifier comes the **analogue-to-digital converter**: a circuit that
+measures the voltage and writes it down as a whole number, over and over, many
+times a second. In a typical g.tec setup it does this 256 or 512 times a second
+— the **sampling rate** — with 24 **bits** of precision, meaning each
+measurement is recorded on a scale of about sixteen million steps, fine enough
+that a microvolt is still several steps. Its input range spans a few hundred
+millivolts, deliberately far wider than any EEG, so that the electrodes' own
+private voltages do not push the reading off the end of the scale. The numbers
+that finally reach pyspeller through Lab Streaming Layer have already been
+converted into **microvolts**.
 
 ## 8. Reference and ground: the question everyone asks
 
 They are different things and they are not interchangeable.
 
 **The reference is one of the two inputs of every channel.** It is a *signal*
-electrode, on the participant's head, that every channel is compared against.
-There is no "voltage at Pz" — only "Pz minus wherever the reference is". Choose
-a quiet, stable site: a mastoid, an earlobe, the nose tip, sometimes Cz.
+electrode, sitting on the participant's head, that every other electrode is
+compared against. There is no such thing as "the voltage at Pz" — only "Pz minus
+wherever the reference is". So you choose a site that is electrically quiet and
+mechanically stable: a mastoid (the bony bump behind the ear), an earlobe, the
+tip of the nose, sometimes Cz on the top of the head.
 
-**The ground is the amplifier's zero.** It gives the participant's body a
-defined potential relative to the amplifier's circuitry so the inputs stay
-inside their working range, and it carries the bias currents the input stage
-needs. It is not part of any channel's arithmetic. In modern amplifiers it is
-often **driven**: the measured common-mode is inverted and fed back into the
-body (the idea comes from ECG, where it is called the *driven right leg*), which
-actively pushes the common-mode toward zero and improves hum rejection well
-beyond what CMRR alone gives.
+**The ground is the amplifier's own zero.** It gives the participant's body a
+defined voltage relative to the amplifier's circuitry, so the inputs stay inside
+the range they can measure. It also gives somewhere to go to the tiny trickle of
+current that the amplifier's first transistors need in order to work at all —
+the **bias current**. The ground takes no part in any channel's arithmetic. In
+modern amplifiers it is often **driven**: the amplifier measures what the two
+inputs have in common, flips it upside down and feeds it back into the body
+through the ground electrode, actively pushing the shared hum towards zero.
+(The idea comes from ECG, where the electrode doing this sits on the leg and the
+technique is called the *driven right leg*.)
 
 | | Reference | Ground |
 | --- | --- | --- |
-| Purpose | the second input of every channel | sets the body's potential, provides bias return |
+| Purpose | the second input of every channel | sets the body's voltage, gives the bias current somewhere to go |
 | Appears in the data? | yes — subtracted from every channel | no |
 | Typical position | mastoid, earlobe, nose | AFz, forehead, neck, collarbone |
-| If it comes loose | every channel goes noisy at once | everything saturates or hums badly |
+| If it comes loose | every channel goes noisy at once | everything runs off the end of the scale, or hums badly |
 | Can you change it afterwards? | yes, arithmetically | no |
 
 <div class="stop">
 <span class="block-title">Ground is not "earth"</span>
-The ground electrode must never be connected to mains earth. Medical and
-research amplifiers isolate the participant from the mains — optically or by
-radio — precisely so that no current can flow through a person if something
-fails. That is also why you must not connect a participant to a non-isolated,
-mains-powered device.
+The ground electrode must never be connected to the earth pin of a mains
+socket. Medical and research amplifiers keep the participant electrically
+separated from the mains — by light or by radio, with no metal path — precisely
+so that no current can pass through a person if something fails elsewhere. It is
+also why you must never connect a participant to a mains-powered device that
+lacks that separation.
 </div>
 
 ### Changing the reference after the fact
 
-Because every channel shares one reference, you can compute any other reference
-offline with arithmetic alone:
+Because every channel was recorded against the same reference, that reference
+cancels out the moment you subtract one channel from another. So you can rebuild
+the recording around a different zero later, with arithmetic alone and no new
+measurement. In the lines below, `A(x)` means the true voltage at site `x`, and
+`V_x` is the number your file actually contains:
 
 ```
 recorded:      V_a = A(a) − A(ref)        V_b = A(b) − A(ref)
@@ -447,12 +536,17 @@ Laplacian:     V_a − mean(V of neighbours)
 <figcaption>Four ways of looking at the same recording. None is "correct" — each answers a different question.</figcaption>
 </figure>
 
-This speller uses the **common average reference**: `preproc.car` subtracts the
-mean across channels from each channel, before filtering. With eight or more
-reasonably spread electrodes, that removes reference drift, much of the mains
-hum and distant muscle activity, while leaving the centro-parietal P300 intact.
-A **Laplacian** would be a poor choice here: it is deliberately local, and it
-would subtract away a response that is broad by nature.
+This speller uses the **common average reference**, the third line: `preproc.car`
+subtracts the average across all channels from each channel before filtering. The
+reasoning is that anything appearing on every electrode at once is almost
+certainly not brain activity from one place — it is drift in the reference, mains
+hum, or muscle activity from far away — so subtracting the average of all of them
+removes most of it while leaving the P300, which is concentrated over the middle
+and back of the head. Eight or more reasonably spread electrodes are enough for
+this to work. A **Laplacian**, the fourth line, subtracts only the immediate
+neighbours and so keeps just what is different from its surroundings; it is a
+poor choice here, because it would subtract away a response that is broad by
+nature.
 
 <div class="do">
 <span class="block-title">Try it on your own recording</span>
@@ -464,24 +558,27 @@ Nothing about the brain changed — only what you subtracted.
 
 ## 9. What goes wrong, seen from the sensor side
 
-| On the scope | Usually means |
+| On the screen | Usually means |
 | --- | --- |
 | One channel much larger than its neighbours | that electrode has poor contact, or has come off |
-| A sudden step, then a slow return ("electrode pop") | the double layer was disturbed — the electrode moved, or an air bubble in the gel |
-| Slow wandering over seconds, worse late in the session | drying gel, or sweat changing the skin's own potential |
-| Everything humming at 50 or 60 Hz | reference or ground loose, mismatched impedances, or a power supply too near the cap |
+| A sudden step, then a slow return ("electrode pop") | the thin sandwich of charge at the metal was disturbed — the electrode moved, or there is an air bubble in the gel |
+| Slow wandering over seconds, worse late in the session | drying gel, or sweat changing the skin's own voltage |
+| Everything humming at 50 or 60 Hz | reference or ground loose, mismatched impedances, or a power supply sitting too near the cap |
 | Two channels suspiciously identical | gel bridging between them |
-| All channels dead flat | amplifier not acquiring, or the cap is unplugged |
+| All channels dead flat | the amplifier is not acquiring, or the cap is unplugged |
 | Fast, spiky activity over the temples | jaw and neck muscle, not brain |
 
 ## 10. What this means when you are capping up
 
-- Prepare the **reference and ground as carefully as any channel** — they are in
-  every number you record.
-- Use **one electrode material** throughout.
-- Aim for **low *and* matched** impedances, and write them down.
-- Gel enough to conduct, **not enough to bridge**.
-- With dry electrodes, expect higher impedances and give the participant a
+- Prepare the **reference and ground as carefully as any channel** — the
+  reference is inside every number you record, and without the ground there are
+  no numbers at all.
+- Use **one electrode material** throughout, reference and ground included.
+- Aim for impedances that are **low *and* similar to each other**, and write
+  them down.
+- Use enough gel to conduct, **not so much that it bridges** to the next
+  electrode.
+- With dry electrodes, expect much higher impedances and give the participant a
   minute to settle before recording.
 - Re-check impedances after 30–40 minutes; gel dries.
 
