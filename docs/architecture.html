@@ -16,21 +16,22 @@
   <div class="nav-group"><div class="nav-title">Orientation</div><nav>
   <a href="index.html">Start here</a>
   <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
-  <a href="architecture.html" class="current"><span class="num">2</span>The client–server design</a>
+  <a href="sensors.html"><span class="num">2</span>Sensors, materials & amplifiers</a>
+  <a href="architecture.html" class="current"><span class="num">3</span>The client–server design</a>
   </nav></div>
   <div class="nav-group"><div class="nav-title">Getting running</div><nav>
-  <a href="install.html"><span class="num">3</span>Set up your computer</a>
-  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  <a href="install.html"><span class="num">4</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">5</span>Your first experiment</a>
   </nav></div>
   <div class="nav-group"><div class="nav-title">With hardware</div><nav>
-  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
-  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  <a href="gtec.html"><span class="num">6</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">7</span>Running a real session</a>
   </nav></div>
   <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
-  <a href="results.html"><span class="num">7</span>Reading the results</a>
-  <a href="code.html"><span class="num">8</span>Under the hood</a>
-  <a href="exercises.html"><span class="num">9</span>Exercises</a>
-  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  <a href="results.html"><span class="num">8</span>Reading the results</a>
+  <a href="code.html"><span class="num">9</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">10</span>Exercises</a>
+  <a href="reference.html"><span class="num">11</span>Troubleshooting & glossary</a>
   </nav></div>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
@@ -40,7 +41,7 @@
   </div>
 </aside>
 <main>
-  <div class="page-kicker">02 · Orientation</div>
+  <div class="page-kicker">03 · Orientation</div>
   <h1>The client–server design</h1>
   <p class="lede">One buffer in the middle, several small programs around it. This is how real BCI systems are built, and why.</p>
   <p>A BCI has to do several things at once: read an amplifier without ever missing a
@@ -258,7 +259,7 @@ keep going; restart the analysis client and it picks up from the next event.
 than wall-clock times. (3) in the analysis client, `pyspeller/speller/sigproc.py`,
 which is the only place that turns epochs into decisions.
 </div>
-  <div class="pager"><a href="paradigm.html"><span class="dir">previous</span>How a P300 speller works</a>
+  <div class="pager"><a href="sensors.html"><span class="dir">previous</span>Sensors, materials & amplifiers</a>
 <a class="next" href="install.html"><span class="dir">next</span>Set up your computer</a></div>
   <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
   a pure-python BCI framework built on the ideas of

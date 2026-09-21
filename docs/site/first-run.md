@@ -1,7 +1,7 @@
 ---
 title: Your first experiment
 description: A whole session against the simulated participant — calibrate, train, spell — and what every screen is telling you.
-kicker: 04 · Getting running
+kicker: 05 · Getting running
 ---
 
 Start it:

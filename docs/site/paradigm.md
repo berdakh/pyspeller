@@ -30,6 +30,15 @@ Practical consequences of the size of that number:
 <figcaption>The ten channels that matter for a speller. If your amplifier has 16 or 32, use them all — but make sure these are among them.</figcaption>
 </figure>
 
+<div class="note">
+<span class="block-title">How does metal on a scalp pick up any of this?</span>
+Through an electrochemical reaction at the electrode, and a differential
+amplifier that subtracts one place on the head from another.
+<a href="sensors.html">Sensors, materials and amplifiers</a> is the whole story:
+what silver–silver chloride, gold and platinum each do, why gel exists, and the
+difference between the reference and the ground.
+</div>
+
 ## Evoked responses: finding a signal in the noise
 
 An **event-related potential** (ERP) is the brain's stereotyped response to an

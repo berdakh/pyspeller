@@ -44,15 +44,16 @@ hours get you running.
 
 <div class="cards">
 <a class="card" href="paradigm.html"><span class="card-num">01 · 25 min</span><h3>How a P300 speller works</h3><p>EEG, evoked responses, and why flashing letters lets a computer read your intention.</p></a>
-<a class="card" href="architecture.html"><span class="card-num">02 · 20 min</span><h3>The client–server design</h3><p>One buffer, several small programs. Why this is how real BCI systems are built.</p></a>
-<a class="card" href="install.html"><span class="card-num">03 · 15 min</span><h3>Set up your computer</h3><p>Python, the packages, the tests. Windows, macOS and Linux.</p></a>
-<a class="card" href="first-run.html"><span class="card-num">04 · 30 min</span><h3>Your first experiment</h3><p>Run a whole session against the simulator and read what comes out.</p></a>
-<a class="card" href="gtec.html"><span class="card-num">05 · 45 min</span><h3>The g.tec amplifier</h3><p>Drivers, g.NEEDaccess, Lab Streaming Layer, and getting real EEG into the buffer.</p></a>
-<a class="card" href="session.html"><span class="card-num">06 · 45 min</span><h3>Running a real session</h3><p>Consent, the cap, impedances, what to say, and what to do when it goes wrong.</p></a>
-<a class="card" href="results.html"><span class="card-num">07 · 25 min</span><h3>Reading the results</h3><p>AUC, the confusion matrix, the ERP plots, and the files on disk.</p></a>
-<a class="card" href="code.html"><span class="card-num">08 · 30 min</span><h3>Under the hood</h3><p>Every module in a page, and how to change the parts you care about.</p></a>
-<a class="card" href="exercises.html"><span class="card-num">09</span><h3>Exercises</h3><p>Seven pieces of work that prove you can actually run and reason about this.</p></a>
-<a class="card" href="reference.html"><span class="card-num">10</span><h3>Troubleshooting &amp; glossary</h3><p>Every error message we know about, and every term defined.</p></a>
+<a class="card" href="sensors.html"><span class="card-num">02 · 30 min</span><h3>Sensors, materials &amp; amplifiers</h3><p>How metal on a scalp picks up brain activity, what gold and silver–silver chloride are for, and why every channel is a subtraction.</p></a>
+<a class="card" href="architecture.html"><span class="card-num">03 · 20 min</span><h3>The client–server design</h3><p>One buffer, several small programs. Why this is how real BCI systems are built.</p></a>
+<a class="card" href="install.html"><span class="card-num">04 · 15 min</span><h3>Set up your computer</h3><p>Python, the packages, the tests. Windows, macOS and Linux.</p></a>
+<a class="card" href="first-run.html"><span class="card-num">05 · 30 min</span><h3>Your first experiment</h3><p>Run a whole session against the simulator and read what comes out.</p></a>
+<a class="card" href="gtec.html"><span class="card-num">06 · 45 min</span><h3>The g.tec amplifier</h3><p>Drivers, g.NEEDaccess, Lab Streaming Layer, and getting real EEG into the buffer.</p></a>
+<a class="card" href="session.html"><span class="card-num">07 · 45 min</span><h3>Running a real session</h3><p>Consent, the cap, impedances, what to say, and what to do when it goes wrong.</p></a>
+<a class="card" href="results.html"><span class="card-num">08 · 25 min</span><h3>Reading the results</h3><p>AUC, the confusion matrix, the ERP plots, and the files on disk.</p></a>
+<a class="card" href="code.html"><span class="card-num">09 · 30 min</span><h3>Under the hood</h3><p>Every module in a page, and how to change the parts you care about.</p></a>
+<a class="card" href="exercises.html"><span class="card-num">10</span><h3>Exercises</h3><p>Seven pieces of work that prove you can actually run and reason about this.</p></a>
+<a class="card" href="reference.html"><span class="card-num">11</span><h3>Troubleshooting &amp; glossary</h3><p>Every error message we know about, and every term defined.</p></a>
 </div>
 
 ## What you need

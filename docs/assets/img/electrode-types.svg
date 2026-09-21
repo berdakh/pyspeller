@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="960" height="540" rx="12" fill="#f6f8fa"/>
+  <style>
+    .card{fill:#fff;stroke:#c9d3de}
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:11.5px}
+    .metal{fill:#b9c3cf;stroke:#8a99ab}
+    .gold{fill:#e8c66a;stroke:#b8952f}
+    .gel{fill:#cfe4f7;stroke:#8fbde8}
+    .skin{fill:#f6e7db;stroke:#d9c7b8}
+  </style>
+  <text x="30" y="34" class="t" font-size="16">the sensors you will meet</text>
+
+  <!-- 1 wet cup -->
+  <g transform="translate(30,56)">
+    <rect width="290" height="210" rx="10" class="card"/>
+    <text x="16" y="28" class="t">wet cup / ring, Ag/AgCl</text>
+    <rect x="20" y="150" width="250" height="26" class="skin"/>
+    <path d="M90 100 h110 v30 h-110 z" class="metal"/>
+    <path d="M96 130 q54 30 98 0 l0 20 q-50 22 -98 0 z" class="gel"/>
+    <path d="M145 100 v-24" stroke="#64748b" stroke-width="4"/>
+    <text x="16" y="186" class="s">sintered Ag/AgCl, gel, 1–10 kΩ after abrasion.</text>
+    <text x="16" y="202" class="s">The reference standard: least drift, least noise.</text>
+  </g>
+
+  <!-- 2 gold cup -->
+  <g transform="translate(340,56)">
+    <rect width="290" height="210" rx="10" class="card"/>
+    <text x="16" y="28" class="t">gold-plated cup</text>
+    <rect x="20" y="150" width="250" height="26" class="skin"/>
+    <path d="M90 100 h110 v30 h-110 z" class="gold"/>
+    <path d="M96 130 q54 30 98 0 l0 20 q-50 22 -98 0 z" class="gel"/>
+    <path d="M145 100 v-24" stroke="#64748b" stroke-width="4"/>
+    <text x="16" y="186" class="s">Gold over silver or copper. Hard-wearing and easy</text>
+    <text x="16" y="202" class="s">to clean, but drifts more below ~1 Hz.</text>
+  </g>
+
+  <!-- 3 active electrode -->
+  <g transform="translate(650,56)">
+    <rect width="280" height="210" rx="10" class="card"/>
+    <text x="16" y="28" class="t">active electrode</text>
+    <rect x="20" y="150" width="240" height="26" class="skin"/>
+    <path d="M85 104 h110 v26 h-110 z" class="metal"/>
+    <path d="M91 130 q54 28 98 0 l0 20 q-50 22 -98 0 z" class="gel"/>
+    <rect x="105" y="66" width="70" height="34" rx="6" fill="#e8f0fe" stroke="#1f6feb"/>
+    <text x="140" y="88" text-anchor="middle" class="s" fill="#1f6feb">pre-amp</text>
+    <path d="M140 66 v-18" stroke="#64748b" stroke-width="4"/>
+    <text x="16" y="186" class="s">An amplifier on the electrode itself: tolerates high</text>
+    <text x="16" y="202" class="s">impedance and cable movement. g.tec's g.LADYbird.</text>
+  </g>
+
+  <!-- 4 dry pin -->
+  <g transform="translate(30,286)">
+    <rect width="290" height="210" rx="10" class="card"/>
+    <text x="16" y="28" class="t">dry pins (through hair)</text>
+    <rect x="20" y="150" width="250" height="26" class="skin"/>
+    <g class="gold">
+      <rect x="100" y="120" width="8" height="32" rx="3"/>
+      <rect x="120" y="120" width="8" height="32" rx="3"/>
+      <rect x="140" y="120" width="8" height="32" rx="3"/>
+      <rect x="160" y="120" width="8" height="32" rx="3"/>
+      <rect x="180" y="120" width="8" height="32" rx="3"/>
+    </g>
+    <rect x="94" y="100" width="100" height="22" rx="5" class="metal"/>
+    <path d="M144 100 v-22" stroke="#64748b" stroke-width="4"/>
+    <text x="16" y="186" class="s">Gold-plated fingers press through the hair. No gel,</text>
+    <text x="16" y="202" class="s">50 kΩ–1 MΩ, noisier and drifts. g.tec's g.SAHARA.</text>
+  </g>
+
+  <!-- 5 capacitive -->
+  <g transform="translate(340,286)">
+    <rect width="290" height="210" rx="10" class="card"/>
+    <text x="16" y="28" class="t">capacitive / contactless</text>
+    <rect x="20" y="150" width="250" height="26" class="skin"/>
+    <rect x="95" y="100" width="100" height="24" rx="4" class="metal"/>
+    <rect x="95" y="132" width="100" height="10" rx="3" fill="#eceff3" stroke="#c9d3de" stroke-dasharray="4 3"/>
+    <text x="205" y="142" class="s">insulator</text>
+    <path d="M145 100 v-22" stroke="#64748b" stroke-width="4"/>
+    <text x="16" y="186" class="s">No metal–skin contact at all; the skin and plate form</text>
+    <text x="16" y="202" class="s">a capacitor. Needs very high input impedance.</text>
+  </g>
+
+  <!-- 6 subdermal -->
+  <g transform="translate(650,286)">
+    <rect width="280" height="210" rx="10" class="card"/>
+    <text x="16" y="28" class="t">subdermal needle</text>
+    <rect x="20" y="150" width="240" height="26" class="skin"/>
+    <path d="M120 96 L 168 158" stroke="#8a99ab" stroke-width="5"/>
+    <path d="M120 96 v-18" stroke="#64748b" stroke-width="4"/>
+    <text x="16" y="186" class="s">Clinical and intensive-care use only, by trained staff.</text>
+    <text x="16" y="202" class="s">You will not use these in a student BCI lab.</text>
+  </g>
+</svg>

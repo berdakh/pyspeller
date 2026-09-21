@@ -19,6 +19,7 @@ SOURCE = os.path.join(HERE, 'site')
 PAGES = [
     ('index', 'Start here', 'Orientation'),
     ('paradigm', 'How a P300 speller works', 'Orientation'),
+    ('sensors', 'Sensors, materials & amplifiers', 'Orientation'),
     ('architecture', 'The client–server design', 'Orientation'),
     ('install', 'Set up your computer', 'Getting running'),
     ('first-run', 'Your first experiment', 'Getting running'),

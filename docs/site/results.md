@@ -1,7 +1,7 @@
 ---
 title: Reading the results
 description: What the training window is telling you, what the numbers mean, and how to get at the data afterwards.
-kicker: 07 · Going deeper
+kicker: 08 · Going deeper
 ---
 
 ## The training window

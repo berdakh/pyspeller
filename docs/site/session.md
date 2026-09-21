@@ -1,7 +1,7 @@
 ---
 title: Running a real session
 description: Consent, the cap, the impedances, the words you say, and what to do when it goes wrong — with a participant in the chair.
-kicker: 06 · With hardware
+kicker: 07 · With hardware
 ---
 
 This page assumes the amplifier is streaming ([the previous page](gtec.html))
@@ -46,7 +46,9 @@ abrade the skin gently, and fill with conductive gel until the impedance drops.
 Do not dig — a good contact comes from contact, not pressure.</li>
 <li><strong>Use the right channels.</strong> Fz, Cz, Pz, Oz, P3, P4, PO7, PO8 at
 minimum, reference on an earlobe or mastoid, ground at AFz or FPz. More channels
-are welcome.</li>
+are welcome. Prepare the reference and the ground as carefully as any channel —
+<a href="sensors.html#7-reference-and-ground-the-question-everyone-asks">they are
+in every number you record</a>.</li>
 <li><strong>Check impedances in the g.tec software.</strong> Below 5 kΩ with gel
 electrodes; dry electrodes read far higher, so use whatever threshold your lab
 uses for that headset. Fix anything that stays high before you record.</li>

@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting & glossary
 description: Every error message we know about, every term defined, and where to read further.
-kicker: 10 · Going deeper
+kicker: 11 · Going deeper
 ---
 
 ## Troubleshooting

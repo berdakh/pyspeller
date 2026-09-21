@@ -1,7 +1,7 @@
 ---
 title: The client–server design
 description: One buffer in the middle, several small programs around it. This is how real BCI systems are built, and why.
-kicker: 02 · Orientation
+kicker: 03 · Orientation
 ---
 
 A BCI has to do several things at once: read an amplifier without ever missing a

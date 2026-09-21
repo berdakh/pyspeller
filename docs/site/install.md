@@ -1,7 +1,7 @@
 ---
 title: Set up your computer
 description: Python, three packages, one clone, one test run. Fifteen minutes on any operating system.
-kicker: 03 · Getting running
+kicker: 04 · Getting running
 ---
 
 ## 1. Python

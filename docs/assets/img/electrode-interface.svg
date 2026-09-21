@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="960" height="520" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:12.5px}
+    .tiny{fill:#64748b;font-size:10.5px}
+    .ion{font-size:12px;font-weight:700}
+    .eq{font-size:14px;fill:#16202c;font-family:ui-monospace,Menlo,Consolas,monospace}
+  </style>
+  <defs>
+    <marker id="e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f6feb"/></marker>
+  </defs>
+  <text x="30" y="34" class="t" font-size="16">what actually happens under an electrode</text>
+
+  <g transform="translate(30,60)">
+    <rect x="0" y="0" width="520" height="400" rx="10" fill="#fff" stroke="#c9d3de"/>
+
+    <!-- skin and brain stack, left half -->
+    <rect x="20" y="118" width="250" height="20" fill="#efe3d9" stroke="#d9c7b8"/>
+    <rect x="20" y="138" width="250" height="40" fill="#f6e7db" stroke="#d9c7b8"/>
+    <rect x="20" y="178" width="250" height="52" fill="#f3d9d3" stroke="#e0bcb4"/>
+    <rect x="20" y="230" width="250" height="40" fill="#e7e7ea" stroke="#cdced4"/>
+    <rect x="20" y="270" width="250" height="28" fill="#e2eef0" stroke="#c3d8dc"/>
+    <path d="M20 298 q62 22 125 0 q63 -22 125 0 l0 62 l-250 0 z" fill="#f0e2ef" stroke="#d8bdd6"/>
+
+    <!-- labels, right half -->
+    <g class="tiny">
+      <text x="284" y="132">stratum corneum — dead, dry skin,</text>
+      <text x="284" y="146">where nearly all the resistance is</text>
+      <text x="284" y="166">epidermis</text>
+      <text x="284" y="206">dermis — sweat glands, blood supply</text>
+      <text x="284" y="254">skull — smears the signal over centimetres</text>
+      <text x="284" y="288">cerebrospinal fluid</text>
+      <text x="284" y="330">cortex: thousands of pyramidal cells,</text>
+      <text x="284" y="344">their dendrites lined up so the tiny</text>
+      <text x="284" y="358">currents add instead of cancelling</text>
+    </g>
+    <path d="M272 126 L 280 126 M272 160 L 280 160 M272 200 L 280 200 M272 250 L 280 250 M272 284 L 280 284 M272 330 L 280 330" stroke="#c9d3de"/>
+
+    <!-- electrode and gel -->
+    <path d="M145 34 C 145 14, 220 18, 268 14" stroke="#64748b" stroke-width="4" fill="none"/>
+    <text x="278" y="18" class="tiny">to the amplifier</text>
+    <rect x="85" y="34" width="120" height="30" rx="7" fill="#b9c3cf" stroke="#8a99ab"/>
+    <text x="145" y="54" text-anchor="middle" class="t" font-size="12">Ag/AgCl electrode</text>
+    <path d="M70 64 q75 34 150 0 l0 26 q-75 30 -150 0 z" fill="#cfe4f7" stroke="#8fbde8"/>
+    <text x="145" y="86" text-anchor="middle" class="tiny" fill="#245a8d">gel: an electrolyte full of Cl⁻</text>
+
+    <!-- current path, to the left of the labels -->
+    <path d="M60 330 L 60 100" stroke="#1f6feb" stroke-width="2.5" fill="none" marker-end="url(#e)"/>
+    <text x="24" y="376" class="s" fill="#1f6feb" font-size="11.5">ionic current: Na⁺, K⁺, Cl⁻</text>
+    <path d="M205 50 L 250 46" stroke="#1f6feb" stroke-width="2.5" fill="none" marker-end="url(#e)"/>
+    <text x="256" y="44" class="s" fill="#1f6feb" font-size="11.5">electrons</text>
+  </g>
+
+  <!-- magnified interface -->
+  <g transform="translate(580,60)">
+    <rect x="0" y="0" width="350" height="400" rx="10" fill="#fff" stroke="#c9d3de"/>
+    <text x="20" y="28" class="t">the interface, magnified</text>
+    <rect x="20" y="44" width="310" height="60" fill="#b9c3cf" stroke="#8a99ab"/>
+    <text x="175" y="96" text-anchor="middle" class="tiny">silver, coated or sintered with AgCl</text>
+    <g class="ion" fill="#16202c">
+      <text x="46" y="70">e⁻</text><text x="130" y="70">e⁻</text><text x="214" y="70">e⁻</text><text x="296" y="70">e⁻</text>
+    </g>
+    <rect x="20" y="104" width="310" height="26" fill="#e8f0fe" stroke="#8fbde8" stroke-dasharray="4 3"/>
+    <text x="175" y="121" text-anchor="middle" class="tiny" fill="#245a8d">electrical double layer — a few nanometres thick</text>
+    <rect x="20" y="130" width="310" height="120" fill="#cfe4f7" stroke="#8fbde8"/>
+    <g class="ion" fill="#245a8d">
+      <text x="42" y="162">Cl⁻</text><text x="118" y="182">Na⁺</text><text x="206" y="158">Cl⁻</text>
+      <text x="272" y="186">K⁺</text><text x="60" y="222">Cl⁻</text><text x="150" y="236">Na⁺</text>
+      <text x="250" y="230">Cl⁻</text><text x="300" y="164">Na⁺</text>
+    </g>
+    <path d="M175 210 L 175 136" stroke="#1f6feb" stroke-width="2.5" fill="none" marker-end="url(#e)"/>
+    <rect x="20" y="266" width="310" height="52" rx="8" fill="#f6f8fa" stroke="#c9d3de"/>
+    <text x="175" y="290" text-anchor="middle" class="eq">Ag + Cl⁻  ⇌  AgCl + e⁻</text>
+    <text x="175" y="308" text-anchor="middle" class="tiny">reversible: charge crosses in either direction</text>
+    <text x="20" y="346" class="s">This reaction is the translator. Ions carry the</text>
+    <text x="20" y="364" class="s">current in the body, electrons carry it in the</text>
+    <text x="20" y="382" class="s">wire, and the electrode converts one to the other.</text>
+  </g>
+</svg>

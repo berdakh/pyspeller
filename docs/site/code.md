@@ -1,7 +1,7 @@
 ---
 title: Under the hood
 description: Every module in a paragraph, the pipeline in code, and the five changes you are most likely to want to make.
-kicker: 08 · Going deeper
+kicker: 09 · Going deeper
 ---
 
 The whole framework is about 3 000 lines of python with one dependency. You can

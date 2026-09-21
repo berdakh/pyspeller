@@ -1,7 +1,7 @@
 ---
 title: Exercises
 description: Seven pieces of work that take you from "it runs" to "I can run an experiment and defend the result".
-kicker: 09 · Going deeper
+kicker: 10 · Going deeper
 ---
 
 Do them in order. The first four need no hardware. Each says what to hand in;

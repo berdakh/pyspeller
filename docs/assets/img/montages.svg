@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="960" height="400" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:13.5px;font-weight:600}
+    .s{fill:#64748b;font-size:11.5px}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;fill:#1f6feb}
+    .head{fill:#fff;stroke:#94a3b8;stroke-width:1.6}
+    .e{fill:#dbe3ec;stroke:#94a3b8}
+    .hot{fill:#1f6feb}
+    .ref{fill:#b45309}
+    .card{fill:#fff;stroke:#c9d3de}
+  </style>
+  <text x="30" y="32" class="t" font-size="16">the same data, four references</text>
+
+  <g transform="translate(30,54)">
+    <rect width="216" height="300" rx="10" class="card"/>
+    <text x="16" y="26" class="t">mastoid / earlobe</text>
+    <g transform="translate(108,130)">
+      <circle r="66" class="head"/>
+      <circle cx="0" cy="-30" r="9" class="e"/><circle cx="0" cy="10" r="9" class="hot"/><circle cx="-34" cy="10" r="9" class="e"/><circle cx="34" cy="10" r="9" class="e"/>
+      <circle cx="-64" cy="34" r="8" class="ref"/>
+      <path d="M0 10 L -60 32" stroke="#1f6feb" stroke-width="1.6"/>
+    </g>
+    <text x="16" y="232" class="mono">V = A(ch) − A(mastoid)</text>
+    <text x="16" y="256" class="s">Simple, close to clinical practice,</text>
+    <text x="16" y="272" class="s">but the mastoid is not silent and</text>
+    <text x="16" y="288" class="s">one side biases the topography.</text>
+  </g>
+
+  <g transform="translate(276,54)">
+    <rect width="216" height="300" rx="10" class="card"/>
+    <text x="16" y="26" class="t">linked mastoids</text>
+    <g transform="translate(108,130)">
+      <circle r="66" class="head"/>
+      <circle cx="0" cy="-30" r="9" class="e"/><circle cx="0" cy="10" r="9" class="hot"/><circle cx="-34" cy="10" r="9" class="e"/><circle cx="34" cy="10" r="9" class="e"/>
+      <circle cx="-64" cy="34" r="8" class="ref"/><circle cx="64" cy="34" r="8" class="ref"/>
+      <path d="M-60 36 q60 26 120 0" stroke="#b45309" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+    </g>
+    <text x="16" y="232" class="mono">V = A(ch) − ½(L+R)</text>
+    <text x="16" y="256" class="s">Symmetric, so left and right are</text>
+    <text x="16" y="272" class="s">treated alike. Computed offline</text>
+    <text x="16" y="288" class="s">rather than wired together.</text>
+  </g>
+
+  <g transform="translate(522,54)">
+    <rect width="216" height="300" rx="10" class="card"/>
+    <text x="16" y="26" class="t">common average (CAR)</text>
+    <g transform="translate(108,130)">
+      <circle r="66" class="head"/>
+      <circle cx="0" cy="-30" r="9" class="hot"/><circle cx="0" cy="10" r="9" class="hot"/><circle cx="-34" cy="10" r="9" class="hot"/><circle cx="34" cy="10" r="9" class="hot"/>
+      <circle cx="0" cy="46" r="9" class="hot"/><circle cx="-30" cy="-16" r="9" class="hot"/><circle cx="30" cy="-16" r="9" class="hot"/>
+    </g>
+    <text x="16" y="232" class="mono">V = A(ch) − mean(all)</text>
+    <text x="16" y="256" class="s">What this speller uses. Removes</text>
+    <text x="16" y="272" class="s">whatever every channel shares —</text>
+    <text x="16" y="288" class="s">needs enough, well spread, channels.</text>
+  </g>
+
+  <g transform="translate(768,54)">
+    <rect width="162" height="300" rx="10" class="card"/>
+    <text x="16" y="26" class="t">Laplacian</text>
+    <g transform="translate(81,130)">
+      <circle r="60" class="head"/>
+      <circle cx="0" cy="0" r="9" class="hot"/>
+      <circle cx="-30" cy="0" r="8" class="e"/><circle cx="30" cy="0" r="8" class="e"/>
+      <circle cx="0" cy="-30" r="8" class="e"/><circle cx="0" cy="30" r="8" class="e"/>
+      <path d="M0 0 L -26 0 M0 0 L 26 0 M0 0 L 0 -26 M0 0 L 0 26" stroke="#1f6feb" stroke-width="1.4"/>
+    </g>
+    <text x="16" y="232" class="mono" font-size="10">V = A(ch) − mean(neighbours)</text>
+    <text x="16" y="256" class="s">Very local, kills shared noise,</text>
+    <text x="16" y="272" class="s">but also kills a broad response</text>
+    <text x="16" y="288" class="s">like the P300. Use with care.</text>
+  </g>
+</svg>

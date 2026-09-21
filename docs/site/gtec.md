@@ -1,7 +1,7 @@
 ---
 title: The g.tec amplifier
 description: Drivers, g.NEEDaccess, Lab Streaming Layer, and how to prove real EEG is reaching the speller — before a participant is waiting.
-kicker: 05 · With hardware
+kicker: 06 · With hardware
 ---
 
 <div class="note">
@@ -27,6 +27,10 @@ your lab already has a working LSL stream by another route, skip to
 | **g.HIamp** | up to 256 channels | same software family, more channels |
 | **g.Nautilus** | wireless, 8–64 channels, gel or dry (g.SAHARA) | a base station on USB, the headset on the participant |
 | **Unicorn Hybrid Black** | 8 channels, low cost | has its own software with LSL support |
+
+What the electrodes themselves are — gel Ag/AgCl, active, or dry gold-plated
+pins — and what that means for your recording is covered in
+[Sensors, materials and amplifiers](sensors.html).
 
 In the box you should have: the amplifier, its power supply or battery, the USB
 cable or wireless dongle, the cap and electrodes, and the software media or

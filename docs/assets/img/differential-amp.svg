@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="960" height="560" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:12px}
+    .tiny{fill:#64748b;font-size:11px}
+    .wire{stroke:#64748b;stroke-width:2.5;fill:none}
+    .sig{fill:none;stroke-width:2}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;fill:#16202c}
+  </style>
+  <text x="30" y="34" class="t" font-size="16">why every EEG channel is a subtraction</text>
+
+  <!-- head -->
+  <g transform="translate(34,64)">
+    <ellipse cx="96" cy="112" rx="88" ry="96" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+    <path d="M96 16 l-13 17 l26 0 z" fill="#fff" stroke="#94a3b8" stroke-width="2"/>
+    <circle cx="96" cy="56" r="13" fill="#1f6feb"/><text x="96" y="60" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">Pz</text>
+    <circle cx="20" cy="150" r="12" fill="#b45309"/><text x="20" y="154" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">REF</text>
+    <circle cx="96" cy="204" r="12" fill="#1b7f4b"/><text x="96" y="208" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">GND</text>
+    <text x="0" y="238" class="tiny">reference on the mastoid · ground at the neck or forehead</text>
+  </g>
+
+  <!-- signals -->
+  <g transform="translate(240,96)">
+    <text x="0" y="-8" class="tiny">what each electrode sees</text>
+    <path d="M0 34 q10 -16 20 0 t20 0 t20 0 t20 0 t20 0 t20 0" class="sig" stroke="#c6ccd3"/>
+    <path d="M0 34 q10 -16 20 0 t20 0 q13 -28 25 2 t20 0 t20 0 t20 0" class="sig" stroke="#1f6feb"/>
+    <text x="0" y="12" class="tiny" fill="#1f6feb">brain + hum</text>
+    <path d="M0 116 q10 -16 20 0 t20 0 t20 0 t20 0 t20 0 t20 0" class="sig" stroke="#b45309"/>
+    <text x="0" y="96" class="tiny" fill="#b45309">mostly just hum</text>
+  </g>
+
+  <path d="M144 120 L 236 124" class="wire"/>
+  <path d="M56 214 C 140 240, 190 220, 236 206" class="wire"/>
+  <path d="M368 124 L 420 124 M 368 206 L 420 206" class="wire"/>
+
+  <!-- amplifier -->
+  <g transform="translate(420,86)">
+    <path d="M0 0 L 0 160 L 116 80 z" fill="#e8f0fe" stroke="#1f6feb" stroke-width="2"/>
+    <text x="14" y="46" font-size="18" fill="#1f6feb" font-weight="700">+</text>
+    <text x="14" y="130" font-size="18" fill="#1f6feb" font-weight="700">−</text>
+    <text x="34" y="88" font-size="17" fill="#1f6feb" font-weight="700">Δ</text>
+    <text x="130" y="198" class="s">differential amplifier</text>
+    <text x="130" y="216" class="tiny">gain ×10 000 · CMRR &gt; 100 dB</text>
+  </g>
+
+  <!-- ground: its own box, out of everyone's way -->
+  <path d="M130 282 L 150 318" class="wire" stroke-dasharray="5 4"/>
+  <rect x="150" y="318" width="250" height="58" rx="8" fill="#e6f4ec" stroke="#1b7f4b"/>
+  <text x="164" y="340" class="tiny" fill="#1b7f4b" font-weight="700">ground — not part of any channel</text>
+  <text x="164" y="356" class="tiny">sets the body's potential, carries the bias</text>
+  <text x="164" y="370" class="tiny">current, and in modern amplifiers is driven</text>
+  <path d="M400 340 C 430 330, 440 300, 448 258" class="wire" stroke-dasharray="5 4"/>
+
+  <!-- recorded -->
+  <g transform="translate(620,96)">
+    <rect x="0" y="0" width="310" height="126" rx="10" fill="#fff" stroke="#c9d3de"/>
+    <text x="16" y="26" class="t">what is recorded</text>
+    <path d="M16 84 q10 -4 20 0 t20 0 q13 -38 25 2 t20 0 t20 0 t20 0" class="sig" stroke="#1b7f4b"/>
+    <text x="186" y="66" class="tiny" fill="#1b7f4b">the hum is gone;</text>
+    <text x="186" y="82" class="tiny" fill="#1b7f4b">the brain response</text>
+    <text x="186" y="98" class="tiny" fill="#1b7f4b">survives</text>
+  </g>
+  <text x="620" y="252" class="mono">V(Pz) = A(Pz) − A(REF)</text>
+
+  <!-- explanation -->
+  <g transform="translate(40,428)">
+    <text x="0" y="0" class="s">Noise that reaches both electrodes equally — mains hum, a distant muscle, the
+    participant's own body</text>
+    <text x="0" y="22" class="s">potential — is <tspan font-weight="700">common to both inputs and
+    cancels</tspan>. Anything local to Pz does not, and that is your signal.</text>
+    <text x="0" y="56" class="s">There is no such thing as "the voltage at Pz". Every number in an EEG file is a
+    difference between two</text>
+    <text x="0" y="78" class="s">places on a head, and the reference is part of the measurement.</text>
+  </g>
+</svg>

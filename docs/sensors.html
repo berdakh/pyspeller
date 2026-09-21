@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sensors, materials and amplifiers · pyspeller</title>
+<meta name="description" content="How a piece of metal on your scalp turns brain activity into a number — the electrochemistry, the materials, and why every channel is a subtraction.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="sensors.html" class="current"><span class="num">2</span>Sensors, materials & amplifiers</a>
+  <a href="architecture.html"><span class="num">3</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">4</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">5</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">6</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">7</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">8</span>Reading the results</a>
+  <a href="code.html"><span class="num">9</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">10</span>Exercises</a>
+  <a href="reference.html"><span class="num">11</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">02 · Orientation</div>
+  <h1>Sensors, materials and amplifiers</h1>
+  <p class="lede">How a piece of metal on your scalp turns brain activity into a number — the electrochemistry, the materials, and why every channel is a subtraction.</p>
+  <p>A student asked the question this page exists to answer: <em>how does the
+electricity actually get from the brain into the computer?</em> The answer runs
+through electrochemistry, metallurgy and amplifier design, and knowing it is
+what separates someone who can run a session from someone who can fix one.</p>
+<h2 id="1-from-neurons-to-a-puddle-of-gel">1. From neurons to a puddle of gel</h2>
+<p>A single neuron produces far too little current to measure from outside the
+head. What EEG sees is the summed <strong>post-synaptic potentials</strong> of tens of
+thousands of pyramidal cells in the cortex — cells that are lined up
+perpendicular to the cortical surface, so their tiny currents add rather than
+cancel. Each patch acts like a small current source and sink: an <strong>electric
+dipole</strong>.</p>
+<p>Current from those dipoles spreads through everything between the cortex and
+the electrode — cerebrospinal fluid, skull, scalp. This is <strong>volume
+conduction</strong>, and two facts about it shape everything else:</p>
+<ul>
+<li><strong>The skull is a poor conductor</strong>, so the pattern is smeared over
+  centimetres. Scalp EEG cannot see a single gyrus; it sees a region.</li>
+<li><strong>What arrives is tiny</strong>: 10–100 µV of ongoing EEG, and the P300 you are
+  hunting is about 5 µV. Mains hum in an unshielded room can be far larger, and
+  a blink is 10–20 times larger.</li>
+</ul>
+<p>In the tissue and in the gel, the current is carried by <strong>ions</strong> — Na⁺, K⁺,
+Cl⁻ moving. In the wire to the amplifier it is carried by <strong>electrons</strong>. The
+electrode is the place where one becomes the other.</p>
+<h2 id="2-the-electrode-is-a-chemical-reaction">2. The electrode is a chemical reaction</h2>
+<figure>
+<img src="assets/img/electrode-interface.svg" alt="Cross-section of an electrode on the scalp with a magnified view of the electrical double layer and the silver–silver chloride reaction">
+<figcaption>Left: what the electrode sits on. Right: the interface where ionic current becomes electronic current.</figcaption>
+</figure>
+
+<p>Put a metal in an electrolyte and charge immediately rearranges at the
+boundary: metal ions dissolve or deposit until an equilibrium is reached. The
+result is an <strong>electrical double layer</strong> — a nanometre-thin sandwich of charge
+— and a voltage across it, the <strong>half-cell potential</strong>. Every metal–electrolyte
+pair has its own: silver–silver chloride sits at about <strong>+0.22 V</strong> relative to
+the standard hydrogen electrode.</p>
+<p>That is <em>a thousand times larger</em> than the EEG. It does not swamp the recording
+for one reason: each channel is the <strong>difference</strong> between two electrodes, and
+if both are the same material in the same electrolyte, their half-cell
+potentials nearly cancel. "Nearly" is what you spend your session fighting —
+the residue is the slow drift you see when an electrode dries out.</p>
+<h3 id="polarizable-and-non-polarizable">Polarizable and non-polarizable</h3>
+<p>This is the single most useful idea about electrode materials.</p>
+<p><strong>Non-polarizable (reversible)</strong> — charge crosses the interface freely, through
+a reversible chemical reaction. For silver–silver chloride:</p>
+<pre><code>Ag + Cl⁻  ⇌  AgCl + e⁻
+</code></pre>
+<p>Current in either direction just runs the reaction one way or the other. The
+interface behaves like a <strong>resistor</strong>: it passes low frequencies and DC, its
+potential is stable, and moving the electrode slightly does not produce a large
+voltage step.</p>
+<p><strong>Polarizable</strong> — no charge crosses; it accumulates on both sides like a
+<strong>capacitor</strong>. Gold, platinum and stainless steel are close to this. A capacitor
+blocks DC and passes high frequencies, so these electrodes are fine for alpha
+and beta rhythms but drift at very low frequencies, and any mechanical
+disturbance changes the capacitance and produces an artefact.</p>
+<p>Real electrodes are somewhere between the two: a resistance and a capacitance in
+parallel, in series with the resistance of the gel and the skin.</p>
+<div class="note">
+<span class="block-title">Why this matters for a P300 speller</span>
+Your signal lives between roughly 0.5 and 10 Hz — the low end, where polarizable
+electrodes drift and non-polarizable ones do not. That is why silver–silver
+chloride is the default for ERP work, and why an ERP lab will put up with the
+gel.
+</div>
+
+<h2 id="3-the-materials-and-why-each-is-used">3. The materials, and why each is used</h2>
+<table>
+<thead>
+<tr>
+<th>Material</th>
+<th>Behaviour</th>
+<th>Where you meet it</th>
+<th>Trade-off</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sintered Ag/AgCl</strong> (silver and silver chloride powder pressed into a pellet)</td>
+<td>Non-polarizable</td>
+<td>Research caps, ERP labs, the reference standard</td>
+<td>Best low-frequency stability; the AgCl is throughout the pellet, so it survives cleaning. Most expensive</td>
+</tr>
+<tr>
+<td><strong>Chloridized silver</strong> (a thin AgCl layer grown on silver)</td>
+<td>Non-polarizable while the layer lasts</td>
+<td>Cheaper caps, home-made electrodes</td>
+<td>Same physics, but the layer wears off with scrubbing and has to be re-chloridized</td>
+</tr>
+<tr>
+<td><strong>Gold</strong> (usually gold-plated silver or copper)</td>
+<td>Largely polarizable</td>
+<td>Clinical cups, dry pin electrodes, long-term monitoring</td>
+<td>Inert, biocompatible, easy to clean, no allergy issues. Drifts below ~1 Hz; fine for oscillations, weaker for slow ERPs</td>
+</tr>
+<tr>
+<td><strong>Platinum / platinum–iridium</strong></td>
+<td>Polarizable, very inert</td>
+<td>Implanted and intracranial electrodes, some research surface electrodes</td>
+<td>Chemically superb and MRI-compatible-ish; expensive, and polarizes</td>
+</tr>
+<tr>
+<td><strong>Tin (Sn)</strong></td>
+<td>Between the two</td>
+<td>Older and budget caps</td>
+<td>Cheap and workable; noisier and driftier than Ag/AgCl</td>
+</tr>
+<tr>
+<td><strong>Stainless steel</strong></td>
+<td>Polarizable</td>
+<td>Dry electrodes, rugged field systems</td>
+<td>Tough and cheap; poor at low frequencies, more 1/f noise</td>
+</tr>
+<tr>
+<td><strong>Conductive polymer / carbon / silver-loaded rubber</strong></td>
+<td>Varies</td>
+<td>MRI-compatible caps, textile electrodes</td>
+<td>Chosen for safety inside a scanner (no induced heating), not for signal quality</td>
+</tr>
+<tr>
+<td><strong>Sponge / saline ("water-based")</strong></td>
+<td>Ag/AgCl behind a saline sponge</td>
+<td>Fast-setup caps</td>
+<td>No gel to wash out; dries out over an hour and drifts as it does</td>
+</tr>
+</tbody>
+</table>
+<div class="warn">
+<span class="block-title">Do not mix metals</span>
+Two different metals in the same electrolyte form a battery: their half-cell
+potentials differ by tens or hundreds of millivolts, and that difference sits
+across your amplifier's input and drifts with temperature. Use one material for
+the whole montage — <em>including</em> the reference and ground.
+</div>
+
+<h2 id="4-the-sensors-themselves">4. The sensors themselves</h2>
+<figure>
+<img src="assets/img/electrode-types.svg" alt="Six electrode types drawn in cross-section: wet cup, gold cup, active electrode, dry pins, capacitive, and subdermal needle">
+<figcaption>The families you will meet. For a teaching BCI lab it is nearly always one of the first four.</figcaption>
+</figure>
+
+<p><strong>Wet cup or ring electrodes.</strong> A small Ag/AgCl cup held in a cap, filled with
+conductive gel through a hole in the top. The workhorse: lowest noise, lowest
+drift, and the reason ERP labs smell faintly of electrolyte.</p>
+<p><strong>Gold cups.</strong> Glued to the scalp with conductive paste in clinical EEG, or
+mounted in caps. Durable and easy to clean; a little more drift.</p>
+<p><strong>Active electrodes.</strong> A wet or dry electrode with a tiny amplifier <em>on the
+electrode itself</em>. The weak, high-impedance signal is buffered before it travels
+down a metre of cable, so cable movement and mains pickup matter far less and
+the skin can be prepared less aggressively. g.tec's g.LADYbird electrodes work
+this way; so do the active systems from other manufacturers.</p>
+<p><strong>Dry electrodes.</strong> Gold-plated pins or fingers that push through the hair to
+touch the scalp, with no gel at all — g.tec's g.SAHARA is the example you are
+most likely to meet on a g.Nautilus. Setup drops from twenty minutes to two. The
+price is impedance in the tens or hundreds of kΩ, more drift, and much greater
+sensitivity to movement. They work for a P300 speller; they work <em>better</em> after
+the participant has stopped fidgeting.</p>
+<p><strong>Capacitive / contactless electrodes.</strong> A metal plate separated from the skin
+by an insulator — even hair or a thin fabric. No chemistry at all: the skin and
+the plate are the two plates of a capacitor. They demand extremely high input
+impedance and careful shielding, and are still mostly a research topic.</p>
+<p><strong>Subdermal needles</strong> exist for intensive care and intra-operative monitoring.
+They are not for student BCI work, and you should not be the person inserting
+them.</p>
+<h2 id="5-skin-gel-and-impedance">5. Skin, gel and impedance</h2>
+<p>The metal is rarely the problem. The <strong>stratum corneum</strong> — the outer layer of
+dead, dry skin cells — is where nearly all the resistance lives. That is what
+the preparation ritual is about:</p>
+<ul>
+<li><strong>Abrasion</strong> with a blunt needle or gel with a mild abrasive removes some of
+  that dead layer.</li>
+<li><strong>Conductive gel</strong> is an electrolyte, usually a chloride salt in a viscous
+  base. It provides the Cl⁻ ions the Ag/AgCl reaction needs and fills the gap
+  between a rigid cup and an irregular scalp.</li>
+</ul>
+<p><strong>Electrode impedance</strong> is what you measure when you press <em>impedance check</em> in
+the recording software: the amplifier passes a tiny alternating current through
+the electrode and measures the resulting voltage. Typical values:</p>
+<table>
+<thead>
+<tr>
+<th>Setup</th>
+<th>Impedance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gel electrode, well prepared</td>
+<td>1–5 kΩ</td>
+</tr>
+<tr>
+<td>Gel electrode, lazy preparation</td>
+<td>10–50 kΩ</td>
+</tr>
+<tr>
+<td>Dry pins on clean scalp</td>
+<td>50 kΩ – 1 MΩ</td>
+</tr>
+<tr>
+<td>Electrode that has come off</td>
+<td>open circuit, often shown as ∞</td>
+</tr>
+</tbody>
+</table>
+<p>Modern amplifiers have input impedances of tens of megaohms to gigaohms, so a
+20 kΩ electrode loses almost none of the signal by simple division. <strong>Why do we
+still chase low impedances?</strong> Two reasons, and both are about noise rather than
+signal:</p>
+<ol>
+<li><strong>Thermal noise.</strong> Any resistance generates Johnson noise proportional to
+   √R. At 5 kΩ it is negligible next to the EEG; at 1 MΩ it is not.</li>
+<li><strong>Mismatch turns common-mode into differential.</strong> Mains hum reaches both
+   inputs of the amplifier equally — but only if both paths are equal. If one
+   electrode is at 5 kΩ and another at 200 kΩ, the hum arrives with different
+   amplitudes, the amplifier sees a genuine difference, and it cannot cancel it.
+   <strong>Matched impedances matter as much as low ones.</strong></li>
+</ol>
+<p>Two failure modes to recognise on the scope: <strong>bridging</strong>, where gel spreads
+between neighbouring electrodes and makes their traces suspiciously identical,
+and <strong>drying</strong>, where impedance climbs over an hour and slow drift creeps in.</p>
+<h2 id="6-how-a-number-is-actually-computed">6. How a number is actually computed</h2>
+<figure>
+<img src="assets/img/differential-amp.svg" alt="Diagram of a head with an electrode, a reference and a ground feeding a differential amplifier, with hum cancelling in the output">
+<figcaption>Every EEG channel is the output of a differential amplifier: the signal at one electrode minus the signal at the reference, amplified.</figcaption>
+</figure>
+
+<p>A <strong>differential amplifier</strong> (in practice an <em>instrumentation amplifier</em>) has two
+inputs and amplifies only their difference:</p>
+<pre><code>output = gain × ( V(+) − V(−) )
+</code></pre>
+<p>Whatever is identical on both inputs — the <strong>common-mode</strong> signal — is
+suppressed. How well is the <strong>common-mode rejection ratio</strong>, CMRR, quoted in
+decibels; a good EEG amplifier is above 100 dB, meaning common-mode signals come
+out at least 100 000 times smaller.</p>
+<p>This is what makes EEG possible at all. A participant sitting in a room is an
+antenna: their whole body floats tens of millivolts of 50 Hz mains hum. That hum
+is the same at Pz and at the mastoid, so it cancels. The 5 µV P300 is not the
+same at both, so it survives.</p>
+<p>After the amplifier, a <strong>24-bit analogue-to-digital converter</strong> samples the
+voltage — 256 or 512 times a second in a typical g.tec setup — with an input
+range of a few hundred millivolts, wide enough to accommodate electrode offsets
+without clipping. The digital numbers that reach pyspeller through Lab Streaming
+Layer are already converted to <strong>microvolts</strong>.</p>
+<h2 id="7-reference-and-ground-the-question-everyone-asks">7. Reference and ground: the question everyone asks</h2>
+<p>They are different things and they are not interchangeable.</p>
+<p><strong>The reference is one of the two inputs of every channel.</strong> It is a <em>signal</em>
+electrode, on the participant's head, that every channel is compared against.
+There is no "voltage at Pz" — only "Pz minus wherever the reference is". Choose
+a quiet, stable site: a mastoid, an earlobe, the nose tip, sometimes Cz.</p>
+<p><strong>The ground is the amplifier's zero.</strong> It gives the participant's body a
+defined potential relative to the amplifier's circuitry so the inputs stay
+inside their working range, and it carries the bias currents the input stage
+needs. It is not part of any channel's arithmetic. In modern amplifiers it is
+often <strong>driven</strong>: the measured common-mode is inverted and fed back into the
+body (the idea comes from ECG, where it is called the <em>driven right leg</em>), which
+actively pushes the common-mode toward zero and improves hum rejection well
+beyond what CMRR alone gives.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Reference</th>
+<th>Ground</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Purpose</td>
+<td>the second input of every channel</td>
+<td>sets the body's potential, provides bias return</td>
+</tr>
+<tr>
+<td>Appears in the data?</td>
+<td>yes — subtracted from every channel</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Typical position</td>
+<td>mastoid, earlobe, nose</td>
+<td>AFz, forehead, neck, collarbone</td>
+</tr>
+<tr>
+<td>If it comes loose</td>
+<td>every channel goes noisy at once</td>
+<td>everything saturates or hums badly</td>
+</tr>
+<tr>
+<td>Can you change it afterwards?</td>
+<td>yes, arithmetically</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<div class="stop">
+<span class="block-title">Ground is not "earth"</span>
+The ground electrode must never be connected to mains earth. Medical and
+research amplifiers isolate the participant from the mains — optically or by
+radio — precisely so that no current can flow through a person if something
+fails. That is also why you must not connect a participant to a non-isolated,
+mains-powered device.
+</div>
+
+<h3 id="changing-the-reference-after-the-fact">Changing the reference after the fact</h3>
+<p>Because every channel shares one reference, you can compute any other reference
+offline with arithmetic alone:</p>
+<pre><code>recorded:      V_a = A(a) − A(ref)        V_b = A(b) − A(ref)
+bipolar:       V_a − V_b = A(a) − A(b)    the reference cancels
+average (CAR): V_a − mean(all V)          removes what every channel shares
+Laplacian:     V_a − mean(V of neighbours)
+</code></pre>
+<figure>
+<img src="assets/img/montages.svg" alt="Four heads showing mastoid, linked mastoid, common average and Laplacian references with their formulas">
+<figcaption>Four ways of looking at the same recording. None is "correct" — each answers a different question.</figcaption>
+</figure>
+
+<p>This speller uses the <strong>common average reference</strong>: <code>preproc.car</code> subtracts the
+mean across channels from each channel, before filtering. With eight or more
+reasonably spread electrodes, that removes reference drift, much of the mains
+hum and distant muscle activity, while leaving the centro-parietal P300 intact.
+A <strong>Laplacian</strong> would be a poor choice here: it is deliberately local, and it
+would subtract away a response that is broad by nature.</p>
+<div class="do">
+<span class="block-title">Try it on your own recording</span>
+Load a saved session (<a href="results.html">Reading the results</a>), compute
+the ERP with no re-referencing, with a mastoid channel subtracted, and with a
+common average. The P300 changes amplitude and even sign at some electrodes.
+Nothing about the brain changed — only what you subtracted.
+</div>
+
+<h2 id="8-what-goes-wrong-seen-from-the-sensor-side">8. What goes wrong, seen from the sensor side</h2>
+<table>
+<thead>
+<tr>
+<th>On the scope</th>
+<th>Usually means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One channel much larger than its neighbours</td>
+<td>that electrode has poor contact, or has come off</td>
+</tr>
+<tr>
+<td>A sudden step, then a slow return ("electrode pop")</td>
+<td>the double layer was disturbed — the electrode moved, or an air bubble in the gel</td>
+</tr>
+<tr>
+<td>Slow wandering over seconds, worse late in the session</td>
+<td>drying gel, or sweat changing the skin's own potential</td>
+</tr>
+<tr>
+<td>Everything humming at 50 or 60 Hz</td>
+<td>reference or ground loose, mismatched impedances, or a power supply too near the cap</td>
+</tr>
+<tr>
+<td>Two channels suspiciously identical</td>
+<td>gel bridging between them</td>
+</tr>
+<tr>
+<td>All channels dead flat</td>
+<td>amplifier not acquiring, or the cap is unplugged</td>
+</tr>
+<tr>
+<td>Fast, spiky activity over the temples</td>
+<td>jaw and neck muscle, not brain</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-what-this-means-when-you-are-capping-up">9. What this means when you are capping up</h2>
+<ul>
+<li>Prepare the <strong>reference and ground as carefully as any channel</strong> — they are in
+  every number you record.</li>
+<li>Use <strong>one electrode material</strong> throughout.</li>
+<li>Aim for <strong>low <em>and</em> matched</strong> impedances, and write them down.</li>
+<li>Gel enough to conduct, <strong>not enough to bridge</strong>.</li>
+<li>With dry electrodes, expect higher impedances and give the participant a
+  minute to settle before recording.</li>
+<li>Re-check impedances after 30–40 minutes; gel dries.</li>
+</ul>
+<p><a href="session.html">Running a real session</a> turns this into a procedure, and
+<a href="gtec.html">the g.tec page</a> covers the specific hardware.</p>
+<h2 id="further-reading">Further reading</h2>
+<ul>
+<li>Nunez &amp; Srinivasan, <em>Electric Fields of the Brain</em> — the standard reference on
+  volume conduction and what the scalp can and cannot see.</li>
+<li>Webster (ed.), <em>Medical Instrumentation: Application and Design</em> — the
+  electrode–electrolyte interface, half-cell potentials, and amplifier design,
+  worked through properly.</li>
+<li>Teplan (2002), <em>Fundamentals of EEG measurement</em> — a short, readable overview.</li>
+<li>buffer_bci's <a href="https://github.com/berdakh/buffer_bci/blob/master/tutorial/EEGBCITutorial/EEGBCI_worksheet.md">EEG BCI tutorial worksheet</a>
+  — practical exercises on referencing and artefacts with a cap on a real head.</li>
+</ul>
+  <div class="pager"><a href="paradigm.html"><span class="dir">previous</span>How a P300 speller works</a>
+<a class="next" href="architecture.html"><span class="dir">next</span>The client–server design</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

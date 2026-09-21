@@ -19,6 +19,7 @@ class BufferClient:
         self.sock = None
         self.header = None
         self._event_cursor = 0   # next event index this client has not seen
+        self._pending = []       # read from the buffer but not yet handed out
 
     # -- connection --------------------------------------------------------
     def connect(self, retries=0, retry_delay=0.5):
@@ -147,6 +148,7 @@ class BufferClient:
         if index is None:
             index = self.poll()[1]
         self._event_cursor = int(index)
+        self._pending = []
         return self._event_cursor
 
     @property
@@ -155,6 +157,10 @@ class BufferClient:
 
     def new_events(self, timeout_ms=0):
         """Events written since the last call, advancing the cursor."""
+        if self._pending:
+            # events a previous wait_for_event() read but did not hand out
+            pending, self._pending = self._pending, []
+            return pending
         _, nevents = self.wait(0xFFFFFFFF, self._event_cursor, timeout_ms)
         if nevents <= self._event_cursor:
             return []
@@ -173,8 +179,12 @@ class BufferClient:
         while True:
             remaining = 1000 if deadline is None else max(
                 0, int((deadline - time.time()) * 1000))
-            for evt in self.new_events(timeout_ms=remaining):
+            events = self.new_events(timeout_ms=remaining)
+            for index, evt in enumerate(events):
                 if evt.type in types and (values is None or evt.value in values):
+                    # keep the rest of the batch: the caller asked for one event,
+                    # not for the others to be thrown away
+                    self._pending = events[index + 1:] + self._pending
                     return evt
             if deadline is not None and time.time() >= deadline:
                 return None

@@ -101,3 +101,39 @@ class TestBufferBasics(BufferTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestEventDelivery(BufferTestCase):
+    """No event may be lost because another one was being waited for."""
+
+    def setUp(self):
+        super().setUp()
+        self.client.put_header(1, 100.0)
+        self.client.reset_event_cursor()
+        self.writer = BufferClient(port=self.server.port).connect()
+        self.addCleanup(self.writer.disconnect)
+
+    def test_waiting_for_one_event_keeps_the_others(self):
+        self.writer.send_event('speller.edit', 'DEL')
+        self.writer.send_event('classifier.prediction', 'I')
+        self.writer.send_event('stimulus.sequence', 'end')
+
+        first = self.client.wait_for_event('speller.edit', timeout=2)
+        self.assertEqual(first.value, 'DEL')
+        # the two events that arrived in the same batch are still to come
+        rest = [(e.type, e.value) for e in self.client.new_events(timeout_ms=500)]
+        self.assertEqual(rest, [('classifier.prediction', 'I'),
+                                ('stimulus.sequence', 'end')])
+
+    def test_a_second_wait_sees_an_event_from_the_first_batch(self):
+        self.writer.send_event('a', '1')
+        self.writer.send_event('b', '2')
+        self.assertEqual(self.client.wait_for_event('a', timeout=2).value, '1')
+        self.assertEqual(self.client.wait_for_event('b', timeout=2).value, '2')
+
+    def test_resetting_the_cursor_drops_what_was_held_back(self):
+        self.writer.send_event('a', '1')
+        self.writer.send_event('b', '2')
+        self.client.wait_for_event('a', timeout=2)
+        self.client.reset_event_cursor()
+        self.assertEqual(self.client.new_events(timeout_ms=100), [])

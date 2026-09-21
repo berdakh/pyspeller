@@ -16,21 +16,22 @@
   <div class="nav-group"><div class="nav-title">Orientation</div><nav>
   <a href="index.html">Start here</a>
   <a href="paradigm.html" class="current"><span class="num">1</span>How a P300 speller works</a>
-  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  <a href="sensors.html"><span class="num">2</span>Sensors, materials & amplifiers</a>
+  <a href="architecture.html"><span class="num">3</span>The client–server design</a>
   </nav></div>
   <div class="nav-group"><div class="nav-title">Getting running</div><nav>
-  <a href="install.html"><span class="num">3</span>Set up your computer</a>
-  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  <a href="install.html"><span class="num">4</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">5</span>Your first experiment</a>
   </nav></div>
   <div class="nav-group"><div class="nav-title">With hardware</div><nav>
-  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
-  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  <a href="gtec.html"><span class="num">6</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">7</span>Running a real session</a>
   </nav></div>
   <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
-  <a href="results.html"><span class="num">7</span>Reading the results</a>
-  <a href="code.html"><span class="num">8</span>Under the hood</a>
-  <a href="exercises.html"><span class="num">9</span>Exercises</a>
-  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  <a href="results.html"><span class="num">8</span>Reading the results</a>
+  <a href="code.html"><span class="num">9</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">10</span>Exercises</a>
+  <a href="reference.html"><span class="num">11</span>Troubleshooting & glossary</a>
   </nav></div>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
@@ -66,6 +67,15 @@ thousand times smaller than an AA battery. That measurement is the
 <img src="assets/img/montage.svg" alt="Head seen from above with the ten-twenty electrode positions marked, the P300 montage highlighted">
 <figcaption>The ten channels that matter for a speller. If your amplifier has 16 or 32, use them all — but make sure these are among them.</figcaption>
 </figure>
+
+<div class="note">
+<span class="block-title">How does metal on a scalp pick up any of this?</span>
+Through an electrochemical reaction at the electrode, and a differential
+amplifier that subtracts one place on the head from another.
+<a href="sensors.html">Sensors, materials and amplifiers</a> is the whole story:
+what silver–silver chloride, gold and platinum each do, why gel exists, and the
+difference between the reference and the ground.
+</div>
 
 <h2 id="evoked-responses-finding-a-signal-in-the-noise">Evoked responses: finding a signal in the noise</h2>
 <p>An <strong>event-related potential</strong> (ERP) is the brain's stereotyped response to an
@@ -188,7 +198,7 @@ matter. If a participant's AUC stays near 0.6 after a careful calibration, that
 is a result, not a failure of your work. Write it down and move on.
 </div>
   <div class="pager"><a href="index.html"><span class="dir">previous</span>Start here</a>
-<a class="next" href="architecture.html"><span class="dir">next</span>The client–server design</a></div>
+<a class="next" href="sensors.html"><span class="dir">next</span>Sensors, materials & amplifiers</a></div>
   <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
   a pure-python BCI framework built on the ideas of
   <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
