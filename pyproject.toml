@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyspeller"
+version = "0.1.0"
+description = "A minimal pure-python BCI framework and P300 speller for buffer_bci"
+requires-python = ">=3.8"
+dependencies = ["numpy>=1.20"]
+
+[project.optional-dependencies]
+lsl = ["pylsl>=1.16"]
+
+[project.scripts]
+pyspeller = "pyspeller.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["pyspeller*"]

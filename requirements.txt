@@ -1,0 +1,8 @@
+# the framework itself only needs numpy
+numpy>=1.20
+
+# optional: talking to an LSL device such as a g.tec amplifier
+# pylsl>=1.16
+
+# the tk gui uses tkinter from the standard library; on debian/ubuntu that is
+# a separate package: sudo apt install python3-tk
