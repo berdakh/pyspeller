@@ -49,13 +49,13 @@ TEMPLATE = """<!DOCTYPE html>
   <details class="contents" open>
   <summary>Contents</summary>
   {nav}
-  </details>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
     <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
     <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
     <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
   </div>
+  </details>
 </aside>
 <main>
   <div class="page-kicker">{kicker}</div>
