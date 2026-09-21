@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a P300 speller works · pyspeller</title>
+<meta name="description" content="From microvolts on the scalp to a letter on the screen — the whole idea in one page, with real data.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html" class="current"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">01 · Orientation</div>
+  <h1>How a P300 speller works</h1>
+  <p class="lede">From microvolts on the scalp to a letter on the screen — the whole idea in one page, with real data.</p>
+  <h2 id="eeg-in-five-minutes">EEG in five minutes</h2>
+<p>Neurons signal with electricity. When many thousands of them in the same patch
+of cortex fire in step, the summed field is large enough to be measured at the
+scalp — a few <strong>microvolts</strong> (µV), a millionth of a volt, about a hundred
+thousand times smaller than an AA battery. That measurement is the
+<strong>electroencephalogram</strong>, EEG.</p>
+<p>Practical consequences of the size of that number:</p>
+<ul>
+<li><strong>Everything is noise until proven otherwise.</strong> Mains hum, a loose electrode,
+  a blink, a swallow, jaw tension — all of these are much larger than the brain
+  signal you want.</li>
+<li><strong>Where you measure matters.</strong> Electrodes are placed by the international
+  <strong>10–20 system</strong>, which names positions by region and side: <code>Fz</code> is front
+  centre, <code>Cz</code> the top of the head, <code>Pz</code> behind it, <code>Oz</code> at the back, odd
+  numbers on the left, even on the right.</li>
+<li><strong>You always measure a difference.</strong> Each electrode is read against a
+  <strong>reference</strong> (often an earlobe or mastoid), with a <strong>ground</strong> somewhere
+  neutral. Change the reference and every waveform changes shape.</li>
+</ul>
+<figure>
+<img src="assets/img/montage.svg" alt="Head seen from above with the ten-twenty electrode positions marked, the P300 montage highlighted">
+<figcaption>The ten channels that matter for a speller. If your amplifier has 16 or 32, use them all — but make sure these are among them.</figcaption>
+</figure>
+
+<h2 id="evoked-responses-finding-a-signal-in-the-noise">Evoked responses: finding a signal in the noise</h2>
+<p>An <strong>event-related potential</strong> (ERP) is the brain's stereotyped response to an
+event — a flash, a beep, a touch. A single one is invisible: a few µV of
+response inside 20 µV of ongoing EEG. But it is <em>time-locked</em> to the event and
+the noise is not, so if you repeat the event and average the segments that
+follow it, the response survives and the noise shrinks with the square root of
+the number of repetitions.</p>
+<p>That segment — the data from an event to a fixed time after it — is called an
+<strong>epoch</strong>. Here every epoch is the 600 ms after a flash.</p>
+<figure>
+<img src="assets/img/erp.png" alt="Eight channels of averaged EEG, target and non-target traces, with a large positive peak at 300 ms">
+<figcaption>Real output from this software: 150 target and 750 non-target epochs from one calibration run, averaged. The green trace is the response to flashes the participant was attending to. The bump at 300 ms is the P300, largest at Cz and Pz.</figcaption>
+</figure>
+
+<h2 id="the-p300">The P300</h2>
+<p>Around <strong>300 milliseconds</strong> after a stimulus that is <em>rare</em> and <em>relevant to
+what you are doing</em>, a broad positive wave appears over the centre and back of
+the head. It is called the <strong>P300</strong> (positive, 300 ms). It is not produced by
+the flash itself — it is produced by the flash <em>mattering to you</em>. A flash you
+are ignoring produces a much smaller response.</p>
+<p>That is the entire trick of this BCI: <strong>you cannot move, but you can choose what
+to attend to, and attention is visible in the EEG.</strong></p>
+<p>The classic way to bring the P300 out is the <strong>oddball</strong>: a stream of frequent
+events with a rare one mixed in, and a task that forces the participant to
+notice the rare one. In a speller, the task is: <em>silently count each time the
+letter you are looking at flashes.</em></p>
+<h2 id="the-matrix-speller">The matrix speller</h2>
+<p>Farwell and Donchin proposed this in 1988 and it is still the standard. Lay the
+alphabet out in a grid. Flash whole <strong>rows and columns</strong> in random order. The
+participant attends to one letter. Only two of the twelve flashes in a
+repetition contain that letter — one row and one column — so those two produce a
+P300 and the other ten do not.</p>
+<figure>
+<img src="assets/img/matrix-decode.svg" alt="A six by six grid with one row and one column highlighted, and bar charts of the score for each row and column">
+<figcaption>Score every flash, average the scores per row and per column, and the winning row and column intersect at the letter. Flashing groups rather than single letters is what makes this fast: 12 flashes cover 36 letters.</figcaption>
+</figure>
+
+<p>Because one repetition is not enough to be sure, the whole set of rows and
+columns is flashed several times — by default <strong>12 repetitions</strong>, 144 flashes,
+about 22 seconds per letter — and the scores are averaged.</p>
+<figure>
+<img src="assets/img/evidence.png" alt="Two panels showing the running average score for each row and each column as repetitions accumulate">
+<figcaption>Evidence accumulating while one letter is spelled. Each line is a row (left) or column (right); the green one contains the attended letter. After a few repetitions it separates from the rest and stays there.</figcaption>
+</figure>
+
+<figure>
+<img src="assets/img/accuracy-vs-repetitions.png" alt="Accuracy rising from chance to one hundred percent as repetitions increase">
+<figcaption>The trade-off you will be tuning: more repetitions means more accuracy and slower typing. Measured with this software on ten letters; your participant's curve will differ.</figcaption>
+</figure>
+
+<h2 id="what-the-computer-actually-does">What the computer actually does</h2>
+<figure>
+<img src="assets/img/session-timeline.svg" alt="Timeline of one letter: cue, flashes, events, epochs, prediction">
+<figcaption>One letter, from cue to decision. Every flash writes an event; the analysis client cuts a 600 ms epoch after each one and scores it.</figcaption>
+</figure>
+
+<ol>
+<li><strong>Calibration.</strong> The participant is told which letter to attend to, so every
+   epoch can be labelled <em>target</em> or <em>non-target</em>. A few letters gives several
+   hundred labelled epochs.</li>
+<li><strong>Training.</strong> A classifier learns the difference between the two kinds of
+   epoch: pre-process (filter, reference, downsample), then a
+   <a href="reference.html#glossary">linear discriminant</a> over channels × time points.</li>
+<li><strong>Feedback.</strong> Now unlabelled: every flash is scored, scores are averaged per
+   row and column, and the best row and column give the letter.</li>
+</ol>
+<figure>
+<img src="assets/img/discriminability.png" alt="Heat map of AUC per channel and time point, warm around 300 milliseconds at the parietal channels">
+<figcaption>Where the two classes actually differ, measured as <a href="reference.html#glossary">AUC</a> for each channel and time point. This is the picture to look at after training: the warm patch should sit over Cz/Pz around 300 ms. If it is flat, something is wrong with the cap, the task, or the participant's attention.</figcaption>
+</figure>
+
+<h2 id="what-makes-it-work-badly">What makes it work badly</h2>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>What you see</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Participant not really attending</td>
+<td>Flat discriminability map, AUC near 0.5</td>
+<td>Re-explain the counting task; keep blocks short</td>
+</tr>
+<tr>
+<td>Blinks and movement</td>
+<td>Huge slow swings, epochs rejected</td>
+<td>Blink in the gaps, not during flashing; support the arms</td>
+</tr>
+<tr>
+<td>A bad electrode</td>
+<td>One channel far louder than the rest</td>
+<td>Re-gel it; the software will drop it, but you lose a channel</td>
+</tr>
+<tr>
+<td>Too few repetitions</td>
+<td>Accuracy far below the AUC would suggest</td>
+<td>Raise <code>--n-repetitions</code></td>
+</tr>
+<tr>
+<td>Flashes too fast</td>
+<td>P300 to one flash overlaps the next</td>
+<td>Keep the inter-stimulus interval at 150 ms or more</td>
+</tr>
+<tr>
+<td>Target flashed twice in quick succession</td>
+<td>Second response is weaker (refractory)</td>
+<td>The software already forbids it within 3 flashes</td>
+</tr>
+</tbody>
+</table>
+<div class="note">
+<span class="block-title">Not everyone is a P300 speller user</span>
+In published work with healthy volunteers, most people reach high accuracy
+within a session, but a minority do not — tiredness, medication, and cap fit all
+matter. If a participant's AUC stays near 0.6 after a careful calibration, that
+is a result, not a failure of your work. Write it down and move on.
+</div>
+  <div class="pager"><a href="index.html"><span class="dir">previous</span>Start here</a>
+<a class="next" href="architecture.html"><span class="dir">next</span>The client–server design</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

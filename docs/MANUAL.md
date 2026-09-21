@@ -11,6 +11,9 @@ A full session takes about 45 minutes: 20 for capping up, 3 for calibration,
 > and must only be used with participants who have given informed consent under
 > your lab's ethics approval.
 
+The full tutorial, with the background this manual assumes, is at
+<https://berdakh.github.io/pyspeller/>.
+
 ---
 
 ## 0. What you need

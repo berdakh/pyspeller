@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 520" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="640" height="520" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:12.5px}
+    .head{fill:#fff;stroke:#94a3b8;stroke-width:2}
+    .e{fill:#fff;stroke:#c9d3de;stroke-width:1.5}
+    .use{fill:#1f6feb;stroke:#1f6feb}
+    .lab{font-size:11px;fill:#64748b;text-anchor:middle}
+    .labw{font-size:11px;fill:#fff;text-anchor:middle;font-weight:700}
+  </style>
+  <text x="30" y="34" class="t">where to put the electrodes (10–20 system, seen from above)</text>
+
+  <!-- head -->
+  <g transform="translate(320,270)">
+    <path d="M0,-215 L-22,-188 L22,-188 Z" class="head"/>
+    <ellipse cx="0" cy="0" rx="190" ry="190" class="head"/>
+    <path d="M-190,-30 q-24,30 0,60" class="head"/>
+    <path d="M190,-30 q24,30 0,60" class="head"/>
+
+    <!-- unused positions -->
+    <g class="lab">
+      <circle cx="-60" cy="-150" r="17" class="e"/><text x="-60" y="-146">Fp1</text>
+      <circle cx="60" cy="-150" r="17" class="e"/><text x="60" y="-146">Fp2</text>
+      <circle cx="-120" cy="-80" r="17" class="e"/><text x="-120" y="-76">F7</text>
+      <circle cx="120" cy="-80" r="17" class="e"/><text x="120" y="-76">F8</text>
+      <circle cx="-150" cy="0" r="17" class="e"/><text x="-150" y="4">T7</text>
+      <circle cx="150" cy="0" r="17" class="e"/><text x="150" y="4">T8</text>
+      <circle cx="-62" cy="-78" r="17" class="e"/><text x="-62" y="-74">F3</text>
+      <circle cx="62" cy="-78" r="17" class="e"/><text x="62" y="-74">F4</text>
+    </g>
+
+    <!-- the montage we use -->
+    <g>
+      <circle cx="0" cy="-110" r="19" class="use"/><text x="0" y="-106" class="labw">Fz</text>
+      <circle cx="0" cy="0" r="19" class="use"/><text x="0" y="4" class="labw">Cz</text>
+      <circle cx="-78" cy="0" r="19" class="use"/><text x="-78" y="4" class="labw">C3</text>
+      <circle cx="78" cy="0" r="19" class="use"/><text x="78" y="4" class="labw">C4</text>
+      <circle cx="0" cy="95" r="19" class="use"/><text x="0" y="99" class="labw">Pz</text>
+      <circle cx="-72" cy="90" r="19" class="use"/><text x="-72" y="94" class="labw">P3</text>
+      <circle cx="72" cy="90" r="19" class="use"/><text x="72" y="94" class="labw">P4</text>
+      <circle cx="0" cy="165" r="19" class="use"/><text x="0" y="169" class="labw">Oz</text>
+      <circle cx="-112" cy="140" r="19" class="use"/><text x="-112" y="144" class="labw">PO7</text>
+      <circle cx="112" cy="140" r="19" class="use"/><text x="112" y="144" class="labw">PO8</text>
+    </g>
+
+    <!-- reference and ground -->
+    <circle cx="-186" cy="55" r="15" fill="#fdf3e3" stroke="#b45309"/>
+    <text x="-186" y="59" class="lab" fill="#b45309" font-size="9">REF</text>
+    <circle cx="0" cy="-152" r="15" fill="#e6f4ec" stroke="#1b7f4b"/>
+    <text x="0" y="-148" class="lab" fill="#1b7f4b" font-size="9">GND</text>
+  </g>
+
+  <text x="30" y="470" class="s">Blue: the eight to ten channels a P300 speller needs — the response is
+  centro-parietal, biggest at Cz and Pz.</text>
+  <text x="30" y="492" class="s">Orange: the reference (an earlobe or mastoid).
+  Green: the ground. More channels never hurt; these are the ones that matter.</text>
+</svg>

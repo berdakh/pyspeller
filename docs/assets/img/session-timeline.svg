@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="900" height="400" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:12px}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;fill:#1f6feb}
+    .grid{fill:#fff;stroke:#c9d3de}
+    .letter{font-size:11px;fill:#8a9299;text-anchor:middle}
+    .lit{fill:#16202c;font-weight:700}
+    .axis{stroke:#94a3b8;stroke-width:1.5}
+  </style>
+  <text x="30" y="34" class="t">what happens while one letter is spelled</text>
+
+  <!-- time axis -->
+  <line x1="30" y1="70" x2="870" y2="70" class="axis" marker-end="url(#b)"/>
+  <defs><marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
+  <text x="40" y="62" class="s">0 s</text>
+  <text x="215" y="62" class="s">1.5 s</text>
+  <text x="330" y="62" class="s">1.65 s</text>
+  <text x="470" y="62" class="s">1.80 s</text>
+  <text x="700" y="62" class="s">… 12 repetitions …</text>
+  <text x="820" y="62" class="s">~22 s</text>
+
+  <!-- cue -->
+  <rect x="40" y="90" width="150" height="90" rx="8" class="grid"/>
+  <text x="115" y="110" class="letter">A B <tspan class="lit" fill="#1b7f4b">C</tspan> D E F</text>
+  <text x="115" y="132" class="letter">G H I J K L</text>
+  <text x="115" y="154" class="letter">M N O P Q R</text>
+  <text x="115" y="196" text-anchor="middle" class="s">cue: look at C</text>
+
+  <!-- flashes -->
+  <g>
+    <rect x="240" y="90" width="150" height="90" rx="8" class="grid"/>
+    <text x="315" y="110" class="letter"><tspan class="lit">A B C D E F</tspan></text>
+    <text x="315" y="132" class="letter">G H I J K L</text>
+    <text x="315" y="154" class="letter">M N O P Q R</text>
+    <text x="315" y="196" text-anchor="middle" class="s">row 1 flashes</text>
+    <text x="315" y="216" text-anchor="middle" class="mono">stimulus.rowFlash 0</text>
+    <text x="315" y="232" text-anchor="middle" class="mono">stimulus.tgtFlash 1</text>
+
+    <rect x="410" y="90" width="150" height="90" rx="8" class="grid"/>
+    <text x="485" y="110" class="letter">A B C D E F</text>
+    <text x="485" y="132" class="letter"><tspan class="lit">G H I J K L</tspan></text>
+    <text x="485" y="154" class="letter">M N O P Q R</text>
+    <text x="485" y="196" text-anchor="middle" class="s">row 2 flashes</text>
+    <text x="485" y="216" text-anchor="middle" class="mono">stimulus.rowFlash 1</text>
+    <text x="485" y="232" text-anchor="middle" class="mono">stimulus.tgtFlash 0</text>
+
+    <rect x="580" y="90" width="150" height="90" rx="8" class="grid"/>
+    <text x="655" y="110" class="letter">A B <tspan class="lit">C</tspan> D E F</text>
+    <text x="655" y="132" class="letter">G H <tspan class="lit">I</tspan> J K L</text>
+    <text x="655" y="154" class="letter">M N <tspan class="lit">O</tspan> P Q R</text>
+    <text x="655" y="196" text-anchor="middle" class="s">column 3 flashes</text>
+    <text x="655" y="216" text-anchor="middle" class="mono">stimulus.colFlash 2</text>
+    <text x="655" y="232" text-anchor="middle" class="mono">stimulus.tgtFlash 1</text>
+  </g>
+  <text x="790" y="140" class="s">…</text>
+
+  <!-- epochs -->
+  <line x1="30" y1="270" x2="870" y2="270" stroke="#dde3ea"/>
+  <text x="30" y="292" class="t">signal processing</text>
+  <rect x="240" y="300" width="120" height="34" rx="6" fill="#e8f0fe" stroke="#1f6feb"/>
+  <text x="300" y="322" text-anchor="middle" class="s" fill="#1f6feb">600 ms epoch</text>
+  <rect x="410" y="300" width="120" height="34" rx="6" fill="#fff" stroke="#c9d3de"/>
+  <text x="470" y="322" text-anchor="middle" class="s">600 ms epoch</text>
+  <rect x="580" y="300" width="120" height="34" rx="6" fill="#e8f0fe" stroke="#1f6feb"/>
+  <text x="640" y="322" text-anchor="middle" class="s" fill="#1f6feb">600 ms epoch</text>
+  <text x="740" y="322" class="s">… 144 of them …</text>
+  <text x="30" y="368" class="s">Each epoch gets a score. The scores are averaged per row and per column;
+  the best row and best column</text>
+  <text x="30" y="386" class="s">meet at the letter, published as
+  <tspan class="mono">classifier.prediction</tspan>.</text>
+</svg>

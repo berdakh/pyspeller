@@ -2,6 +2,10 @@
 
 [![tests](https://github.com/berdakh/pyspeller/actions/workflows/tests.yml/badge.svg)](https://github.com/berdakh/pyspeller/actions/workflows/tests.yml)
 
+📖 **[Read the tutorial](https://berdakh.github.io/pyspeller/)** — a course from
+"what is EEG" to running a session with a g.tec amplifier, written for students
+starting from nothing.
+
 A minimal but complete BCI framework written entirely in python, with a working
 P300 matrix speller on top of it: a 6x6 alphabet grid, the same kind of
 spelling environment a commercial g.tec speller gives you.  It follows the

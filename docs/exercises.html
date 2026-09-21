@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercises · pyspeller</title>
+<meta name="description" content="Seven pieces of work that take you from "it runs" to "I can run an experiment and defend the result".">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html" class="current"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">09 · Going deeper</div>
+  <h1>Exercises</h1>
+  <p class="lede">Seven pieces of work that take you from "it runs" to "I can run an experiment and defend the result".</p>
+  <p>Do them in order. The first four need no hardware. Each says what to hand in;
+keep everything in one short report with the figures inline.</p>
+<div class="note">
+<span class="block-title">How to measure anything here</span>
+Every result below comes from <code>python -m pyspeller demo</code> or from the
+notebook, both of which print the numbers you need. Use <code>--speed 20</code>
+so a run takes seconds, and <strong>repeat every measurement at least three
+times</strong> — a single run of a noisy experiment tells you very little.
+</div>
+
+<h2 id="1-get-it-running">1 · Get it running</h2>
+<p>Install, run the tests, and run one simulated session end to end through the
+graphical interface: calibrate, train, feedback.</p>
+<p><strong>Hand in:</strong> a screenshot of the training window and one of the speller with a
+word typed in it, plus the AUC you got.</p>
+<h2 id="2-repetitions-against-accuracy">2 · Repetitions against accuracy</h2>
+<p>How many repetitions does a letter need? Run the demo at 2, 4, 6, 8, 10, 12 and
+15 repetitions, three times each, and plot letter accuracy against repetitions.</p>
+<pre><code>python -m pyspeller demo --speed 20 --n-repetitions 6
+</code></pre>
+<p>Then compute <strong>letters per minute</strong> at each point: one letter takes
+<code>repetitions × groups × 0.15 s</code> plus about 2 s of cue and pause. Where is the
+best trade-off for a participant who wants to write a sentence?</p>
+<p><strong>Hand in:</strong> the two curves (accuracy and letters per minute against
+repetitions) and a sentence recommending a setting, with your reason.</p>
+<h2 id="3-how-much-signal-do-you-need">3 · How much signal do you need?</h2>
+<p><code>--erp-amplitude</code> sets the size of the simulated P300 in microvolts and
+<code>--noise-amplitude</code> the background EEG. Vary the ratio between them and record
+the cross-validated AUC and the letter accuracy.</p>
+<pre><code>python -m pyspeller demo --speed 20 --erp-amplitude 3 --noise-amplitude 10
+</code></pre>
+<p><strong>Hand in:</strong> a table or plot of AUC against the signal-to-noise ratio, and the
+smallest P300 that still spelled correctly at 12 repetitions. Relate it to the
+real amplitudes you saw in <a href="paradigm.html">the paradigm page</a>.</p>
+<h2 id="4-does-the-pre-processing-earn-its-keep">4 · Does the pre-processing earn its keep?</h2>
+<p>In <code>pyspeller/config.py</code>, <code>spatial_filter</code> is <code>'car'</code> and <code>freq_band</code> is
+<code>(0.1, 0.5, 10.0, 12.0)</code>. Re-run the calibration from the notebook and compare
+cross-validated AUC with:</p>
+<ul>
+<li>the common average reference turned off (<code>spatial_filter='none'</code>),</li>
+<li>a wider band (say <code>(0.1, 0.5, 30.0, 35.0)</code>),</li>
+<li>a much lower analysis rate (<code>analysis_fsample=4</code>).</li>
+</ul>
+<p><strong>Hand in:</strong> four AUC numbers with an explanation of each change. One of them
+will surprise you — say which, and why it happens. (Hint: what does a common
+average reference actually remove, and where does the simulator put its noise?)</p>
+<h2 id="5-a-bad-electrode">5 · A bad electrode</h2>
+<p>Simulate what happens when an electrode comes loose. Load a saved calibration
+with <code>load_epochs</code>, multiply one channel by 50, and retrain.</p>
+<ul>
+<li>What does cross-validated AUC do?</li>
+<li>Does <code>preproc.find_bad_channels</code> catch it?</li>
+<li>What happens if you corrupt three of the eight channels?</li>
+</ul>
+<p><strong>Hand in:</strong> the numbers, and a recommendation for how many bad channels a
+session can tolerate before you should stop and re-gel.</p>
+<h2 id="6-a-real-recording">6 · A real recording</h2>
+<p>With the amplifier: run a full session on a willing volunteer, following
+<a href="session.html">Running a real session</a>. Record it with <code>--save</code>.</p>
+<p><strong>Hand in:</strong> impedances, the AUC, the letters spelled and how many were right,
+the training window screenshot, and your notes on what went wrong and what you
+would do differently. A session with a poor AUC and a good explanation is worth
+more marks than a good one you cannot account for.</p>
+<h2 id="7-make-it-yours">7 · Make it yours</h2>
+<p>Pick one and do it properly, with a test that proves it works:</p>
+<ul>
+<li><strong>A new layout</strong> — your own symbol set (a different alphabet, an icon-based
+  communication board, a numeric keypad), registered in <code>config.py</code>.</li>
+<li><strong>A different classifier</strong> — swap <code>ShrinkageLDA</code> for logistic regression or
+  an SVM and compare cross-validated AUC on the same saved calibration data.</li>
+<li><strong>Dynamic stopping</strong> — stop flashing as soon as one row and one column are
+  clearly ahead, instead of always doing N repetitions. Measure the letters per
+  minute you gain and the accuracy you lose.</li>
+<li><strong>A new client</strong> — anything that watches the buffer: a second display, a
+  logger, an online artefact detector that warns the operator when a channel
+  goes bad.</li>
+</ul>
+<p><strong>Hand in:</strong> the diff, the passing test, and a paragraph on what you measured.</p>
+<div class="do">
+<span class="block-title">What a good report looks like</span>
+Numbers with the conditions that produced them, figures with axes and units,
+and honest reporting of what did not work. "AUC dropped to 0.58 when I widened
+the band and I do not know why" is a better sentence than a table of results
+with no commentary.
+</div>
+  <div class="pager"><a href="code.html"><span class="dir">previous</span>Under the hood</a>
+<a class="next" href="reference.html"><span class="dir">next</span>Troubleshooting & glossary</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

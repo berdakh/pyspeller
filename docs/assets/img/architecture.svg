@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="900" height="430" rx="12" fill="#f6f8fa"/>
+  <style>
+    .box{fill:#fff;stroke:#c9d3de;stroke-width:1.5;rx:10}
+    .t{fill:#16202c;font-size:15px;font-weight:600}
+    .s{fill:#64748b;font-size:12.5px}
+    .arrow{stroke:#94a3b8;stroke-width:2;fill:none;marker-end:url(#a)}
+    .lbl{fill:#64748b;font-size:11.5px;font-style:italic}
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- the buffer -->
+  <rect x="330" y="150" width="240" height="130" rx="12" fill="#e8f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="450" y="185" text-anchor="middle" class="t" font-size="17">buffer server</text>
+  <text x="450" y="209" text-anchor="middle" class="s">samples: a ring of the last minutes</text>
+  <text x="450" y="228" text-anchor="middle" class="s">events: what happened, and when</text>
+  <text x="450" y="254" text-anchor="middle" class="s" font-family="monospace" font-size="12">localhost:1972</text>
+
+  <!-- acquisition -->
+  <rect x="40" y="70" width="230" height="70" class="box"/>
+  <text x="60" y="98" class="t">g.tec amplifier</text>
+  <text x="60" y="119" class="s">→ LSL → lsl_bridge.py</text>
+  <rect x="40" y="165" width="230" height="70" class="box"/>
+  <text x="60" y="193" class="t">simulated subject</text>
+  <text x="60" y="214" class="s">simulator.py, no hardware</text>
+  <path d="M275 105 C 310 105, 300 195, 325 200" class="arrow"/>
+  <path d="M275 200 L 325 205" class="arrow"/>
+  <text x="285" y="150" class="lbl">put data</text>
+
+  <!-- clients -->
+  <rect x="630" y="40" width="230" height="66" class="box"/>
+  <text x="650" y="66" class="t">speller window</text>
+  <text x="650" y="87" class="s">flashes rows and columns</text>
+  <rect x="630" y="126" width="230" height="66" class="box"/>
+  <text x="650" y="152" class="t">signal processing</text>
+  <text x="650" y="173" class="s">epochs → classifier → letter</text>
+  <rect x="630" y="212" width="230" height="66" class="box"/>
+  <text x="650" y="238" class="t">control panel</text>
+  <text x="650" y="259" class="s">buttons, live signal, results</text>
+  <rect x="630" y="298" width="230" height="66" class="box"/>
+  <text x="650" y="324" class="t">recorder</text>
+  <text x="650" y="345" class="s">everything, onto disk</text>
+
+  <path d="M575 195 C 600 195, 600 75, 625 73" class="arrow"/>
+  <path d="M575 205 L 625 160" class="arrow"/>
+  <path d="M575 225 L 625 245" class="arrow"/>
+  <path d="M575 240 C 600 250, 600 320, 625 330" class="arrow"/>
+  <text x="583" y="120" class="lbl">events in, events out</text>
+
+  <text x="450" y="390" text-anchor="middle" class="s">Every box is a separate program. They never talk to each other —
+  only to the buffer,</text>
+  <text x="450" y="410" text-anchor="middle" class="s">so any of them can be replaced, restarted, or run on another
+  machine.</text>
+</svg>

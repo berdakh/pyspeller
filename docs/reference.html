@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troubleshooting & glossary · pyspeller</title>
+<meta name="description" content="Every error message we know about, every term defined, and where to read further.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html" class="current"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">10 · Going deeper</div>
+  <h1>Troubleshooting & glossary</h1>
+  <p class="lede">Every error message we know about, every term defined, and where to read further.</p>
+  <h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="installing-and-starting">Installing and starting</h3>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>python: command not found</code></td>
+<td>use <code>python3</code>, or reinstall python with <em>Add to PATH</em></td>
+</tr>
+<tr>
+<td><code>No module named pyspeller</code></td>
+<td>run from inside the cloned folder</td>
+</tr>
+<tr>
+<td><code>No module named tkinter</code></td>
+<td>Linux: <code>sudo apt install python3-tk</code></td>
+</tr>
+<tr>
+<td><code>no tk display available</code></td>
+<td>no screen on this machine; use <code>pyspeller demo</code> instead</td>
+</tr>
+<tr>
+<td><code>Address already in use</code></td>
+<td>a buffer is already running: use <code>--port 1973</code>, or stop the old one</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-amplifier">The amplifier</h3>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pylsl is not installed</code></td>
+<td><code>pip install pylsl</code></td>
+</tr>
+<tr>
+<td><code>no LSL stream matching name=… type='EEG'</code></td>
+<td>the connector is not streaming, or not on this network — see <a href="gtec.html#when-the-stream-is-not-there">the g.tec page</a></td>
+</tr>
+<tr>
+<td><code>stream has no nominal sample rate</code></td>
+<td>you picked a marker stream; name the EEG one with <code>--lsl-name</code></td>
+</tr>
+<tr>
+<td><code>no header appeared in the buffer</code></td>
+<td>no acquisition client is running: start <code>pyspeller lsl</code> or <code>pyspeller simulator</code></td>
+</tr>
+<tr>
+<td>the scope is flat</td>
+<td>the amplifier is sending zeros: check it is on, connected, and acquiring in g.tec's own software</td>
+</tr>
+<tr>
+<td>every channel looks identical and noisy</td>
+<td>reference or ground electrode is loose</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-experiment">The experiment</h3>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>flashes happen, no letter ever appears</td>
+<td>the analysis client is not running, or no classifier is trained — press <strong>Train classifier</strong></td>
+</tr>
+<tr>
+<td><code>the 3x3 speller matrix has no 'Q'</code></td>
+<td>the word cannot be spelled in this layout; change <code>--layout</code></td>
+</tr>
+<tr>
+<td>a button does nothing</td>
+<td>look at the panel's status line: if it does not say <code>ready: sigproc, stimulus</code>, a client is not up</td>
+</tr>
+<tr>
+<td>AUC near 0.5 after a careful calibration</td>
+<td>attention, impedances, or a cue the participant could not see. Re-explain the counting task and record again</td>
+</tr>
+<tr>
+<td>good AUC, bad spelling</td>
+<td>too few repetitions, or the participant lost the thread mid-letter</td>
+</tr>
+<tr>
+<td>accuracy fell during the session</td>
+<td>tiredness or drying gel. Break, re-check impedances, consider re-calibrating</td>
+</tr>
+</tbody>
+</table>
+<h2 id="glossary">Glossary</h2>
+<p><strong>Artefact</strong> — anything in the recording that is not brain activity: blinks,
+muscle, movement, mains hum, a loose electrode.</p>
+<p><strong>AUC</strong> — area under the ROC curve. The probability that a randomly chosen
+target scores above a randomly chosen non-target. 0.5 is chance, 1.0 perfect.</p>
+<p><strong>BCI</strong> — brain–computer interface. A system that turns a measured brain signal
+into a command, without using muscles.</p>
+<p><strong>Buffer</strong> — here, the server that holds recent samples and all events, and that
+every client talks to. Also <em>ring buffer</em>: storage that keeps the most recent N
+samples and overwrites the oldest.</p>
+<p><strong>CAR</strong> — common average reference. Subtracting the average of all channels from
+each channel, which removes whatever they all share (reference drift, some
+mains hum, distant muscle).</p>
+<p><strong>Calibration</strong> — the block where the participant is told what to attend to, so
+the data can be labelled and a classifier trained.</p>
+<p><strong>Cross-validation</strong> — fitting on part of the data and scoring on the rest, so
+that the score is not flattered by the fitting.</p>
+<p><strong>Epoch</strong> — the slice of signal following an event; here 600 ms after a flash.</p>
+<p><strong>ERP</strong> — event-related potential. The stereotyped response to an event,
+recovered by averaging many repetitions.</p>
+<p><strong>Feedback / free spelling</strong> — spelling with the classifier running: with a cue
+(so it can be scored) or without one (the real task).</p>
+<p><strong>Impedance</strong> — how well an electrode is connected, in kilohms. Low is good;
+high means gel, abrasion, or a better contact is needed.</p>
+<p><strong>ISI</strong> — inter-stimulus interval, the time from one flash to the next (150 ms
+by default).</p>
+<p><strong>LDA</strong> — linear discriminant analysis. A linear classifier that models each
+class as a Gaussian with a shared covariance; with <em>shrinkage</em> that covariance is
+pulled towards a simple one so it can be estimated from few epochs.</p>
+<p><strong>LSL</strong> — Lab Streaming Layer. The library that carries data between recording
+programs on a lab network.</p>
+<p><strong>Montage</strong> — which electrodes you record and how they are referenced.</p>
+<p><strong>Oddball</strong> — a stimulus stream where the relevant event is rare. The reliable
+way to produce a P300.</p>
+<p><strong>P300</strong> — the positive ERP peaking near 300 ms after a rare, attended event;
+the signal this speller is built on.</p>
+<p><strong>Ten–twenty system</strong> — the standard naming and placement of scalp electrodes
+(Fz, Cz, Pz, Oz, and so on).</p>
+<h2 id="further-reading">Further reading</h2>
+<p><strong>The framework this grew from</strong>
+- <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a> — the original MATLAB/Java
+  framework, with <code>matlab/matrixSpeller</code> as the direct ancestor of this speller.
+- Its <a href="https://github.com/berdakh/buffer_bci/blob/master/tutorial/EEGBCITutorial/EEGBCI_worksheet.md">EEG BCI tutorial worksheet</a>
+  — a practical lab course on EEG, artefacts, referencing and evoked responses.
+  If you can get an afternoon with the cap and no participant, work through it.
+- Its <a href="https://github.com/berdakh/buffer_bci/tree/master/tutorial/lect5-visspell">visual speller lecture material</a>.</p>
+<p><strong>The protocols</strong>
+- <a href="https://www.fieldtriptoolbox.org/development/realtime/">The FieldTrip realtime buffer</a>
+  — the wire protocol our server speaks.
+- <a href="https://github.com/sccn/labstreaminglayer">Lab Streaming Layer</a> — the library
+  and its device connectors.</p>
+<p><strong>The science</strong>
+- Farwell &amp; Donchin (1988), <em>Talking off the top of your head</em> — the original
+  matrix speller.
+- Krusienski et al. (2006) — which classifier and which channels for a P300
+  speller.
+- Guger et al. (2009) — how well a large group of people can actually use one.</p>
+<p><strong>This repository</strong>
+- <a href="https://github.com/berdakh/pyspeller">The code</a>
+- <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">The printable session manual</a>
+- <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">The tutorial notebook</a></p>
+  <div class="pager"><a href="exercises.html"><span class="dir">previous</span>Exercises</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

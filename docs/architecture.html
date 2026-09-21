@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The client–server design · pyspeller</title>
+<meta name="description" content="One buffer in the middle, several small programs around it. This is how real BCI systems are built, and why.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html" class="current"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">02 · Orientation</div>
+  <h1>The client–server design</h1>
+  <p class="lede">One buffer in the middle, several small programs around it. This is how real BCI systems are built, and why.</p>
+  <p>A BCI has to do several things at once: read an amplifier without ever missing a
+sample, put flashes on a screen with steady timing, cut and classify data, and
+let an operator drive the session. Doing all of that in one program means one
+slow step stalls everything.</p>
+<p>buffer_bci's answer, which this software follows, is to split the job into
+<strong>independent clients around a central data store</strong>.</p>
+<figure>
+<img src="assets/img/architecture.svg" alt="Diagram: amplifier clients on the left, buffer server in the middle, speller, analysis, panel and recorder on the right">
+<figcaption>Nothing talks to anything else — only to the buffer. That one decision is what lets you swap the simulator for a real amplifier without touching the speller.</figcaption>
+</figure>
+
+<h2 id="the-buffer">The buffer</h2>
+<p>The <strong>buffer server</strong> is a small network service that holds two things:</p>
+<ul>
+<li><strong>samples</strong> — a ring holding the last few minutes of EEG, numbered from the
+  start of the session;</li>
+<li><strong>events</strong> — a list of things that happened, each stamped with the sample
+  number it happened at.</li>
+</ul>
+<p>Clients connect over TCP and do exactly four kinds of thing: put samples, put
+events, get samples, get events (plus a blocking <em>wait until something new
+arrives</em>). That is the whole protocol.</p>
+<p>It is the <a href="https://www.fieldtriptoolbox.org/development/realtime/">FieldTrip buffer</a>
+protocol, the same one buffer_bci uses, so a MATLAB, Java or C client can talk to
+this python server and vice versa. There is a test in this repository that
+proves it, by driving our server with buffer_bci's own client code.</p>
+<div class="note">
+<span class="block-title">Time is measured in samples, not seconds</span>
+Every event carries the sample number at which it happened. That is what makes
+the analysis exact: to cut the 600 ms after a flash you take samples
+<code>n … n + 0.6 × rate</code>, no clock comparison and no drift between
+machines. Wall-clock time appears only in the stimulus client, which decides
+when to flash next.
+</div>
+
+<h2 id="the-clients">The clients</h2>
+<table>
+<thead>
+<tr>
+<th>Client</th>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acquisition</td>
+<td><code>pyspeller lsl</code> / <code>pyspeller simulator</code></td>
+<td>Reads the amplifier (or invents data) and puts samples in the buffer</td>
+</tr>
+<tr>
+<td>Stimulus</td>
+<td><code>pyspeller speller</code></td>
+<td>Flashes rows and columns, writes an event for each flash</td>
+</tr>
+<tr>
+<td>Signal processing</td>
+<td><code>pyspeller sigproc</code></td>
+<td>Cuts epochs, trains the classifier, publishes the decoded letter</td>
+</tr>
+<tr>
+<td>Control panel</td>
+<td><code>pyspeller gui</code></td>
+<td>The operator's buttons and the live signal view</td>
+</tr>
+<tr>
+<td>Recorder</td>
+<td><code>pyspeller save</code></td>
+<td>Copies everything onto disk as it arrives</td>
+</tr>
+</tbody>
+</table>
+<p><code>pyspeller run</code> starts all of them in one process for convenience, but they are
+the same programs: you can run the amplifier on the recording machine, the
+speller on the participant's screen, and the analysis on your laptop, by
+pointing each at the buffer's address with <code>--host</code>.</p>
+<h2 id="how-they-coordinate-events">How they coordinate: events</h2>
+<p>There is no command channel. Clients coordinate by writing events that the
+others read. This is the entire vocabulary:</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Value</th>
+<th>Written by</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>startPhase.cmd</code></td>
+<td><code>practice</code>, <code>calibrate</code>, <code>train</code>, <code>feedback</code>, <code>free</code>, <code>quit</code></td>
+<td>panel</td>
+<td>run this phase now</td>
+</tr>
+<tr>
+<td><code>speller.ready</code></td>
+<td><code>stimulus</code>, <code>sigproc</code></td>
+<td>those clients</td>
+<td>I am listening for commands</td>
+</tr>
+<tr>
+<td><code>stimulus.rowFlash</code> / <code>.colFlash</code></td>
+<td>index of the group</td>
+<td>stimulus</td>
+<td>this row/column just flashed</td>
+</tr>
+<tr>
+<td><code>stimulus.tgtFlash</code></td>
+<td><code>1</code> / <code>0</code></td>
+<td>stimulus</td>
+<td>that flash did/didn't contain the cued letter (calibration only)</td>
+</tr>
+<tr>
+<td><code>stimulus.sequence</code></td>
+<td><code>end</code></td>
+<td>stimulus</td>
+<td>that letter's flashes are over</td>
+</tr>
+<tr>
+<td><code>stimulus.training</code></td>
+<td><code>start</code>, <code>end</code></td>
+<td>stimulus</td>
+<td>a calibration block</td>
+</tr>
+<tr>
+<td><code>stimulus.feedback</code></td>
+<td><code>start</code>, <code>end</code></td>
+<td>stimulus</td>
+<td>a spelling block</td>
+</tr>
+<tr>
+<td><code>classifier.prediction</code></td>
+<td>the symbol</td>
+<td>analysis</td>
+<td>the letter I decided on</td>
+</tr>
+<tr>
+<td><code>classifier.summary</code></td>
+<td>JSON</td>
+<td>analysis</td>
+<td>what training found (metrics, ERPs, confusion)</td>
+</tr>
+<tr>
+<td><code>sigproc.training</code></td>
+<td><code>done</code></td>
+<td>analysis</td>
+<td>the classifier is fitted</td>
+</tr>
+<tr>
+<td><code>speller.control</code></td>
+<td><code>pause</code>, <code>resume</code>, <code>stop</code></td>
+<td>panel</td>
+<td>hold or abandon the running block</td>
+</tr>
+<tr>
+<td><code>speller.edit</code></td>
+<td><code>DEL</code>, <code>CLR</code></td>
+<td>panel</td>
+<td>correct the typed text</td>
+</tr>
+<tr>
+<td><code>simulation.target</code></td>
+<td>the symbol</td>
+<td>stimulus</td>
+<td>(simulator only) what the fake participant is attending to</td>
+</tr>
+</tbody>
+</table>
+<p>Two consequences worth understanding:</p>
+<ul>
+<li><strong>Anything can drive the experiment.</strong> The control panel has no special
+  powers: it writes <code>startPhase.cmd</code>. A script, a notebook, or a foot pedal
+  could do the same. The tests drive whole sessions this way.</li>
+<li><strong>Anything can watch.</strong> Adding a new display, a logger, or your own online
+  analysis means writing another client that reads events. Nothing else changes.</li>
+</ul>
+<h2 id="talk-to-the-buffer-yourself">Talk to the buffer yourself</h2>
+<p>The fastest way to understand this is to poke it. Start a buffer and a simulated
+amplifier in one terminal each:</p>
+<pre><code>python -m pyspeller buffer
+python -m pyspeller simulator
+</code></pre>
+<p>then, in python:</p>
+<pre><code>from pyspeller.buffer import BufferClient
+
+client = BufferClient('localhost', 1972).connect()
+header = client.wait_for_header()
+print(header, header.labels)
+#  Header(nchannels=8, fsample=128, nsamples=3712, nevents=0, type=float32)
+#  ['Fz', 'Cz', 'Pz', 'Oz', 'P3', 'P4', 'C3', 'C4']
+
+nsamples, nevents = client.poll()           # what is in the buffer right now
+data = client.get_data(nsamples - 128, nsamples - 1)    # the last second
+print(data.shape)                           # (128, 8) -- samples x channels
+
+client.send_event('my.marker', 'hello')     # stamped with the current sample
+print(client.get_events()[-1])              # Event('my.marker', 'hello', sample=3809)
+</code></pre>
+<p>You have just done everything the framework does, by hand. The speller writes
+flash events; the analysis client reads them, asks for the samples after each
+one, and writes a prediction back.</p>
+<div class="do">
+<span class="block-title">Check you have it</span>
+Answer these three before moving on. (1) If the analysis client crashes
+mid-session, what happens to the recording? (2) Why can the stimulus client run
+on a different computer from the amplifier? (3) Where would you plug in a
+different classifier?
+<br><br>
+Answers: (1) nothing — the recorder and the amplifier are separate clients and
+keep going; restart the analysis client and it picks up from the next event.
+(2) because they only share the buffer, and events carry sample numbers rather
+than wall-clock times. (3) in the analysis client, `pyspeller/speller/sigproc.py`,
+which is the only place that turns epochs into decisions.
+</div>
+  <div class="pager"><a href="paradigm.html"><span class="dir">previous</span>How a P300 speller works</a>
+<a class="next" href="install.html"><span class="dir">next</span>Set up your computer</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

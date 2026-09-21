@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The g.tec amplifier · pyspeller</title>
+<meta name="description" content="Drivers, g.NEEDaccess, Lab Streaming Layer, and how to prove real EEG is reaching the speller — before a participant is waiting.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html" class="current"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">05 · With hardware</div>
+  <h1>The g.tec amplifier</h1>
+  <p class="lede">Drivers, g.NEEDaccess, Lab Streaming Layer, and how to prove real EEG is reaching the speller — before a participant is waiting.</p>
+  <div class="note">
+<span class="block-title">What this page can and cannot tell you</span>
+g.tec's installers, menu names and version numbers change, and the software that
+came with <em>your</em> device is the authority. What does not change is the
+<b>contract</b>: pyspeller needs <b>one Lab Streaming Layer stream of EEG with a
+nominal sample rate</b>. Everything below is about producing that stream. If
+your lab already has a working LSL stream by another route, skip to
+<a href="#step-4-see-the-stream-from-python">step 4</a>.
+</div>
+
+<figure>
+<img src="assets/img/gtec-chain.svg" alt="Chain from cap and electrodes through the amplifier, g.tec software and the LSL connector into pyspeller">
+<figcaption>Four things belong to g.tec, three to pyspeller, and Lab Streaming Layer is the join. Each stage can be tested on its own — do that, in order, and hardware debugging stops being guesswork.</figcaption>
+</figure>
+
+<h2 id="the-hardware">The hardware</h2>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Typical use</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>g.USBamp</strong></td>
+<td>16 channels, USB, research workhorse</td>
+<td>needs its own driver; very common in teaching labs</td>
+</tr>
+<tr>
+<td><strong>g.HIamp</strong></td>
+<td>up to 256 channels</td>
+<td>same software family, more channels</td>
+</tr>
+<tr>
+<td><strong>g.Nautilus</strong></td>
+<td>wireless, 8–64 channels, gel or dry (g.SAHARA)</td>
+<td>a base station on USB, the headset on the participant</td>
+</tr>
+<tr>
+<td><strong>Unicorn Hybrid Black</strong></td>
+<td>8 channels, low cost</td>
+<td>has its own software with LSL support</td>
+</tr>
+</tbody>
+</table>
+<p>In the box you should have: the amplifier, its power supply or battery, the USB
+cable or wireless dongle, the cap and electrodes, and the software media or
+portal credentials.</p>
+<h2 id="step-1-install-gtecs-software-in-the-right-order">Step 1 — install g.tec's software in the right order</h2>
+<p>On the <strong>recording computer</strong> (Windows, in practice):</p>
+<ol class="steps">
+<li><strong>Log in to g.tec's download portal</strong> with the credentials your
+lab was given when the device was bought, or use the installation media that
+came with it. The downloads are licensed — they are not public.</li>
+<li><strong>Install the device driver first</strong>, then the device software
+(<b>g.NEEDaccess</b> for g.USBamp / g.HIamp / g.Nautilus; <b>Unicorn Suite</b>
+for the Unicorn). Reboot if the installer asks.</li>
+<li><strong>Plug the amplifier in and switch it on.</strong> Windows should show
+it in Device Manager without a warning triangle. A triangle means the driver did
+not take — uninstall, reboot, install again.</li>
+<li><strong>Open g.tec's own recorder or demo client</strong> and confirm you
+see live EEG there.</li>
+</ol>
+
+<div class="warn">
+<span class="block-title">Do not skip step 4</span>
+If g.tec's own software cannot see the amplifier, nothing downstream can either.
+Fixing it there — with their documentation and support — is far faster than
+debugging through two more layers.
+</div>
+
+<p>While you are in that software, set:</p>
+<ul>
+<li><strong>sample rate</strong> 256 or 512 Hz (anything from 128 Hz up works; higher is fine),</li>
+<li><strong>band-pass</strong> about 0.1–30 Hz, and the <strong>notch</strong> at your mains frequency
+  (50 Hz in Kazakhstan and Europe, 60 Hz in the Americas),</li>
+<li><strong>channel names</strong> matching your montage, if the software lets you — they
+  travel with the stream and appear in your recording.</li>
+</ul>
+<h2 id="step-2-what-lab-streaming-layer-is">Step 2 — what Lab Streaming Layer is</h2>
+<p><strong>LSL</strong> is a small open-source library for shipping time-stamped data between
+programs on a lab network. A program that produces data creates an <em>outlet</em>; a
+program that wants it creates an <em>inlet</em>; they find each other by name and type
+without either being configured with an address.</p>
+<p>Almost every EEG vendor has an LSL connector, which is why pyspeller speaks LSL
+rather than g.tec's API directly: the same bridge works for other amplifiers
+too.</p>
+<h2 id="step-3-publish-the-amplifier-as-an-lsl-stream">Step 3 — publish the amplifier as an LSL stream</h2>
+<p>There are two routes; use whichever your lab has.</p>
+<p><strong>A. g.tec's own LSL connector.</strong> Recent g.NEEDaccess installations include an
+application that publishes the device as an LSL stream. Start it, select the
+amplifier, and start streaming.</p>
+<p><strong>B. The open-source LSL apps.</strong> The Lab Streaming Layer project publishes
+connector applications for g.tec devices (<code>gUSBampLSL</code>, <code>gNautilusLSL</code>) at
+<a href="https://github.com/labstreaminglayer">github.com/labstreaminglayer</a>. They are
+built against g.tec's API, so the driver from step 1 must already be installed.</p>
+<p>Either way, when it is streaming you have an outlet with a <strong>name</strong> (something
+like <code>g.USBamp-UB-2016.03.06</code>), a <strong>type</strong> (<code>EEG</code>) and a <strong>nominal rate</strong>.</p>
+<h2 id="step-4-see-the-stream-from-python">Step 4 — see the stream from python</h2>
+<p>On the <strong>analysis computer</strong> (it can be the same machine):</p>
+<pre><code>pip install pylsl
+python -m pyspeller lsl --list
+</code></pre>
+<pre class="out"><code>g.USBamp-UB-2016.03.06   type=EEG   channels=16  rate=256 Hz  host=lab-pc</code></pre>
+
+<p>That one line proves the whole chain from the electrodes to your python
+process. If the list is empty, go to <a href="#when-the-stream-is-not-there">networking</a>
+below.</p>
+<h2 id="step-5-rehearse-the-lsl-path-with-no-hardware">Step 5 — rehearse the LSL path with no hardware</h2>
+<p>Worth doing once on your own laptop, before the lab: pyspeller can publish its
+<em>simulated</em> amplifier as an LSL stream and then read it back, which exercises
+exactly the same code path the real device uses.</p>
+<pre><code>python -m pyspeller buffer --port 1972
+python -m pyspeller simulator --port 1972
+python -m pyspeller lsl-publish --port 1972 --name practice-amp
+</code></pre>
+<p>then, in a fourth terminal:</p>
+<pre><code>python -m pyspeller lsl --list
+python -m pyspeller buffer --port 1973
+python -m pyspeller lsl --name practice-amp --port 1973
+</code></pre>
+<p>If samples flow into the second buffer, your LSL installation works and any
+later problem is the amplifier's side, not python's.</p>
+<h2 id="step-6-run-the-session-on-real-eeg">Step 6 — run the session on real EEG</h2>
+<pre><code>python -m pyspeller run --lsl --lsl-name &quot;g.USBamp-UB-2016.03.06&quot; --save --subject S01
+</code></pre>
+<p>or just <code>python -m pyspeller run</code>, choose <strong>g.tec amplifier</strong>, press <strong>scan for
+amplifiers</strong>, and pick it from the list with the mouse.</p>
+<p>The channel count, the sample rate and the channel names all come from the
+stream — pyspeller takes the amplifier's word for the montage, so what you
+configured in step 1 is what the classifier uses and what lands in the
+recording.</p>
+<p>From here, <a href="session.html">Running a real session</a> takes over.</p>
+<h2 id="when-the-stream-is-not-there">When the stream is not there</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pylsl is not installed</code></td>
+<td>the library is missing</td>
+<td><code>pip install pylsl</code> (it brings liblsl with it)</td>
+</tr>
+<tr>
+<td><code>--list</code> prints nothing, connector is running</td>
+<td>the two machines are not on the same network</td>
+<td>put both on the same lab switch or run everything on one machine</td>
+</tr>
+<tr>
+<td>Still nothing, same machine</td>
+<td>firewall blocking LSL's discovery</td>
+<td>allow the connector and python through the firewall; on Windows, both private and public profiles</td>
+</tr>
+<tr>
+<td>Still nothing, VPN is on</td>
+<td>LSL discovery does not cross most VPNs</td>
+<td>turn the VPN off</td>
+</tr>
+<tr>
+<td>Stream appears then vanishes</td>
+<td>wireless dropout (g.Nautilus) or USB power saving</td>
+<td>move the dongle closer, disable USB selective suspend</td>
+</tr>
+<tr>
+<td><code>stream has no nominal sample rate</code></td>
+<td>a marker or irregular stream, not EEG</td>
+<td>pass <code>--lsl-name</code> with the EEG stream's name</td>
+</tr>
+<tr>
+<td>Channels are <code>ch1…ch16</code></td>
+<td>the connector did not send names</td>
+<td>set them in g.tec's software, or ignore it — only the labels are affected</td>
+</tr>
+<tr>
+<td>Data arrives but looks like noise on every channel</td>
+<td>reference or ground not connected</td>
+<td>check REF and GND before anything else</td>
+</tr>
+</tbody>
+</table>
+<h2 id="timing-and-when-it-matters">Timing, and when it matters</h2>
+<p>The speller stamps each flash with the buffer's current sample number. Between
+the screen actually changing and that stamp there is a small delay — the
+display's refresh, the operating system, and the amplifier's own buffering.
+It is roughly constant, and a constant delay does not hurt a P300 classifier,
+because training and use share it.</p>
+<p>It matters if you are comparing latencies across systems or publishing ERP
+latencies. Then use the amplifier's <strong>hardware trigger input</strong> — g.USBamp has
+one — and record the true stimulus time on a trigger channel.</p>
+<h2 id="hygiene-and-care">Hygiene and care</h2>
+<p>Clean electrodes and the cap immediately after every session; dried gel is what
+kills electrodes. Never immerse a connector. Follow the cleaning and
+disinfection instructions in your device's manual, especially if caps are shared
+between participants.</p>
+  <div class="pager"><a href="first-run.html"><span class="dir">previous</span>Your first experiment</a>
+<a class="next" href="session.html"><span class="dir">next</span>Running a real session</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

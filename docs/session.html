@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Running a real session · pyspeller</title>
+<meta name="description" content="Consent, the cap, the impedances, the words you say, and what to do when it goes wrong — with a participant in the chair.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html" class="current"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">06 · With hardware</div>
+  <h1>Running a real session</h1>
+  <p class="lede">Consent, the cap, the impedances, the words you say, and what to do when it goes wrong — with a participant in the chair.</p>
+  <p>This page assumes the amplifier is streaming (<a href="gtec.html">the previous page</a>)
+and that you have practised the whole procedure on the simulator. There is a
+condensed, printable version in
+<a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">docs/MANUAL.md</a>
+— take it into the lab.</p>
+<div class="stop">
+<span class="block-title">Before a human being is involved</span>
+Research on people needs ethical approval and informed consent — <em>your</em>
+institution's, in writing, before the session. This is research equipment, not a
+medical device: it diagnoses nothing and treats nothing, and you must not imply
+otherwise to a participant. If they want to stop, the session stops
+immediately, without discussion.
+</div>
+
+<h2 id="timing">Timing</h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Consent, explanation, questions</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>Cap, electrodes, impedances</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>Signal check</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>Calibration (5 letters)</td>
+<td>3 min</td>
+</tr>
+<tr>
+<td>Training</td>
+<td>1 min</td>
+</tr>
+<tr>
+<td>Feedback and free spelling</td>
+<td>10–20 min</td>
+</tr>
+<tr>
+<td>Cleaning up</td>
+<td>15 min</td>
+</tr>
+</tbody>
+</table>
+<h2 id="preparing-the-participant">Preparing the participant</h2>
+<ol class="steps">
+<li><strong>Explain first, touch later.</strong> Show them the cap, the gel, and
+the screen. Tell them it is painless, that the gel washes out, that they can
+stop at any time, and roughly how long it takes.</li>
+<li><strong>Measure and fit the cap.</strong> Measure head circumference and
+choose the size. Find <code>Cz</code>: halfway between nasion (bridge of the
+nose) and inion (the bump at the back), and halfway between the two ear canals.
+The cap's Cz goes there.</li>
+<li><strong>Prepare each site.</strong> Part the hair with a blunt syringe tip,
+abrade the skin gently, and fill with conductive gel until the impedance drops.
+Do not dig — a good contact comes from contact, not pressure.</li>
+<li><strong>Use the right channels.</strong> Fz, Cz, Pz, Oz, P3, P4, PO7, PO8 at
+minimum, reference on an earlobe or mastoid, ground at AFz or FPz. More channels
+are welcome.</li>
+<li><strong>Check impedances in the g.tec software.</strong> Below 5 kΩ with gel
+electrodes; dry electrodes read far higher, so use whatever threshold your lab
+uses for that headset. Fix anything that stays high before you record.</li>
+<li><strong>Seat them properly.</strong> About 60 cm from the screen, forearms
+supported, feet flat. Ask them to find a position they can hold for twenty
+minutes — comfort now prevents movement artefacts later.</li>
+</ol>
+
+<h2 id="the-signal-check-five-minutes-that-save-an-hour">The signal check — five minutes that save an hour</h2>
+<p>Start the session (<code>python -m pyspeller run</code>, source = your amplifier) and watch
+the panel's traces before recording anything.</p>
+<table>
+<thead>
+<tr>
+<th>Ask them to</th>
+<th>You should see</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sit still, eyes open</td>
+<td>wandering traces of roughly 10–30 µV, all channels similar</td>
+</tr>
+<tr>
+<td>blink a few times</td>
+<td>large slow deflections, biggest at Fz</td>
+</tr>
+<tr>
+<td>clench the jaw</td>
+<td>a burst of fast spiky activity that stops when they relax</td>
+</tr>
+<tr>
+<td>close their eyes for 10 s</td>
+<td>alpha: a visible ~10 Hz rhythm, strongest at Oz and Pz</td>
+</tr>
+</tbody>
+</table>
+<p>If a channel is flat, or far louder than its neighbours, or the whole montage
+hums, fix it now: re-gel, check the reference and ground, move power supplies
+away from the cap. Seeing alpha appear when they close their eyes is the best
+single proof that you are recording brain activity and not an artefact.</p>
+<h2 id="calibration">Calibration</h2>
+<p>Say this, in these words:</p>
+<blockquote>
+<p>A letter will be shown to you in green. Look at it, and keep looking at that
+spot. Rows and columns will flash quickly. Count silently, to yourself, each
+time the letter you are looking at flashes — start again at one for each new
+letter. Try not to blink while the flashing is going on; blink in the pauses
+between letters.</p>
+</blockquote>
+<p>The counting matters. It is what makes the target flash <em>relevant</em> and the P300
+appear. A participant who merely stares at the letter gives you a much smaller
+response.</p>
+<p>Press <strong>Calibrate</strong>. Watch the traces, not the grid. If they blink constantly or
+shift in the chair, press <strong>⏸ pause</strong>, sort it out, and resume. If a block is
+spoiled, <strong>■ stop</strong> it and start again — bad calibration data cannot be repaired
+afterwards.</p>
+<h2 id="training-and-what-the-number-means">Training, and what the number means</h2>
+<p>Press <strong>Train classifier</strong> and read the AUC:</p>
+<table>
+<thead>
+<tr>
+<th>AUC</th>
+<th>What it means</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>above 0.75</td>
+<td>a good session</td>
+<td>go and spell</td>
+</tr>
+<tr>
+<td>0.65 – 0.75</td>
+<td>usable</td>
+<td>raise repetitions to 15, or record a second calibration block and retrain</td>
+</tr>
+<tr>
+<td>below 0.65</td>
+<td>not good enough to spell with</td>
+<td>check impedances, re-explain the counting task, give them a break, then re-calibrate</td>
+</tr>
+</tbody>
+</table>
+<p>A second calibration block is cheap — three minutes — and often turns a marginal
+session into a good one, because the participant now knows what the task feels
+like.</p>
+<h2 id="spelling">Spelling</h2>
+<p><strong>Feedback</strong> spells a known word and scores it: use it to show the participant
+(and yourself) that it works. <strong>Free spelling</strong> lets them write what they like;
+<code>DEL</code> fixes mistakes.</p>
+<p>Give a break every ten minutes: attention decays, and with it the P300. A
+five-minute rest usually restores accuracy better than any parameter change.</p>
+<h2 id="ending">Ending</h2>
+<p>Press <strong>Quit</strong>, remove the cap, and let them wash their hair. Clean the
+electrodes and the cap immediately — dried gel destroys electrodes and blocks
+the holes.</p>
+<p>Before you leave the lab, write down: participant code, date, cap size, which
+channels were bad, the AUC, how many letters were spelled and how many were
+right, and anything unusual (tiredness, interruptions, a loose electrode). In
+six months, the recording will be meaningless without those notes.</p>
+<div class="do">
+<span class="block-title">The session checklist</span>
+Consent signed · cap on · impedances checked and written down · amplifier
+streaming and visible to <code>pyspeller lsl --list</code> · recording started ·
+signal checked (blink, jaw, alpha) · calibration clean · classifier trained and
+AUC noted · feedback block scored · free spelling done · data copied off the
+machine · cap and electrodes cleaned.
+</div>
+  <div class="pager"><a href="gtec.html"><span class="dir">previous</span>The g.tec amplifier</a>
+<a class="next" href="results.html"><span class="dir">next</span>Reading the results</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

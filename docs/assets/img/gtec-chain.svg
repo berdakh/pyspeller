@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="900" height="340" rx="12" fill="#f6f8fa"/>
+  <style>
+    .box{fill:#fff;stroke:#c9d3de;stroke-width:1.5}
+    .t{fill:#16202c;font-size:13.5px;font-weight:600}
+    .s{fill:#64748b;font-size:11.5px}
+    .arrow{stroke:#94a3b8;stroke-width:2;fill:none;marker-end:url(#c)}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;fill:#1f6feb}
+  </style>
+  <defs><marker id="c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
+  <text x="30" y="34" class="t" font-size="15">from the electrodes to the speller</text>
+
+  <rect x="30" y="70" width="150" height="86" rx="10" class="box"/>
+  <text x="46" y="98" class="t">cap + electrodes</text>
+  <text x="46" y="118" class="s">8–16 channels, gel,</text>
+  <text x="46" y="134" class="s">reference + ground</text>
+
+  <rect x="210" y="70" width="150" height="86" rx="10" class="box"/>
+  <text x="226" y="98" class="t">g.tec amplifier</text>
+  <text x="226" y="118" class="s">g.USBamp, g.HIamp</text>
+  <text x="226" y="134" class="s">or g.Nautilus</text>
+
+  <rect x="390" y="70" width="170" height="86" rx="10" class="box"/>
+  <text x="406" y="98" class="t">g.tec software</text>
+  <text x="406" y="118" class="s">device driver plus</text>
+  <text x="406" y="134" class="s">g.NEEDaccess</text>
+
+  <rect x="590" y="70" width="170" height="86" rx="10" class="box" stroke="#1f6feb"/>
+  <text x="606" y="98" class="t">LSL connector</text>
+  <text x="606" y="118" class="s">publishes an EEG</text>
+  <text x="606" y="134" class="s">stream on the network</text>
+
+  <path d="M182 113 L 206 113" class="arrow"/>
+  <path d="M362 113 L 386 113" class="arrow"/>
+  <path d="M562 113 L 586 113" class="arrow"/>
+
+  <line x1="780" y1="50" x2="780" y2="300" stroke="#c9d3de" stroke-dasharray="6 6"/>
+  <text x="792" y="66" class="s" transform="rotate(90 792 66)">pyspeller starts here</text>
+
+  <rect x="590" y="200" width="170" height="80" rx="10" fill="#e8f0fe" stroke="#1f6feb"/>
+  <text x="606" y="228" class="t">lsl bridge</text>
+  <text x="606" y="248" class="mono">pyspeller lsl</text>
+  <text x="606" y="266" class="s">copies it into the buffer</text>
+
+  <rect x="390" y="200" width="170" height="80" rx="10" fill="#e8f0fe" stroke="#1f6feb"/>
+  <text x="406" y="228" class="t">buffer server</text>
+  <text x="406" y="248" class="mono">pyspeller buffer</text>
+  <text x="406" y="266" class="s">samples and events</text>
+
+  <rect x="150" y="200" width="210" height="80" rx="10" fill="#e8f0fe" stroke="#1f6feb"/>
+  <text x="166" y="228" class="t">speller · analysis · panel</text>
+  <text x="166" y="248" class="mono">pyspeller run --lsl</text>
+  <text x="166" y="266" class="s">the experiment itself</text>
+
+  <path d="M675 160 L 675 196" class="arrow"/>
+  <path d="M586 240 L 566 240" class="arrow"/>
+  <path d="M386 240 L 366 240" class="arrow"/>
+</svg>

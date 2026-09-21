@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+  <rect width="900" height="430" rx="12" fill="#f6f8fa"/>
+  <style>
+    .t{fill:#16202c;font-size:14px;font-weight:600}
+    .s{fill:#64748b;font-size:12.5px}
+    .cell{font-size:22px;fill:#8a9299;text-anchor:middle;font-weight:600}
+    .hit{fill:#16202c}
+    .bar{fill:#c6ccd3}
+    .barwin{fill:#1b7f4b}
+  </style>
+  <text x="40" y="40" class="t">how the rows and columns meet at a letter</text>
+
+  <!-- grid -->
+  <g transform="translate(60,70)">
+    <rect x="0" y="0" width="360" height="300" rx="10" fill="#fff" stroke="#c9d3de"/>
+    <!-- row scores -->
+    <g>
+      <rect x="-1" y="98" width="360" height="52" fill="#e6f4ec"/>
+    </g>
+    <!-- column highlight -->
+    <rect x="118" y="-1" width="58" height="300" fill="#e6f4ec"/>
+    <rect x="118" y="98" width="58" height="52" fill="#bfe3cd"/>
+    <g class="cell">
+      <text x="30" y="38">A</text><text x="88" y="38">B</text><text x="147" y="38">C</text><text x="205" y="38">D</text><text x="264" y="38">E</text><text x="322" y="38">F</text>
+      <text x="30" y="88">G</text><text x="88" y="88">H</text><text x="147" y="88">I</text><text x="205" y="88">J</text><text x="264" y="88">K</text><text x="322" y="88">L</text>
+      <text x="30" y="138" class="hit">M</text><text x="88" y="138" class="hit">N</text><text x="147" y="138" class="hit" fill="#1b7f4b">O</text><text x="205" y="138" class="hit">P</text><text x="264" y="138" class="hit">Q</text><text x="322" y="138" class="hit">R</text>
+      <text x="30" y="188">S</text><text x="88" y="188">T</text><text x="147" y="188" class="hit">U</text><text x="205" y="188">V</text><text x="264" y="188">W</text><text x="322" y="188">X</text>
+      <text x="30" y="238">Y</text><text x="88" y="238">Z</text><text x="147" y="238" class="hit">0</text><text x="205" y="238">1</text><text x="264" y="238">2</text><text x="322" y="238">3</text>
+      <text x="30" y="288">4</text><text x="88" y="288">5</text><text x="147" y="288" class="hit">.</text><text x="205" y="288">,</text><text x="264" y="288">_</text><text x="322" y="288" font-size="15">DEL</text>
+    </g>
+  </g>
+
+  <!-- row bars -->
+  <g transform="translate(430,70)">
+    <text x="0" y="-14" class="s">average score per row</text>
+    <rect x="0" y="14" width="40" height="16" class="bar"/>
+    <rect x="0" y="64" width="24" height="16" class="bar"/>
+    <rect x="0" y="114" width="150" height="16" class="barwin"/>
+    <rect x="0" y="164" width="52" height="16" class="bar"/>
+    <rect x="0" y="214" width="18" height="16" class="bar"/>
+    <rect x="0" y="264" width="36" height="16" class="bar"/>
+    <text x="158" y="128" class="s" fill="#1b7f4b">row 3 wins</text>
+  </g>
+
+  <!-- column bars -->
+  <g transform="translate(60,385)">
+    <text x="0" y="30" class="s">average score per column →</text>
+    <rect x="18" y="0" width="24" height="12" class="bar"/>
+    <rect x="76" y="0" width="14" height="12" class="bar"/>
+    <rect x="130" y="0" width="34" height="12" class="barwin"/>
+    <rect x="193" y="0" width="16" height="12" class="bar"/>
+    <rect x="252" y="0" width="10" height="12" class="bar"/>
+    <rect x="310" y="0" width="20" height="12" class="bar"/>
+  </g>
+  <text x="620" y="300" class="t" font-size="20" fill="#1b7f4b">the letter is O</text>
+  <text x="620" y="326" class="s">best row × best column</text>
+  <text x="620" y="352" class="s">— one letter needs only</text>
+  <text x="620" y="372" class="s">12 flashes per repetition,</text>
+  <text x="620" y="392" class="s">not 36.</text>
+</svg>

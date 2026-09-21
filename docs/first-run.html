@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your first experiment · pyspeller</title>
+<meta name="description" content="A whole session against the simulated participant — calibrate, train, spell — and what every screen is telling you.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html" class="current"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">04 · Getting running</div>
+  <h1>Your first experiment</h1>
+  <p class="lede">A whole session against the simulated participant — calibrate, train, spell — and what every screen is telling you.</p>
+  <p>Start it:</p>
+<pre><code>python -m pyspeller run
+</code></pre>
+<h2 id="the-launcher">The launcher</h2>
+<figure>
+<img class="shadow" src="assets/img/launcher.png" alt="The launcher window with source, participant, matrix, language and repetitions">
+<figcaption>Everything a session needs, before anything starts. With a real amplifier you would press <em>scan for amplifiers</em> and pick it from the list; today, leave the source on <em>simulated subject</em>.</figcaption>
+</figure>
+
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source</td>
+<td>Where the EEG comes from: the simulator, or a g.tec amplifier over LSL</td>
+</tr>
+<tr>
+<td>Participant / experiment</td>
+<td>Names the folder your recording goes into</td>
+</tr>
+<tr>
+<td>Matrix</td>
+<td>Which grid of symbols to spell from — the alphabet with editing keys, the classic grid, Kazakh, Russian, or a small 3×3 for demos</td>
+</tr>
+<tr>
+<td>Language on screen</td>
+<td>What the participant reads. Follows the matrix unless you change it</td>
+</tr>
+<tr>
+<td>Repetitions per letter</td>
+<td>How many times each row and column flashes. More = slower and more accurate</td>
+</tr>
+<tr>
+<td>Record to disk</td>
+<td>Writes the raw EEG and every event into <code>~/output/…</code></td>
+</tr>
+</tbody>
+</table>
+<p>Press <strong>Start session</strong>. Two windows open: the <strong>control panel</strong> for you, and
+the <strong>speller</strong> for the participant. In a real session you drag the speller onto
+their monitor and maximise it.</p>
+<h2 id="the-control-panel">The control panel</h2>
+<figure>
+<img class="shadow" src="assets/img/panel-and-speller.png" alt="Control panel with buttons, live traces, signal quality bars, event log, and the speller matrix mid-flash">
+<figcaption>Left to right: the phase buttons, the live EEG, the per-channel signal level, the event stream, and the speller itself with a row lit up and the typed text at the top.</figcaption>
+</figure>
+
+<ul>
+<li><strong>the traces</strong> are the last five seconds of every channel. With the simulator
+  you will see 1/f noise, an alpha rhythm, and the occasional simulated blink.</li>
+<li><strong>signal quality</strong> is the level of each channel in microvolts. Green is
+  healthy; orange and red mean a channel much louder than the others.</li>
+<li><strong>the event log</strong> is the session's narrative — every cue, every sequence end,
+  every prediction. Flashes are left out or it would scroll past too fast.</li>
+<li><strong>typed:</strong> is what has been spelled so far, the same text the participant sees.</li>
+</ul>
+<h2 id="calibrate">Calibrate</h2>
+<p>Press <strong>Calibrate</strong>. The speller cues five letters (B, R, A, I, N) and flashes
+rows and columns for each of them. With <code>--speed</code> at its default this is real
+time, about two minutes; the simulated participant "attends" to the cued letter,
+so the data is labelled.</p>
+<p>Watch the event log: <code>simulation.target B</code>, then a burst of flashing, then
+<code>stimulus.sequence end</code>, five times over, then <code>stimulus.training end</code>.</p>
+<div class="note">
+<span class="block-title">You are not stuck with a block once it starts</span>
+<b>⏸ pause</b> holds the flashing and resumes where it left off. <b>■ stop</b>
+abandons the block. And pressing any other phase button — Calibrate while
+practice is running, say — interrupts what is running and starts the new one.
+Nothing gets wedged.
+</div>
+
+<h2 id="train">Train</h2>
+<p>Press <strong>Train classifier</strong>. It takes a second, and a window opens.</p>
+<figure>
+<img class="shadow" src="assets/img/training-view.png" alt="Training result window: AUC headline, ERP panel, discriminability map, confusion matrix">
+<figcaption>The result of training, and the single most informative screen in the whole system. <a href="results.html">Reading the results</a> goes through it in detail.</figcaption>
+</figure>
+
+<p>For now, one number matters: <strong>cross-validated AUC</strong>. It is the probability that
+a randomly chosen target flash scores higher than a randomly chosen non-target
+one — 0.5 is a coin toss, 1.0 is perfect. With the simulator you should see
+<strong>0.70–0.82</strong>. If you see 0.5, something is broken; if you see 0.99, you are not
+running the simulator you think you are.</p>
+<h2 id="spell">Spell</h2>
+<p>Press <strong>Feedback</strong>. The speller cues B, C, I in turn, flashes for each, and then
+shows what the classifier decided — in green in the grid, and appended to the
+text field. The panel's <code>typed:</code> line follows along.</p>
+<p>Then press <strong>Free spelling</strong>: the same thing without a cue. This is the mode a
+real user works in — they look at whatever they want and it appears.</p>
+<div class="warn">
+<span class="block-title">Free spelling with the simulator types nonsense</span>
+And it should. Without a cue, the simulated participant has nothing to attend
+to, so there is no P300 to find and the classifier picks noise. With a real
+participant this is the mode that matters.
+</div>
+
+<h2 id="correcting-a-letter">Correcting a letter</h2>
+<p>When a letter comes out wrong — and it will — the participant selects <strong>DEL</strong> in
+the matrix, exactly like any other key, and the last character disappears. You
+can also press <strong>⌫ backspace</strong> on the panel, which does the same from your side
+and shows up in the event log as <code>speller.edit DEL</code>. <code>_</code> types a space.</p>
+<h2 id="without-any-windows">Without any windows</h2>
+<p>Everything above also works headless, which is how you test changes and how the
+exercises are scored:</p>
+<pre><code>python -m pyspeller demo --speed 20
+</code></pre>
+<p><code>--speed 20</code> compresses experiment time twenty-fold: the data in the buffer is
+identical because everything is indexed by samples, but a four-minute session
+takes twelve seconds. Useful flags:</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--n-repetitions 8</code></td>
+<td>fewer flashes per letter — faster, less accurate</td>
+</tr>
+<tr>
+<td><code>--layout kk</code></td>
+<td>the Kazakh matrix (also <code>ru</code>, <code>6x6</code>, <code>3x3</code>)</td>
+</tr>
+<tr>
+<td><code>--erp-amplitude 4</code></td>
+<td>a harder participant: a 4 µV P300 instead of 8</td>
+</tr>
+<tr>
+<td><code>--noise-amplitude 20</code></td>
+<td>a noisier recording</td>
+</tr>
+<tr>
+<td><code>--save</code></td>
+<td>record the session to <code>~/output/…</code></td>
+</tr>
+</tbody>
+</table>
+<div class="do">
+<span class="block-title">Try this before moving on</span>
+Run <code>python -m pyspeller demo --speed 20 --erp-amplitude 4</code> and then
+the same with <code>--erp-amplitude 12</code>. Watch what the AUC and the letter
+accuracy do. You have just measured how signal strength turns into spelling
+performance — which is the whole game with a real participant.
+</div>
+  <div class="pager"><a href="install.html"><span class="dir">previous</span>Set up your computer</a>
+<a class="next" href="gtec.html"><span class="dir">next</span>The g.tec amplifier</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

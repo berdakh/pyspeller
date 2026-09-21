@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading the results · pyspeller</title>
+<meta name="description" content="What the training window is telling you, what the numbers mean, and how to get at the data afterwards.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html" class="current"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">07 · Going deeper</div>
+  <h1>Reading the results</h1>
+  <p class="lede">What the training window is telling you, what the numbers mean, and how to get at the data afterwards.</p>
+  <h2 id="the-training-window">The training window</h2>
+<figure>
+<img class="shadow" src="assets/img/training-view.png" alt="Training result window with AUC headline, ERP panel, discriminability map and confusion matrix">
+<figcaption>Four views of the same calibration data. buffer_bci draws the equivalent plots in MATLAB after <code>train_erp_clsfr</code>; this is the same report for the python speller.</figcaption>
+</figure>
+
+<h3 id="the-headline-auc">The headline: AUC</h3>
+<p><strong>AUC</strong> — the area under the ROC curve — is the probability that a randomly
+chosen target flash gets a higher score than a randomly chosen non-target one.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.5</td>
+<td>the classifier cannot tell them apart at all</td>
+</tr>
+<tr>
+<td>0.65</td>
+<td>weak but real; usable with many repetitions</td>
+</tr>
+<tr>
+<td>0.75–0.85</td>
+<td>a good P300 session</td>
+</tr>
+<tr>
+<td>above 0.9</td>
+<td>excellent — or you are looking at the simulator being generous</td>
+</tr>
+</tbody>
+</table>
+<p>It is <strong>cross-validated</strong>: the data is split into five parts, and each part is
+scored by a classifier trained on the other four. That matters. A classifier
+scored on the data it was fitted to will look far better than it is —
+especially here, where there are more features (channels × time points) than
+epochs.</p>
+<p>Accuracy, the number beside it, is the same idea in a blunter form: the
+proportion of single flashes put in the right class. It looks low (0.70 is
+normal) because two flashes in twelve are targets; AUC is the number to trust.</p>
+<h3 id="the-class-averages">The class averages</h3>
+<p>The target trace should have a positive bump 250–400 ms after the flash, largest
+at Cz and Pz. If both traces lie on top of each other, the participant was not
+attending, the cue was not visible, or the flashes are not reaching the
+classifier — check the event log.</p>
+<p>These are drawn <strong>after pre-processing</strong>, so they are referenced, filtered and
+downsampled: the amplitudes are smaller than the raw ERP you saw in
+<a href="paradigm.html">the paradigm page</a>, because the common average reference removes
+what every channel shares.</p>
+<h3 id="where-the-classes-differ">Where the classes differ</h3>
+<p>The heat map is the AUC of each channel and time point <em>on its own</em>. It answers
+a different question from the classifier: not "can we decide?" but "where is
+there anything to decide with?"</p>
+<p>A healthy map has a warm patch over the centro-parietal channels between about
+250 and 450 ms. A uniformly pale map means no signal — no amount of classifier
+tuning will save that session.</p>
+<h3 id="the-confusion-matrix">The confusion matrix</h3>
+<p>Read it a row at a time: of the flashes that really were targets, how many did
+the classifier call targets? A P300 classifier typically misses a lot of single
+targets (rows like 43 % correct) and still spells perfectly, because twelve
+repetitions are averaged before a decision. This is why single-flash accuracy is
+a poor guide and letter accuracy is what you report.</p>
+<h2 id="what-is-written-to-disk">What is written to disk</h2>
+<p>With <code>--save</code> (or <code>pyspeller save</code>), a session directory looks like this:</p>
+<pre><code>~/output/&lt;experiment&gt;/&lt;subject&gt;/&lt;date&gt;/&lt;time&gt;/raw_buffer/
+├── header          binary: channel count, sample rate, sample type, labels
+├── header.txt      the same in ascii, readable
+├── samples         the raw EEG, channels fastest
+├── events          every flash, cue, prediction and correction
+├── calibration_epochs.npz   the cut, labelled epochs
+├── classifier.pkl           the trained classifier
+└── training_summary.json    the numbers behind the window above
+</code></pre>
+<p>The first four files are the <strong>FieldTrip offline-buffer format</strong>, which is what
+buffer_bci writes too — so these recordings open in its MATLAB tools
+(<code>matlab/offline/read_buffer_offline_data.m</code>) and can be replayed into a live
+buffer with <code>matlab/dataAcq/buffer_fileproxy.m</code>, as if the participant were
+still in the chair.</p>
+<h2 id="getting-at-it-in-python">Getting at it in python</h2>
+<pre><code>from pyspeller.acquisition.saver import load_session, load_epochs
+
+header, samples, events = load_session(
+    '~/output/speller/S01/260921/1503/raw_buffer')
+
+print(header)                 # channels, rate, how many samples
+print(samples.shape)          # (n_samples, n_channels), microvolts
+
+spelled = [e.value for e in events if e.type == 'classifier.prediction']
+cues    = [e.value for e in events if e.type == 'simulation.target']
+
+epochs, labels, meta = load_epochs('.../calibration_epochs.npz')
+print(epochs.shape)           # (n_epochs, n_channels, n_samples)
+target = epochs[labels == 1].mean(axis=0)
+</code></pre>
+<p>Everything the online system did, you can now redo offline — with a different
+filter, a different classifier, a different epoch length — on exactly the data
+the participant produced.</p>
+<h2 id="the-notebook">The notebook</h2>
+<p><a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb"><code>docs/pyspeller_tutorial.ipynb</code></a>
+runs a whole session from python and plots everything on this page: the raw
+traces, the class averages, the classifier's weights, the decoded letters, and
+how to load a recording back. It runs against the simulator in about 25 seconds:</p>
+<pre><code>pip install matplotlib jupyter
+jupyter notebook docs/pyspeller_tutorial.ipynb
+</code></pre>
+<div class="do">
+<span class="block-title">The measurement that matters</span>
+Letter accuracy — how many cued letters came out right — is what you report for
+a session, together with the number of repetitions it took and the resulting
+letters per minute. AUC explains <em>why</em> the accuracy is what it is; it is
+not a result on its own.
+</div>
+  <div class="pager"><a href="session.html"><span class="dir">previous</span>Running a real session</a>
+<a class="next" href="code.html"><span class="dir">next</span>Under the hood</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

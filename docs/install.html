@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up your computer · pyspeller</title>
+<meta name="description" content="Python, three packages, one clone, one test run. Fifteen minutes on any operating system.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html" class="current"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">03 · Getting running</div>
+  <h1>Set up your computer</h1>
+  <p class="lede">Python, three packages, one clone, one test run. Fifteen minutes on any operating system.</p>
+  <h2 id="1-python">1. Python</h2>
+<p>You need <strong>python 3.8 or newer</strong>. Check what you have:</p>
+<pre><code>python --version
+</code></pre>
+<p>On many Linux and macOS systems the command is <code>python3</code> instead.</p>
+<p>If that fails or shows something older than 3.8:</p>
+<ul>
+<li><strong>Windows</strong> — install from <a href="https://www.python.org/downloads/">python.org</a>
+  and tick <em>Add python.exe to PATH</em> on the first screen of the installer.</li>
+<li><strong>macOS</strong> — <code>brew install python</code> if you have Homebrew, or the installer from
+  python.org.</li>
+<li><strong>Linux</strong> — <code>sudo apt install python3 python3-pip python3-tk</code> on Debian and
+  Ubuntu; your distribution's equivalent elsewhere.</li>
+</ul>
+<div class="warn">
+<span class="block-title">Linux users: don't skip python3-tk</span>
+The graphical interface uses <code>tkinter</code>, which ships with python on
+Windows and macOS but is a separate package on Linux. Without it, the speller
+falls back to a text-only display. Check with
+<code>python3 -c "import tkinter"</code> — no output means it is there.
+</div>
+
+<h2 id="2-a-place-to-work-recommended">2. A place to work (recommended)</h2>
+<p>A virtual environment keeps this project's packages away from the rest of your
+system. From the folder where you keep your work:</p>
+<pre><code>python -m venv bci
+</code></pre>
+<p>Then activate it — on Windows <code>bci\Scripts\activate</code>, on macOS and Linux
+<code>source bci/bin/activate</code>.</p>
+<p>Your prompt now starts with <code>(bci)</code>. Everything below happens inside it.</p>
+<h2 id="3-get-the-code">3. Get the code</h2>
+<pre><code>git clone https://github.com/berdakh/pyspeller
+cd pyspeller
+pip install numpy
+</code></pre>
+<p><code>numpy</code> is the only thing the framework needs. Two more are worth adding now:</p>
+<pre><code>pip install pylsl          # to talk to a g.tec amplifier
+pip install matplotlib     # for the tutorial notebook's plots
+</code></pre>
+<div class="note">
+<span class="block-title">No git?</span>
+Download the ZIP from the
+<a href="https://github.com/berdakh/pyspeller">repository page</a> (green
+<em>Code</em> button → <em>Download ZIP</em>) and unpack it. Git is better —
+you will be able to pull fixes — but the ZIP works.
+</div>
+
+<h2 id="4-prove-it-works">4. Prove it works</h2>
+<pre><code>python -m unittest discover -s tests
+</code></pre>
+<p>This runs the whole test suite: the network protocol, the buffer, the signal
+processing, the classifier, and a complete simulated experiment that calibrates,
+trains and spells. It takes about 40 seconds and ends with:</p>
+<pre class="out"><code>Ran 142 tests in 40.161s
+
+OK (skipped=26)</code></pre>
+
+<p>Skipped tests are the ones that need something you may not have — a display, or
+<code>pylsl</code>, or a checkout of buffer_bci. <code>OK</code> is what matters.</p>
+<p>Then run a whole experiment without any windows:</p>
+<pre><code>python -m pyspeller demo --speed 10
+</code></pre>
+<pre class="out"><code>calibrating on B R A I N ...
+[sigproc] gathered 720 epochs (120 target, 600 non-target)
+[sigproc] classifier trained: cross-validated AUC 0.773, accuracy 0.72
+spelling B C I ...
+typed: 'BCI'  (cued: 'BCI')
+letter accuracy: 3/3</code></pre>
+
+<p>If you see a number near 0.75 and three letters spelled, your installation is
+correct and you understand what the rest of this tutorial will produce.</p>
+<h2 id="when-it-goes-wrong">When it goes wrong</h2>
+<table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Cause and fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>python: command not found</code></td>
+<td>Use <code>python3</code>, or re-run the Windows installer with <em>Add to PATH</em> ticked</td>
+</tr>
+<tr>
+<td><code>No module named numpy</code></td>
+<td><code>pip install numpy</code> — and check your virtual environment is active</td>
+</tr>
+<tr>
+<td><code>No module named pyspeller</code></td>
+<td>Run the commands from inside the cloned <code>pyspeller</code> folder</td>
+</tr>
+<tr>
+<td><code>No module named tkinter</code></td>
+<td>Linux: <code>sudo apt install python3-tk</code>. macOS with pyenv: reinstall python with tcl-tk available</td>
+</tr>
+<tr>
+<td><code>no tk display available</code> in the tests</td>
+<td>You are on a machine without a screen (a server, SSH without X). The tests skip those; the rest still run</td>
+</tr>
+<tr>
+<td>Tests fail with timeouts</td>
+<td>A very slow or heavily loaded machine. Run them again on an idle machine before reporting it</td>
+</tr>
+<tr>
+<td><code>pip: command not found</code></td>
+<td><code>python -m pip install ...</code> instead</td>
+</tr>
+</tbody>
+</table>
+<div class="do">
+<span class="block-title">Done when</span>
+<code>python -m unittest discover -s tests</code> prints <code>OK</code> and
+<code>python -m pyspeller demo --speed 10</code> spells its three letters. Now
+go and run the real thing.
+</div>
+  <div class="pager"><a href="architecture.html"><span class="dir">previous</span>The client–server design</a>
+<a class="next" href="first-run.html"><span class="dir">next</span>Your first experiment</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Under the hood · pyspeller</title>
+<meta name="description" content="Every module in a paragraph, the pipeline in code, and the five changes you are most likely to want to make.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html" class="current"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">08 · Going deeper</div>
+  <h1>Under the hood</h1>
+  <p class="lede">Every module in a paragraph, the pipeline in code, and the five changes you are most likely to want to make.</p>
+  <p>The whole framework is about 3 000 lines of python with one dependency. You can
+read it in an afternoon, and you should: it is the best way to understand what a
+BCI actually does.</p>
+<h2 id="the-map">The map</h2>
+<pre><code>pyspeller/
+├── buffer/
+│   ├── protocol.py     the FieldTrip wire format: headers, events, samples
+│   ├── server.py       the data/event server: a sample ring and an event list
+│   └── client.py       everything else uses this to talk to it
+├── acquisition/
+│   ├── simulator.py    a fake participant: 1/f EEG, alpha, blinks, and a P300
+│   ├── lsl_bridge.py   a real amplifier, over Lab Streaming Layer
+│   ├── lsl_outlet.py   the reverse, for testing the LSL path
+│   └── saver.py        writes samples and events to disk as they arrive
+├── signalproc/
+│   ├── preproc.py      detrend, reference, band-pass, downsample, outliers
+│   ├── epochs.py       turns events plus samples into labelled epochs
+│   └── classifier.py   shrinkage LDA, cross-validation, discriminability
+├── speller/
+│   ├── matrix.py       the grid, the flash sequences, the row/column decoding
+│   ├── stimulus.py     the experiment itself: cue, flash, pause, stop
+│   ├── sigproc.py      the online client: gather, train, score, decide
+│   ├── render.py       how the matrix is drawn (tk, terminal, headless)
+│   ├── text.py         what a decoded symbol does to the typed text
+│   └── messages.py     the on-screen wording, per language
+├── gui/
+│   ├── launcher.py     the start screen
+│   ├── control_panel.py the operator's window
+│   └── training_view.py what training found
+├── clock.py            experiment time, and how to compress it
+├── config.py           every parameter of the experiment, in one dataclass
+├── experiment.py       all the clients in one process (used by the tests)
+└── cli.py              python -m pyspeller &lt;command&gt;
+</code></pre>
+<h2 id="the-pipeline-in-code">The pipeline, in code</h2>
+<p>This is the entire signal path, with the file each step lives in:</p>
+<pre><code>raw epoch                         [channels x samples], 600 ms after a flash
+  → preproc.detrend               remove drift within the epoch
+  → preproc.car                   common average reference
+  → preproc.spectral_filter       trapezoidal band-pass, 0.5–10 Hz
+  → preproc.subsample             down to 16 Hz: ~10 points per channel
+  → flatten                       one feature vector per epoch
+  → ShrinkageLDA.decision_function   one number per flash
+  → average per row / per column  speller/sigproc.py
+  → matrix.decode                 best row × best column = the letter
+</code></pre>
+<p>Two design choices are worth understanding, because they are where most ERP
+pipelines differ:</p>
+<ul>
+<li><strong>Shrinkage.</strong> With 8 channels × 10 time points there are 80 features and
+  perhaps 600 epochs. The covariance matrix of 80 features estimated from 600
+  samples is noisy, so it is shrunk towards a scaled identity
+  (<code>regularisation=0.5</code>). Without it, cross-validated AUC collapses.</li>
+<li><strong>A trapezoidal filter in the frequency domain</strong> rather than an IIR filter:
+  zero phase distortion, no dependency on scipy, and the same four-corner
+  specification (<code>0.1 0.5 10 12</code>) that buffer_bci's MATLAB code uses.</li>
+</ul>
+<h2 id="changes-you-are-likely-to-want">Changes you are likely to want</h2>
+<h3 id="a-new-symbol-layout">A new symbol layout</h3>
+<p><code>config.py</code> holds them as tuples of rows. Add yours, register it, and give it
+words that it can spell:</p>
+<pre><code>SYMBOLS_MINE = (('A', 'B', 'C'),
+                ('D', 'E', 'F'))
+LAYOUTS['mine'] = SYMBOLS_MINE
+DEFAULT_WORDS['mine'] = (tuple('ABCDEF'), tuple('FACE'))
+</code></pre>
+<p><code>python -m pyspeller demo --layout mine</code> now works. The flash sequence, the
+decoding and the display all derive from the shape of the tuple.</p>
+<h3 id="a-new-language-for-the-instructions">A new language for the instructions</h3>
+<p><code>speller/messages.py</code> is one dictionary per language, with the same keys.
+Copy <code>ENGLISH</code>, translate the values, add it to <code>LANGUAGES</code>, and select it with
+<code>--language</code>. A test checks that every language defines every key.</p>
+<h3 id="a-different-classifier">A different classifier</h3>
+<p><code>signalproc/classifier.py</code> defines <code>ShrinkageLDA</code> with <code>fit</code> and
+<code>decision_function</code>, and <code>ERPClassifier</code> wraps it with the pre-processing.
+Anything with those two methods can be dropped in — logistic regression, a
+support vector machine, a shrinkage-free LDA for comparison. The exercises ask
+you to do exactly that.</p>
+<h3 id="a-different-amplifier">A different amplifier</h3>
+<p>If it has an LSL connector, nothing changes: <code>pyspeller lsl --name ...</code>. If it
+does not, write a client that reads your device and calls <code>put_data</code> — that is
+what <code>simulator.py</code> and <code>lsl_bridge.py</code> both do, in about 40 lines each.</p>
+<h3 id="your-own-online-analysis">Your own online analysis</h3>
+<p>Write a client. Connect, read events, take the samples you want, publish your
+own events. Fifteen lines is enough to log every prediction to a CSV, or to make
+a second display that shows something you care about:</p>
+<pre><code>from pyspeller.buffer import BufferClient
+
+client = BufferClient('localhost', 1972).connect()
+client.wait_for_header()
+client.reset_event_cursor()
+while True:
+    for event in client.new_events(timeout_ms=1000):
+        if event.type == 'classifier.prediction':
+            print('the speller chose', event.value)
+</code></pre>
+<h2 id="the-tests-are-documentation-too">The tests are documentation too</h2>
+<p><code>tests/</code> is 142 tests and the most precise description of how the system
+behaves. If you want to know what happens when a block is stopped mid-flash, or
+how an epoch is cut, or what the buffer does when its ring wraps, the test that
+pins that behaviour down is easier to read than the code.</p>
+<pre><code>python -m unittest discover -s tests -v
+</code></pre>
+<p>Every change you make should leave that green, and every behaviour you add
+should get a test. That is how this codebase stays small enough to read.</p>
+  <div class="pager"><a href="results.html"><span class="dir">previous</span>Reading the results</a>
+<a class="next" href="exercises.html"><span class="dir">next</span>Exercises</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>

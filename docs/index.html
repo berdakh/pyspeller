@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build a working brain–computer interface · pyspeller</title>
+<meta name="description" content="A P300 speller you can run this afternoon — on a simulated brain first, then on a real one with a g.tec amplifier.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <a class="brand" href="index.html">py<span>speller</span></a>
+  <div class="brand-sub">P300 speller tutorial</div>
+  <div class="nav-group"><div class="nav-title">Orientation</div><nav>
+  <a href="index.html" class="current">Start here</a>
+  <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
+  <a href="architecture.html"><span class="num">2</span>The client–server design</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Getting running</div><nav>
+  <a href="install.html"><span class="num">3</span>Set up your computer</a>
+  <a href="first-run.html"><span class="num">4</span>Your first experiment</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">With hardware</div><nav>
+  <a href="gtec.html"><span class="num">5</span>The g.tec amplifier</a>
+  <a href="session.html"><span class="num">6</span>Running a real session</a>
+  </nav></div>
+  <div class="nav-group"><div class="nav-title">Going deeper</div><nav>
+  <a href="results.html"><span class="num">7</span>Reading the results</a>
+  <a href="code.html"><span class="num">8</span>Under the hood</a>
+  <a href="exercises.html"><span class="num">9</span>Exercises</a>
+  <a href="reference.html"><span class="num">10</span>Troubleshooting & glossary</a>
+  </nav></div>
+  <div class="sidebar-foot">
+    <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
+    <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/MANUAL.md">the printable session manual</a><br>
+    <a href="https://github.com/berdakh/pyspeller/blob/main/docs/pyspeller_tutorial.ipynb">the tutorial notebook</a>
+  </div>
+</aside>
+<main>
+  <div class="page-kicker">Start here</div>
+  <h1>Build a working brain–computer interface</h1>
+  <p class="lede">A P300 speller you can run this afternoon — on a simulated brain first, then on a real one with a g.tec amplifier.</p>
+  <p>By the end of this tutorial you will have typed a word on a screen using nothing
+but attention: no keyboard, no mouse, no muscles. You will also know why it
+works, what every piece of the software does, and how to run a session with a
+real person and a real amplifier.</p>
+<figure>
+<img class="shadow" src="assets/img/panel-and-speller.png" alt="The control panel on the left and the speller matrix on the right">
+<figcaption>What you are building: the operator's panel (left) with the live EEG, and the participant's speller (right) mid-flash, with the letters typed so far in the field at the top.</figcaption>
+</figure>
+
+<h2 id="ten-minutes-to-your-first-experiment">Ten minutes to your first experiment</h2>
+<p>No hardware needed. The software comes with a simulated participant whose
+brain responds the way a real one does.</p>
+<pre><code>git clone https://github.com/berdakh/pyspeller
+cd pyspeller
+pip install numpy
+python -m pyspeller run
+</code></pre>
+<p>Choose <strong>simulated subject</strong>, press <strong>Start session</strong>, then <strong>Calibrate</strong>,
+<strong>Train classifier</strong>, <strong>Feedback</strong> — and watch letters appear. If anything goes
+wrong, <a href="install.html">Set up your computer</a> has the fix.</p>
+<div class="note">
+<span class="block-title">Why start with a simulator?</span>
+Because every mistake you make with a real participant costs twenty minutes of
+their time and a wash of their hair. Learn the procedure on the simulator until
+it is boring, then do it for real.
+</div>
+
+<h2 id="the-path">The path</h2>
+<p>Work through these in order. The whole thing is a long afternoon; the first two
+hours get you running.</p>
+<div class="cards">
+<a class="card" href="paradigm.html"><span class="card-num">01 · 25 min</span><h3>How a P300 speller works</h3><p>EEG, evoked responses, and why flashing letters lets a computer read your intention.</p></a>
+<a class="card" href="architecture.html"><span class="card-num">02 · 20 min</span><h3>The client–server design</h3><p>One buffer, several small programs. Why this is how real BCI systems are built.</p></a>
+<a class="card" href="install.html"><span class="card-num">03 · 15 min</span><h3>Set up your computer</h3><p>Python, the packages, the tests. Windows, macOS and Linux.</p></a>
+<a class="card" href="first-run.html"><span class="card-num">04 · 30 min</span><h3>Your first experiment</h3><p>Run a whole session against the simulator and read what comes out.</p></a>
+<a class="card" href="gtec.html"><span class="card-num">05 · 45 min</span><h3>The g.tec amplifier</h3><p>Drivers, g.NEEDaccess, Lab Streaming Layer, and getting real EEG into the buffer.</p></a>
+<a class="card" href="session.html"><span class="card-num">06 · 45 min</span><h3>Running a real session</h3><p>Consent, the cap, impedances, what to say, and what to do when it goes wrong.</p></a>
+<a class="card" href="results.html"><span class="card-num">07 · 25 min</span><h3>Reading the results</h3><p>AUC, the confusion matrix, the ERP plots, and the files on disk.</p></a>
+<a class="card" href="code.html"><span class="card-num">08 · 30 min</span><h3>Under the hood</h3><p>Every module in a page, and how to change the parts you care about.</p></a>
+<a class="card" href="exercises.html"><span class="card-num">09</span><h3>Exercises</h3><p>Seven pieces of work that prove you can actually run and reason about this.</p></a>
+<a class="card" href="reference.html"><span class="card-num">10</span><h3>Troubleshooting &amp; glossary</h3><p>Every error message we know about, and every term defined.</p></a>
+</div>
+
+<h2 id="what-you-need">What you need</h2>
+<table>
+<thead>
+<tr>
+<th>For the simulator</th>
+<th>For a real session</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Any computer with python 3.8 or newer</td>
+<td>A g.tec amplifier (g.USBamp, g.HIamp or g.Nautilus)</td>
+</tr>
+<tr>
+<td><code>numpy</code></td>
+<td>An EEG cap, electrodes, gel, syringes</td>
+</tr>
+<tr>
+<td>A screen</td>
+<td><code>pylsl</code>, and g.tec's driver and software on the recording machine</td>
+</tr>
+<tr>
+<td>10 minutes</td>
+<td>A willing participant, consent, and about an hour</td>
+</tr>
+</tbody>
+</table>
+<h2 id="where-this-comes-from">Where this comes from</h2>
+<p>This software is a python rewrite of the ideas in
+<a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>, a framework built at the
+Donders Institute for teaching and running BCI experiments. buffer_bci is
+mostly MATLAB with a C/Java data server; <strong>pyspeller</strong> is the same architecture
+with every part written in python, so that you can read all of it in an
+afternoon.</p>
+<p>The two speak the same protocol on the wire, so a recording made here opens in
+buffer_bci's MATLAB analysis tools, and its MATLAB clients can talk to this
+server. Where buffer_bci's own tutorial material is worth reading, this site
+points at it.</p>
+<div class="do">
+<span class="block-title">If you only have one hour</span>
+Read <a href="paradigm.html">How a P300 speller works</a>, then do
+<a href="install.html">Set up your computer</a> and
+<a href="first-run.html">Your first experiment</a>. That is enough to run the
+simulated experiment and understand what you are seeing.
+</div>
+
+<div class="meta" style="margin-top:34px">
+This site lives in <code>docs/</code> in the repository: the pages are markdown
+in <code>docs/site/</code>, and <code>python docs/build_site.py</code> (needs
+<code>pip install markdown</code>) regenerates the html. Corrections are
+welcome as pull requests.
+</div>
+  <div class="pager"><a class="next" href="paradigm.html"><span class="dir">next</span>How a P300 speller works</a></div>
+  <p class="meta">Part of <a href="https://github.com/berdakh/pyspeller">pyspeller</a>,
+  a pure-python BCI framework built on the ideas of
+  <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
+</main>
+</div>
+</body>
+</html>
