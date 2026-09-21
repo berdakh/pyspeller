@@ -13,6 +13,8 @@
 <aside class="sidebar">
   <a class="brand" href="index.html">py<span>speller</span></a>
   <div class="brand-sub">P300 speller tutorial</div>
+  <details class="contents" open>
+  <summary>Contents</summary>
   <div class="nav-group"><div class="nav-title">Orientation</div><nav>
   <a href="index.html">Start here</a>
   <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
@@ -33,6 +35,7 @@
   <a href="exercises.html"><span class="num">10</span>Exercises</a>
   <a href="reference.html" class="current"><span class="num">11</span>Troubleshooting & glossary</a>
   </nav></div>
+  </details>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
     <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
@@ -46,7 +49,7 @@
   <p class="lede">Every error message we know about, every term defined, and where to read further.</p>
   <h2 id="troubleshooting">Troubleshooting</h2>
 <h3 id="installing-and-starting">Installing and starting</h3>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Message</th>
@@ -75,9 +78,9 @@
 <td>a buffer is already running: use <code>--port 1973</code>, or stop the old one</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="the-amplifier">The amplifier</h3>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Message</th>
@@ -110,9 +113,9 @@
 <td>reference or ground electrode is loose</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="the-experiment">The experiment</h3>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Symptom</th>
@@ -145,7 +148,7 @@
 <td>tiredness or drying gel. Break, re-check impedances, consider re-calibrating</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h2 id="glossary">Glossary</h2>
 <p><strong>Artefact</strong> — anything in the recording that is not brain activity: blinks,
 muscle, movement, mains hum, a loose electrode.</p>
@@ -213,5 +216,11 @@ the signal this speller is built on.</p>
   <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
 </main>
 </div>
+<script>
+  // on a phone the contents list starts folded; on a wide screen it stays open
+  var contents = document.querySelector('.contents');
+  if (contents && window.matchMedia('(max-width: 900px)').matches)
+    contents.removeAttribute('open');
+</script>
 </body>
 </html>

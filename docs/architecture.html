@@ -13,6 +13,8 @@
 <aside class="sidebar">
   <a class="brand" href="index.html">py<span>speller</span></a>
   <div class="brand-sub">P300 speller tutorial</div>
+  <details class="contents" open>
+  <summary>Contents</summary>
   <div class="nav-group"><div class="nav-title">Orientation</div><nav>
   <a href="index.html">Start here</a>
   <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
@@ -33,6 +35,7 @@
   <a href="exercises.html"><span class="num">10</span>Exercises</a>
   <a href="reference.html"><span class="num">11</span>Troubleshooting & glossary</a>
   </nav></div>
+  </details>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
     <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
@@ -80,7 +83,7 @@ when to flash next.
 </div>
 
 <h2 id="the-clients">The clients</h2>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Client</th>
@@ -115,7 +118,7 @@ when to flash next.
 <td>Copies everything onto disk as it arrives</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p><code>pyspeller run</code> starts all of them in one process for convenience, but they are
 the same programs: you can run the amplifier on the recording machine, the
 speller on the participant's screen, and the analysis on your laptop, by
@@ -123,7 +126,7 @@ pointing each at the buffer's address with <code>--host</code>.</p>
 <h2 id="how-they-coordinate-events">How they coordinate: events</h2>
 <p>There is no command channel. Clients coordinate by writing events that the
 others read. This is the entire vocabulary:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Event</th>
@@ -212,7 +215,7 @@ others read. This is the entire vocabulary:</p>
 <td>(simulator only) what the fake participant is attending to</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>Two consequences worth understanding:</p>
 <ul>
 <li><strong>Anything can drive the experiment.</strong> The control panel has no special
@@ -266,5 +269,11 @@ which is the only place that turns epochs into decisions.
   <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
 </main>
 </div>
+<script>
+  // on a phone the contents list starts folded; on a wide screen it stays open
+  var contents = document.querySelector('.contents');
+  if (contents && window.matchMedia('(max-width: 900px)').matches)
+    contents.removeAttribute('open');
+</script>
 </body>
 </html>

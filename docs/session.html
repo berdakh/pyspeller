@@ -13,6 +13,8 @@
 <aside class="sidebar">
   <a class="brand" href="index.html">py<span>speller</span></a>
   <div class="brand-sub">P300 speller tutorial</div>
+  <details class="contents" open>
+  <summary>Contents</summary>
   <div class="nav-group"><div class="nav-title">Orientation</div><nav>
   <a href="index.html">Start here</a>
   <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
@@ -33,6 +35,7 @@
   <a href="exercises.html"><span class="num">10</span>Exercises</a>
   <a href="reference.html"><span class="num">11</span>Troubleshooting & glossary</a>
   </nav></div>
+  </details>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
     <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
@@ -59,7 +62,7 @@ immediately, without discussion.
 </div>
 
 <h2 id="timing">Timing</h2>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Step</th>
@@ -96,7 +99,7 @@ immediately, without discussion.
 <td>15 min</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h2 id="preparing-the-participant">Preparing the participant</h2>
 <ol class="steps">
 <li><strong>Explain first, touch later.</strong> Show them the cap, the gel, and
@@ -125,7 +128,7 @@ minutes — comfort now prevents movement artefacts later.</li>
 <h2 id="the-signal-check-five-minutes-that-save-an-hour">The signal check — five minutes that save an hour</h2>
 <p>Start the session (<code>python -m pyspeller run</code>, source = your amplifier) and watch
 the panel's traces before recording anything.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Ask them to</th>
@@ -150,7 +153,7 @@ the panel's traces before recording anything.</p>
 <td>alpha: a visible ~10 Hz rhythm, strongest at Oz and Pz</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>If a channel is flat, or far louder than its neighbours, or the whole montage
 hums, fix it now: re-gel, check the reference and ground, move power supplies
 away from the cap. Seeing alpha appear when they close their eyes is the best
@@ -173,7 +176,7 @@ spoiled, <strong>■ stop</strong> it and start again — bad calibration data c
 afterwards.</p>
 <h2 id="training-and-what-the-number-means">Training, and what the number means</h2>
 <p>Press <strong>Train classifier</strong> and read the AUC:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>AUC</th>
@@ -198,7 +201,7 @@ afterwards.</p>
 <td>check impedances, re-explain the counting task, give them a break, then re-calibrate</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>A second calibration block is cheap — three minutes — and often turns a marginal
 session into a good one, because the participant now knows what the task feels
 like.</p>
@@ -231,5 +234,11 @@ machine · cap and electrodes cleaned.
   <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
 </main>
 </div>
+<script>
+  // on a phone the contents list starts folded; on a wide screen it stays open
+  var contents = document.querySelector('.contents');
+  if (contents && window.matchMedia('(max-width: 900px)').matches)
+    contents.removeAttribute('open');
+</script>
 </body>
 </html>

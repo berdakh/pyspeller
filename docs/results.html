@@ -13,6 +13,8 @@
 <aside class="sidebar">
   <a class="brand" href="index.html">py<span>speller</span></a>
   <div class="brand-sub">P300 speller tutorial</div>
+  <details class="contents" open>
+  <summary>Contents</summary>
   <div class="nav-group"><div class="nav-title">Orientation</div><nav>
   <a href="index.html">Start here</a>
   <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
@@ -33,6 +35,7 @@
   <a href="exercises.html"><span class="num">10</span>Exercises</a>
   <a href="reference.html"><span class="num">11</span>Troubleshooting & glossary</a>
   </nav></div>
+  </details>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
     <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
@@ -53,7 +56,7 @@
 <h3 id="the-headline-auc">The headline: AUC</h3>
 <p><strong>AUC</strong> — the area under the ROC curve — is the probability that a randomly
 chosen target flash gets a higher score than a randomly chosen non-target one.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Value</th>
@@ -78,7 +81,7 @@ chosen target flash gets a higher score than a randomly chosen non-target one.</
 <td>excellent — or you are looking at the simulator being generous</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>It is <strong>cross-validated</strong>: the data is split into five parts, and each part is
 scored by a classifier trained on the other four. That matters. A classifier
 scored on the data it was fitted to will look far better than it is —
@@ -166,5 +169,11 @@ not a result on its own.
   <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
 </main>
 </div>
+<script>
+  // on a phone the contents list starts folded; on a wide screen it stays open
+  var contents = document.querySelector('.contents');
+  if (contents && window.matchMedia('(max-width: 900px)').matches)
+    contents.removeAttribute('open');
+</script>
 </body>
 </html>

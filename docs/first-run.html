@@ -13,6 +13,8 @@
 <aside class="sidebar">
   <a class="brand" href="index.html">py<span>speller</span></a>
   <div class="brand-sub">P300 speller tutorial</div>
+  <details class="contents" open>
+  <summary>Contents</summary>
   <div class="nav-group"><div class="nav-title">Orientation</div><nav>
   <a href="index.html">Start here</a>
   <a href="paradigm.html"><span class="num">1</span>How a P300 speller works</a>
@@ -33,6 +35,7 @@
   <a href="exercises.html"><span class="num">10</span>Exercises</a>
   <a href="reference.html"><span class="num">11</span>Troubleshooting & glossary</a>
   </nav></div>
+  </details>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
     <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
@@ -53,7 +56,7 @@
 <figcaption>Everything a session needs, before anything starts. With a real amplifier you would press <em>scan for amplifiers</em> and pick it from the list; today, leave the source on <em>simulated subject</em>.</figcaption>
 </figure>
 
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Field</th>
@@ -86,7 +89,7 @@
 <td>Writes the raw EEG and every event into <code>~/output/…</code></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>Press <strong>Start session</strong>. Two windows open: the <strong>control panel</strong> for you, and
 the <strong>speller</strong> for the participant. In a real session you drag the speller onto
 their monitor and maximise it.</p>
@@ -158,7 +161,7 @@ exercises are scored:</p>
 <p><code>--speed 20</code> compresses experiment time twenty-fold: the data in the buffer is
 identical because everything is indexed by samples, but a four-minute session
 takes twelve seconds. Useful flags:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Flag</th>
@@ -187,7 +190,7 @@ takes twelve seconds. Useful flags:</p>
 <td>record the session to <code>~/output/…</code></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <div class="do">
 <span class="block-title">Try this before moving on</span>
 Run <code>python -m pyspeller demo --speed 20 --erp-amplitude 4</code> and then
@@ -202,5 +205,11 @@ performance — which is the whole game with a real participant.
   <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
 </main>
 </div>
+<script>
+  // on a phone the contents list starts folded; on a wide screen it stays open
+  var contents = document.querySelector('.contents');
+  if (contents && window.matchMedia('(max-width: 900px)').matches)
+    contents.removeAttribute('open');
+</script>
 </body>
 </html>

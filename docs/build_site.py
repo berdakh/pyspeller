@@ -46,7 +46,10 @@ TEMPLATE = """<!DOCTYPE html>
 <aside class="sidebar">
   <a class="brand" href="index.html">py<span>speller</span></a>
   <div class="brand-sub">P300 speller tutorial</div>
+  <details class="contents" open>
+  <summary>Contents</summary>
   {nav}
+  </details>
   <div class="sidebar-foot">
     <a href="https://github.com/berdakh/pyspeller">the code on GitHub</a><br>
     <a href="https://github.com/berdakh/buffer_bci">buffer_bci, where it came from</a><br>
@@ -65,6 +68,12 @@ TEMPLATE = """<!DOCTYPE html>
   <a href="https://github.com/berdakh/buffer_bci">buffer_bci</a>. GPL-3.0.</p>
 </main>
 </div>
+<script>
+  // on a phone the contents list starts folded; on a wide screen it stays open
+  var contents = document.querySelector('.contents');
+  if (contents && window.matchMedia('(max-width: 900px)').matches)
+    contents.removeAttribute('open');
+</script>
 </body>
 </html>
 """
@@ -133,6 +142,9 @@ def main():
         # keep <svg> and raw html blocks intact: markdown escapes nothing here
         html = re.sub(r'<p>(<(?:figure|div|svg|table)[ >])', r'\1', html)
         html = re.sub(r'(</(?:figure|div|svg|table)>)</p>', r'\1', html)
+        # a table on a narrow screen scrolls inside its own box
+        html = html.replace('<table>', '<div class="table-wrap"><table>')
+        html = html.replace('</table>', '</table></div>')
         target = os.path.join(HERE, name + '.html')
         with open(target, 'w', encoding='utf-8') as handle:
             handle.write(html)
