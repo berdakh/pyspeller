@@ -11,80 +11,156 @@ what separates someone who can run a session from someone who can fix one.
 
 ## 1. From neurons to a puddle of gel
 
-A single neuron produces far too little current to measure from outside the
-head. What EEG sees is the summed **post-synaptic potentials** of tens of
-thousands of pyramidal cells in the cortex — cells that are lined up
-perpendicular to the cortical surface, so their tiny currents add rather than
-cancel. Each patch acts like a small current source and sink: an **electric
-dipole**.
+### What "electricity" means here
 
-Current from those dipoles spreads through everything between the cortex and
-the electrode — cerebrospinal fluid, skull, scalp. This is **volume
-conduction**, and two facts about it shape everything else:
+Electricity is just **charge that moves**. Charge comes in two kinds, which we
+call positive and negative; opposite kinds attract, like kinds push apart.
 
-- **The skull is a poor conductor**, so the pattern is smeared over
-  centimetres — like reading a page through frosted glass. Scalp EEG cannot see
-  a single gyrus; it sees a region.
-- **What arrives is tiny**: 10–100 µV of ongoing EEG, and the P300 you are
-  hunting is about 5 µV. That is three hundred thousand times smaller than an AA
-  battery: you are listening for a whisper from the far side of a stadium, while
-  the crowd (mains hum, a blink, a clenched jaw) is shouting.
+In a **metal**, the things that move are **electrons** — the tiny negatively
+charged particles that belong to atoms, but which in a metal are free to drift
+from atom to atom. That is exactly why metals conduct and wood does not.
 
-In the tissue and in the gel, the current is carried by **ions** — Na⁺, K⁺,
-Cl⁻ moving. In the wire to the amplifier it is carried by **electrons**. The
-electrode is the place where one becomes the other.
+In **water, and therefore in you**, electrons do not roam free. What moves
+instead are **ions**: atoms that have lost or gained an electron, so they carry
+a charge and drift through the liquid. Table salt dissolved in water splits into
+sodium ions (written Na⁺, positive because the sodium atom lost an electron) and
+chloride ions (Cl⁻, negative because it gained one). Your blood, the fluid
+around your brain cells and the gel under an EEG electrode are all salty water
+full of ions.
+
+Two more words you will need:
+
+- **Current** is charge flowing past a point — electrons drifting down a wire,
+  or ions drifting through fluid.
+- **Voltage** is the *difference in electrical push* between two places. It is
+  like height: water flows downhill, charge flows from higher voltage to lower.
+  And like height, it only ever means something **relative to somewhere else** —
+  remember that sentence, because the whole design of an EEG system follows
+  from it.
+
+### How a brain makes any of this
+
+A brain cell does its work by letting ions in and out through its outer
+membrane. Sodium rushes in here, potassium leaks out there. Every one of those
+movements is charge moving, which means every working neuron makes a tiny
+current in the salty fluid around it.
+
+While that is happening, charge is being pulled in at one end of the cell and
+pushed out at the other. A pair of opposite charges a short distance apart like
+that is called a **dipole** — think of a very small, very weak battery, with a
+plus end and a minus end, sitting in the tissue.
+
+One cell's dipole is hopelessly small to detect from outside the head. Two
+things rescue us:
+
+- **Numbers.** Tens of thousands of cells in the same patch of brain do the same
+  thing at the same moment when they are responding to the same event.
+- **Alignment.** The cells in the outer layer of the brain — the cortex — are
+  stacked side by side, pointing the same way, like trees in a plantation. Their
+  little batteries therefore point the same way too, so their effects **add up**
+  instead of cancelling out. Cells pointing in random directions would cancel
+  and we would see nothing.
+
+### Getting from there to the scalp
+
+The current from those aligned dipoles does not travel along a wire; it spreads
+out through everything around it — the fluid the brain floats in, the skull, the
+scalp — the way heat spreads through a pan. Physicists call that spreading
+**volume conduction**, and two consequences of it shape everything else in this
+tutorial:
+
+- **The skull is a poor conductor**, so the pattern is blurred by the time it
+  reaches the surface — like reading a page through frosted glass. An electrode
+  on the scalp never sees one small spot of brain; it sees a smeared-together
+  region a few centimetres across.
+- **What arrives is minuscule.** The ongoing EEG is 10–100 **microvolts**
+  (µV, millionths of a volt), and the P300 response this speller hunts for is
+  about 5 µV. An AA battery is 1.5 volts — three hundred thousand times bigger.
+  You are listening for a whisper from the far side of a stadium, while the
+  crowd — mains hum from the wiring in the walls, a blink, a clenched jaw — is
+  shouting.
+
+So: **in your head, the current is carried by ions. In the cable to the
+amplifier, it is carried by electrons.** Those are two different things, and
+something has to translate between them. That something is the electrode.
 
 ## 2. The electrode is a chemical reaction
 
 <figure>
 <img src="assets/img/electrode-interface.svg" alt="Cross-section of an electrode on the scalp with a magnified view of the electrical double layer and the silver–silver chloride reaction">
-<figcaption>Left: what the electrode sits on. Right: the interface where ionic current becomes electronic current.</figcaption>
+<figcaption>Left: what the electrode sits on. Right: the boundary where a current of ions becomes a current of electrons.</figcaption>
 </figure>
 
-Put a metal in an electrolyte and charge immediately rearranges at the
-boundary: metal ions dissolve or deposit until an equilibrium is reached. The
-result is an **electrical double layer** — a nanometre-thin sandwich of charge
-— and a voltage across it, the **half-cell potential**. Every metal–electrolyte
-pair has its own: silver–silver chloride sits at about **+0.22 V** relative to
-the standard hydrogen electrode.
+### What happens the moment metal touches gel
 
-That is *a thousand times larger* than the EEG. It does not swamp the recording
-for one reason: each channel is the **difference** between two electrodes, and
-if both are the same material in the same electrolyte, their half-cell
-potentials nearly cancel. "Nearly" is what you spend your session fighting —
-the residue is the slow drift you see when an electrode dries out.
+Put a piece of metal into salty liquid — which is what you do every time you
+fill an electrode with gel — and chemistry starts immediately at the surface.
+Some atoms of the metal react with the liquid: a metal atom may give up an
+electron and drift off into the liquid as an ion, or an ion from the liquid may
+grab an electron and stick to the metal.
 
-### Polarizable and non-polarizable
+This does not go on forever. After a moment it settles, having left a little
+extra charge of one kind on the metal and the opposite kind in the liquid right
+next to it. You end up with an extremely thin sandwich — a layer of charge on
+the metal, a layer of the opposite charge in the liquid — perhaps a millionth of
+a millimetre thick. It has a name: the **electrical double layer**.
 
-This is the single most useful idea about electrode materials.
+Separated charge means a voltage, exactly as separated water levels mean
+pressure. So every electrode sitting in gel has a small steady voltage of its
+own across that boundary, before any brain is involved at all. It is called the
+**half-cell potential**, and for a silver electrode coated in silver chloride it
+is about **0.22 volts**.
 
-**Non-polarizable (reversible)** — charge crosses the interface freely, through
-a reversible chemical reaction. For silver–silver chloride:
+Stop and compare that with the signal: 0.22 volts against 0.000005 volts. The
+electrode's own private voltage is some **forty thousand times larger than the
+P300**. How is anything measurable at all?
+
+Because you never measure one electrode on its own — you measure the
+**difference between two of them**. Use two electrodes of the same material,
+sitting in the same kind of gel, and both carry almost the same private voltage,
+so subtracting one from the other cancels almost all of it. "Almost" is the word
+you will fight all session: what is left over, changing slowly as gel dries or
+one electrode warms up, is the **drift** you see wandering across the screen.
+
+### Can charge actually cross? (the most useful idea on this page)
+
+Sooner or later a little charge has to get from the liquid onto the metal, or
+the electrode cannot report anything. Whether it can, and how easily, depends on
+the metal — and this single question divides electrodes into two families.
+
+**Family one: charge crosses freely.** Silver coated with silver chloride has a
+reaction available that runs happily in both directions:
 
 ```
 Ag + Cl⁻  ⇌  AgCl + e⁻
 ```
 
-Current in either direction just runs the reaction one way or the other. The
-interface behaves like a **resistor**: it passes low frequencies and DC, its
-potential is stable, and moving the electrode slightly does not produce a large
-voltage step.
+In words: a silver atom (Ag) and a chloride ion from the gel (Cl⁻) combine into
+silver chloride (AgCl), and in doing so release an electron (e⁻) into the metal.
+The double arrow ⇌ means the reaction runs just as willingly backwards. So when
+charge needs to cross in either direction, it simply does, and the electrode
+keeps reporting faithfully however slowly the signal changes. Electrodes like
+this are called **non-polarizable**, and they behave like a plain **resistor**.
 
-**Polarizable** — no charge crosses; it accumulates on both sides like a
-**capacitor**. Gold, platinum and stainless steel are close to this. A capacitor
-blocks DC and passes high frequencies, so these electrodes are fine for alpha
-and beta rhythms but drift at very low frequencies, and any mechanical
-disturbance changes the capacitance and produces an artefact.
+**Family two: charge piles up instead.** Gold, platinum and stainless steel have
+no such easy reaction. Charge arriving at the boundary cannot get across, so it
+accumulates on both sides of the double layer. That arrangement — charge stored
+on two surfaces facing each other — is a **capacitor**, and a capacitor has a
+peculiar habit: it passes rapid changes and blocks slow, steady ones. Push on it
+quickly and the push is felt on the other side; lean on it steadily and nothing
+happens. Electrodes like this are called **polarizable**.
 
-Real electrodes are somewhere between the two: a resistance and a capacitance in
-parallel, in series with the resistance of the gel and the skin.
+Real electrodes are a mixture of the two, with the resistance of the gel and the
+skin in the path as well. But the division explains most of what you will
+observe in a lab.
 
 <div class="note">
 <span class="block-title">Why this matters for a P300 speller</span>
-Your signal lives between roughly 0.5 and 10 Hz — the low end, where polarizable
-electrodes drift and non-polarizable ones do not. That is why silver–silver
-chloride is the default for ERP work, and why an ERP lab will put up with the
-gel.
+The response you are trying to record is slow: the P300 is a bump lasting a few
+tenths of a second, which lives in the frequency range 0.5 to 10 Hz — the low
+end, exactly where a "piles up" electrode stops reporting honestly and starts
+drifting. That is why silver–silver chloride, gel and all, is the standard for
+this kind of work, and why gold is better suited to faster brain rhythms.
 </div>
 
 ## 3. Five pictures to keep in your head
